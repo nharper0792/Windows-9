@@ -94,6 +94,7 @@ void kmain(void)
 	klogv(COM1, "Shutdown complete.");
 }
 
+/*
 comhand(void) {
 	for (;;) {
 		char buf[100] = { 0 };
@@ -102,7 +103,8 @@ comhand(void) {
 		//echoes input
 		sys_req(WRITE, COM1, buf, nread);
 
-		if (/*insert statement here */)
+		if ()
 			return;
 	}
 }
+*/

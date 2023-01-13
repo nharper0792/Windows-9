@@ -66,12 +66,15 @@ int serial_poll(device dev, char *buffer, size_t len)
 	// You must validate each key and handle special keys such as delete, back space, and
 	// arrow keys
 
-	while (/* buffer not full */) {
-		if (/* data is available through LSR */) {
+	/*
+	while ( buffer not full ) {
+		if ( data is available through LSR ) {
 			char c = inb(device); // reads one byte
 			//update the user buffer or handle data
 		}
 	}
+	*/
+
 	// REMOVE THIS -- IT ONLY EXISTS TO AVOID UNUSED PARAMETER WARNINGS
 	// Failure to remove this comment and the following line *will* result in
 	// losing points for inattention to detail
