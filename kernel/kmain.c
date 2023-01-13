@@ -10,7 +10,6 @@
 			Ben Smith 2018, and Alex Wilson 2019, Jakob Kaivo 2022
 */
 
-//test commit for Windows VS2022 -- REMOVE
 #include <mpx/gdt.h>
 #include <mpx/interrupts.h>
 #include <mpx/serial.h>
