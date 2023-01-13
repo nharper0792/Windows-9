@@ -93,3 +93,16 @@ void kmain(void)
 	// System shutdown -- Nothing remains to change below here.
 	klogv(COM1, "Shutdown complete.");
 }
+
+comhand(void) {
+	for (;;) {
+		char buf[100] = { 0 };
+		sys_req(READ, COM1, buf, sizeof(buf));
+		int nread = sys_req(READ, COM1, buf, sizeof(buf));
+		//echoes input
+		sys_req(WRITE, COM1, buf, nread);
+
+		if (/*insert statement here */)
+			return;
+	}
+}
