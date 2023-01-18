@@ -14,7 +14,8 @@ lib/stdlib.o\
 lib/string.o
 
 USER_OBJECTS =\
-user/system.o
+user/system.o\
+user/comhand.o
 
 ########################################################################
 ### Nothing below here needs to be changed
