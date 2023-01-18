@@ -68,7 +68,8 @@ int serial_poll(device dev, char *buffer, size_t len)
 
 
 	while (1) {
-		if (inb(COM1 + 5) ) {
+
+		if (inb(COM1 + 5) ) { // when data is available the lsb in the line status register, (COM1+5) is set
 			char c = inb(COM1); // reads one byte
 			//update the user buffer or handle data
 		}
