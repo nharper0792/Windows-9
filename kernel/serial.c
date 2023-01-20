@@ -72,7 +72,7 @@ int serial_poll(device dev, char *buffer, size_t len)
 	while (1) 
 	{
 
-		if (inb(COM1 + 5) ) 
+		if (inb(dev+LSR) ) 
 		{ // when data is available the lsb in the line status register, (COM1+5) is set
 			char c = inb(COM1); // reads one byte
 			//update the user buffer or handle data
@@ -81,19 +81,16 @@ int serial_poll(device dev, char *buffer, size_t len)
 			 {
       			if(ind !=0)
 				{
-      				sys_req(WRITE, COM1,"\b", 1);
-      				sys_req(WRITE,COM1,"\033[K",1);
-      				buffer[ind] = buffer[ind-1];
+      				outb(dev,'\b');
+      				buffer[ind] = '\0';
       				ind--;
     			}
 
    			 //delete
    			 else if(c==8)
 			 {
-      			sys_req(WRITE,COM1,"\033{C",1);
-      			sys_req(WRITE,COM1,"\b",1);
+      			outb(dev,'\b');}
 
-   			 } 
 
     		//enter
     		else if(c==13 || c==10)
