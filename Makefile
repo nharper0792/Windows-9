@@ -11,7 +11,8 @@ kernel/serial.o
 LIB_OBJECTS =\
 lib/ctype.o\
 lib/stdlib.o\
-lib/string.o
+lib/string.o\
+lib/rtc.o
 
 USER_OBJECTS =\
 user/system.o\

@@ -1,2 +1,8 @@
 *.o
 kernel.bin
+/.idea/.gitignore
+/cmake-build-debug/CMakeFiles/clion-log.txt
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/Windows-9.iml
