@@ -62,43 +62,52 @@ int serial_out(device dev, const char *buffer, size_t len)
 
 int serial_poll(device dev, char *buffer, size_t len)
 {
-	int ind = 0;
+	int ind = (int)len;
 	int count = 0;
 	// insert your code to gather keyboard input via the technique of polling.
 	// You must validate each key and handle special keys such as delete, back space, and
 	// arrow keys
 
 
-	while (1) {
+	while (1) 
+	{
 
-		if (inb(COM1 + 5) ) { // when data is available the lsb in the line status register, (COM1+5) is set
+		if (inb(COM1 + 5) ) 
+		{ // when data is available the lsb in the line status register, (COM1+5) is set
 			char c = inb(COM1); // reads one byte
 			//update the user buffer or handle data
-			 if(c==127){
-      			if(ind !=0){
-      				serial_print("\b");
-      				serial_print("\033[K");
+			 if(c==127)
+			 {
+      			if(ind !=0)
+				{
+      				outb(dev,"\b");
+      				outb(dev, "\033[K");
       				buffer[ind] = buffer[ind-1];
-      				ind--;}
+      				ind--;
     			}
 
    			 //delete
-   			 else if(c==8){
-      			serial_print("\033{C");
-      			serial_print("\b");
+   			 else if(c==8)
+			 {
+      			outb(dev,"\033{C");
+      			outb(dev,"\b");
 
    			 } 
 
     		//enter
-    		else if(c==13 || c==10){
+    		else if(c==13 || c==10)
+			{
     			buffer[ind] ='\0';
     			ind--;
     			return count;
-    		} else{
+    		} else
+			{
       			buffer[ind]=c;
       			ind++;
       			outb(COM1,c);
-      		if(ind == count){
+				}
+      		if(ind == count)
+			{
         		return count;
       }
     }
