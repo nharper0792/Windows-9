@@ -3,6 +3,7 @@
 //
 #include <mpx/io.h>
 #include <mpx/device.h>
+#include <rtc.h>
 
 #define IndexRegister 0x70
 #define DataRegister 0x71
@@ -23,14 +24,13 @@ enum indexes{
 char* getDate(){
 //    char buf[11] = {0};
 //
-      outb(IndexRegister,Month);
-      char* month = &inb(DataRegister);
-      outb(COM1,month);
+//    outb(IndexRegister,Month);
+//    char month = &inb(DataRegister);
 //
 //    outb(IndexRegister, DayOfMonth);
-//    byte day = inb(DataRegister);
+//    char day = inb(DataRegister);
 //
 //    buf = month + day;
-//    return &buf;
-    return month;
+//    return month;
+return "unimplemented";
 }

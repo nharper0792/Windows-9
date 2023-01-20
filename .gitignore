@@ -1,6 +1,16 @@
 *.o
 kernel.bin
 /.idea/.gitignore
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/Windows-9.iml
+/.idea/misc.xml
+/.idea/.gitignore
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/Windows-9.iml
+/.idea/misc.xml
+/.idea/.gitignore
 /cmake-build-debug/CMakeFiles/clion-log.txt
 /.idea/misc.xml
 /.idea/modules.xml

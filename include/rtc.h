@@ -17,4 +17,11 @@ char* getDate();
  */
 int setDate();
 
+/**
+ * @brief returns the current time in UTC
+ * @return
+ */
+char* getTime();
+
+int setTime();
 #endif //WINDOWS_9_RTC_H
