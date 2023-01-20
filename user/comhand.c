@@ -3,7 +3,7 @@
 #include <memory.h>
 #include <sys_req.h>
 #include <string.h>
-//#include <rtc.h>
+#include <rtc.h>
 
 /*
 Variable: process
@@ -56,7 +56,7 @@ void init_comhand(void) {
 		//	REMOVE BEFORE SUBMISSION OF R1 -- FOR TESTING ONLY
 		//	THIS BUFFER AND NREAD ASSIGNMENT WILL BE A TEMPORARY TEST METHOD UNTIL BUFFER IS FINISHED IN SERIAL_POLL
 		//	REMOVE BEFORE SUBMISSION OF R1 AND CHANGE ACCORDING CODE
-		char buf[] = "help";
+		char buf[] = "rtc";
 		//==
 
 
@@ -69,7 +69,7 @@ void init_comhand(void) {
 		char textversion[] = "version";
 		//version
 		//process 010
-		if ((strcmp(textversion, buf) <= 0) && nread == 10) {
+		if ((strcmp(textversion, buf) == 0) && nread == 10) {
 			process = 010;
 			comhand_version();
 		}
@@ -77,35 +77,27 @@ void init_comhand(void) {
 		char textshutdown[] = "shutdown";
 		//shutdown
 		//process 020
-		if ((strcmp(textshutdown, buf) <= 0) && (nread == 10)) {
+		if ((strcmp(textshutdown, buf) == 0) && (nread == 10)) {
 			process = 020;
 			comhand_shutdown();
-		}
-
-		char textjb[] = "jb";
-		//joe burrow
-		//process 030
-		if ((strcmp(textjb, buf) <= 0) && nread == 10) {
-			process = 030;
-			comhand_jb();
 		}
 
 		char texthelp[] = "help";
 		//help
 		//process 040
-		if ((strcmp(texthelp, buf) <= 0) && nread == 10) {
+		if ((strcmp(texthelp, buf) == 0) && nread == 10) {
 			process = 040;
 			comhand_help();
 		}
-		/*
+
 		char textrtc[] = "rtc";
 		//help
 		//process 050
-		if ((strcmp(textrtc, buf) <= 0) && nread == 10) {
+		if ((strcmp(textrtc, buf) == 0) && nread == 10) {
 			process = 050;
 			comhand_rtc();
 		}
-		*/
+
 		nread = 0;
 	}
 }
@@ -137,49 +129,23 @@ void comhand_shutdown(void) {
 	return;
 }
 
-//comhand_jb() is a function used to test various features within the command handler. currently, it is being used to test user prompts from within another process.
-void comhand_jb(void) {
-	char textjb_landing[] =
-		"\n"\
-		"\n(JB)$:It's me, Joe Burrow! I throw footballs!:"\
-		"\n(JB)$:What do you want to talk about?:";
-	sys_req(WRITE, COM1, textjb_landing, sizeof(textjb_landing));
-
-	char textjb_landing01[] = "steelers";
-	//==
-	// REMOVE
-	char buf2[] = "steelers";
-	// REMOVE
-	//==
-	if ((strcmp(textjb_landing01, buf2) <= 0) && (nread == 10) && (process = 030)) {
-		char textjb_landing01response[] =
-			"\n(JB)$:Did you mention the Steelers?"\
-			"\n(JB)$:I'm not worried about those gremlins.\n";
-		sys_req(WRITE, COM1, textjb_landing01response, sizeof(textjb_landing01response));
-
-	}
-	nread = 0;
-	process = 0;
-	return;
-}
-/*
 void comhand_rtc(void) {
 	char textrtc_landing[] = "\n$:Real-Time Clock:";
 	sys_req(WRITE, COM1, textrtc_landing, sizeof(textrtc_landing));
 
-	char textrtc_landingclock[] = *getDate();
+	char* textrtc_landingclock = getDate();
 	sys_req(WRITE, COM1, textrtc_landingclock, sizeof(textrtc_landingclock));
 
 	return;
 }
-*/
+
 void comhand_help(void) {
 	char texthelp_landing[] =
 		"\n$:Help Commands:"\
 		"\n$:	1) shutdown"\
 		"\n$:	2) version"\
 		"\n$:	3) jb"\
-		"\n$:	4) "
+		"\n$:	4) rtc"
 		"\n";
 	sys_req(WRITE, COM1, texthelp_landing, sizeof(texthelp_landing));
 	process = 0;
