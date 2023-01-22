@@ -3,7 +3,9 @@
 //
 #include <mpx/io.h>
 #include <mpx/device.h>
+#include <memory.h>
 #include <rtc.h>
+#include <stdlib.h>
 
 #define IndexRegister 0x70
 #define DataRegister 0x71
@@ -22,15 +24,32 @@ enum indexes{
 };
 
 char* getDate(){
-//    char buf[11] = {0};
-//
-//    outb(IndexRegister,Month);
-//    char month = &inb(DataRegister);
-//
-//    outb(IndexRegister, DayOfMonth);
-//    char day = inb(DataRegister);
-//
-//    buf = month + day;
-//    return month;
-return "unimplemented";
+    outb(IndexRegister,Month);
+
+    char* month = (char*)sys_alloc_mem(3);
+    itoa(inb(DataRegister),month);
+
+    outb(IndexRegister, DayOfMonth);
+    char* day = (char*)sys_alloc_mem(3);
+    itoa(inb(DataRegister),day);
+
+    outb(IndexRegister,Year);
+    char* year = (char*)sys_alloc_mem(5);
+    itoa(inb(DataRegister),year);
+    itoa(inb(DataRegister),year+2);
+
+    char* buf = (char*)sys_alloc_mem(100);
+    int p = 0;
+    for(int i = 0;month[i]!='\0';i++){
+        buf[p++] = month[i];
+    }
+    buf[p++] = '/';
+    for(int j = 0;j<3;j++){
+        buf[p++] = day[j];
+    }
+    buf[p++] = '/';
+    for(int k = 0;k<4;k++){
+        buf[p++] = year[k];
+    }
+    return buf;
 }

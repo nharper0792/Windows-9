@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <ctype.h>
-
+#include <string.h>
 int atoi(const char *s)
 {
 	int res = 0;
@@ -28,7 +28,7 @@ int atoi(const char *s)
 	return res;
 }
 
-char *itoa(int i) {
+char *itoa(int i, char* buf) {
     int p = 0;
     static char res[10] = {0};
     int isNegative = 0;
@@ -55,6 +55,9 @@ char *itoa(int i) {
         char temp = res[j];
         res[j] = res[p];
         res[p] = temp;
+    }
+    for(size_t j = 0;j<=strlen(res);j++){
+        *(buf+j) = res[j];
     }
     return res;
 }
