@@ -10,6 +10,8 @@
 #define IndexRegister 0x70
 #define DataRegister 0x71
 
+int bcdToDec(int src);
+
 enum indexes{
     Seconds = 0x00,
     SecondsAlarm = 0x01,
@@ -27,29 +29,38 @@ char* getDate(){
     outb(IndexRegister,Month);
 
     char* month = (char*)sys_alloc_mem(3);
-    itoa(inb(DataRegister),month);
+    itoa(bcdToDec(inb(DataRegister)),month);
 
     outb(IndexRegister, DayOfMonth);
     char* day = (char*)sys_alloc_mem(3);
-    itoa(inb(DataRegister),day);
+    itoa(bcdToDec(inb(DataRegister)),day);
 
     outb(IndexRegister,Year);
     char* year = (char*)sys_alloc_mem(5);
-    itoa(inb(DataRegister),year);
-    itoa(inb(DataRegister),year+2);
+    itoa(bcdToDec(inb(DataRegister)),year);
 
     char* buf = (char*)sys_alloc_mem(100);
     int p = 0;
-    for(int i = 0;month[i]!='\0';i++){
+    for(int i = 0;month[i]!=0;i++){
         buf[p++] = month[i];
     }
     buf[p++] = '/';
-    for(int j = 0;j<3;j++){
+    for(int j = 0;day[j]!=0;j++){
         buf[p++] = day[j];
     }
     buf[p++] = '/';
-    for(int k = 0;k<4;k++){
+    for(int k = 0;day[k]!=0;k++){
         buf[p++] = year[k];
     }
     return buf;
+}
+
+
+int bcdToDec(int src){
+    int res = 0;
+    for(int i = 12;i>=0;i-=4){
+        res*=10;
+        res+=((src>>i)&15);
+    }
+    return res;
 }
