@@ -20,6 +20,4 @@ int atoi(const char *s);
  */
 char* itoa(int i,char* buf);
 
-int bcdToD(int src);
-
 #endif

@@ -13,9 +13,9 @@
 char* getDate();
 /**
  * @brief writes the date to the RTC
- * @return 0 if failure occurs, 1 otherwise
+ * @param char* newDate - a string containing the new date in mm/dd/yy format
  */
-int setDate();
+void setDate(char* newDate);
 
 /**
  * @brief returns the current time in UTC
