@@ -12,7 +12,8 @@ LIB_OBJECTS =\
 lib/ctype.o\
 lib/stdlib.o\
 lib/string.o\
-lib/rtc.o
+lib/rtc.o\
+lib/stdio.o
 
 USER_OBJECTS =\
 user/system.o\

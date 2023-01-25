@@ -14,7 +14,7 @@
 
 int bcdToDec(int src);
 int decToBcd(int src);
-char* read();
+int read();
 
 typedef enum index{
     Seconds = 0x00,
@@ -33,35 +33,12 @@ void write(enum index i, int num);
 
 
 char* getDate(){
-
-    char* month = read(Month);
-
-    char* day = read(DayOfMonth);
-
-    char* year = read(Year);
-
     char* buf = (char*)sys_alloc_mem(100);
-    int p = 0;
-    for(int i = 0;month[i]!=0;i++){
-        buf[p++] = month[i];
-    }
-    buf[p++] = '/';
-    for(int j = 0;day[j]!=0;j++){
-        buf[p++] = day[j];
-    }
-    buf[p++] = '/';
-    for(int k = 0;day[k]!=0;k++){
-        buf[p++] = year[k];
-    }
-   sys_free_mem(month);
-    sys_free_mem(day);
-    sys_free_mem(year);
+    sprintf(buf, "%d/%d/%d",read(Month),read(DayOfMonth),read(Year));
     return buf;
 }
 
 void setDate(char* newDate){
-    char* poop = newDate;
-    newDate = poop;
     char *date[3] = {(char*)sys_alloc_mem(3),(char*)sys_alloc_mem(3),(char*)sys_alloc_mem(3)};
     for (int i = 0, seek = 0; newDate[seek] != '\0'; seek++, i++) {
         for (int p = 0; ; seek++, p++) {
@@ -79,11 +56,9 @@ void setDate(char* newDate){
     }
 }
 
-char* read(index in){
-    char* res = (char*)sys_alloc_mem(3);
+int read(index in){
     outb(IndexRegister, in);
-    itoa(bcdToDec(inb(DataRegister)),res);
-    return res;
+    return bcdToDec(inb(DataRegister));
 }
 
 void write(enum index i, int num){

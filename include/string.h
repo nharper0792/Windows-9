@@ -47,4 +47,6 @@ size_t strlen(const char *s);
 */
 char* strtok(char * restrict s1, const char * restrict s2);
 
+int sprintf(char* str, const char* format, ...);
+
 #endif

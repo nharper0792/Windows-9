@@ -56,6 +56,9 @@ char *itoa(int i, char* buf) {
         res[j] = res[p];
         res[p] = temp;
     }
+    if(buf ==NULL){
+        return res;
+    }
     for(size_t j = 0;j<=strlen(res);j++){
         *(buf+j) = res[j];
     }
