@@ -31,13 +31,19 @@ typedef enum index{
 void write(enum index i, int num);
 
 
-
+/**
+ *
+ * @return a char* containing the date in mm/dd/yy format
+ */
 char* getDate(){
     char* buf = (char*)sys_alloc_mem(100);
     sprintf(buf, "%d/%d/%d",read(Month),read(DayOfMonth),read(Year));
     return buf;
 }
-
+/**
+ *
+ * @param newDate a char* with the new date in mm/dd/yy format
+ */
 void setDate(char* newDate){
     char *date[3] = {(char*)sys_alloc_mem(3),(char*)sys_alloc_mem(3),(char*)sys_alloc_mem(3)};
     for (int i = 0, seek = 0; newDate[seek] != '\0'; seek++, i++) {
