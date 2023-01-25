@@ -27,12 +27,6 @@ void comhand_help(void);
 //				: See comhand.c for more information
 void comhand_shutdown(void);
 
-//jb			: commences test run of joe burrow sequence
-//				: takes no parameters and returns nothing
-//				:
-//				: See comhand.c for more information
-void comhand_jb(void);
-
 //rtc			: displays real-time clock
 //				: takes no parameters and returns nothing
 //				:
