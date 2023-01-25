@@ -23,5 +23,9 @@ void setDate(char* newDate);
  */
 char* getTime();
 
-int setTime();
+/**
+ * @brief writes the time to the RTC
+ * @param newDate (char*) - a string containing the new date in the format HH:MM:SS format
+ */
+void setTime(char* newDate);
 #endif //WINDOWS_9_RTC_H

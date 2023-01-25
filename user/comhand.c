@@ -130,11 +130,17 @@ void comhand_shutdown(void) {
 }
 
 void comhand_rtc(void) {
-	char textrtc_landing[] = "\n$:Real-Time Clock:";
+	char textrtc_landing[] = "\n$:Real-Time Clock: ";
 	sys_req(WRITE, COM1, textrtc_landing, sizeof(textrtc_landing));
 
 	char* textrtc_landingclock = getDate();
-	sys_req(WRITE, COM1, textrtc_landingclock, sizeof(textrtc_landingclock));
+	sys_req(WRITE, COM1, textrtc_landingclock, sizeof(textrtc_landingclock)+5);
+
+	char textrtc_landing2[] = "\n$:Time: ";
+	sys_req(WRITE, COM1, textrtc_landing2, sizeof(textrtc_landing2));
+
+	char* textrtc_landingtime = getTime();
+	sys_req(WRITE, COM1, textrtc_landingtime, sizeof(textrtc_landingtime)+4);
 
 	return;
 }
