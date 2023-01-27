@@ -2,7 +2,7 @@
 #define MPX_STRING_H
 
 #include <stddef.h>
-
+#include <stdarg.h>
 /**
  @file string.h
  @brief A subset of standard C library functions.
@@ -46,7 +46,7 @@ size_t strlen(const char *s);
  TODO
 */
 char* strtok(char * restrict s1, const char * restrict s2);
-
+char* formatCore(const char* format,va_list valist);
 int sprintf(char* str, const char* format, ...);
 
 #endif

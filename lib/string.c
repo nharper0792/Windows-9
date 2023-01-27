@@ -1,6 +1,8 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <memory.h>
 void *memcpy(void * restrict s1, const void * restrict s2, size_t n)
 {
 	unsigned char *dst = s1;
@@ -94,10 +96,24 @@ char *strtok(char * restrict s1, const char * restrict s2)
 	return s1;
 }
 
-int sprintf(char* str, const char* format, ...) {
-    va_list valist;
-    va_start(valist, format);
-    char buffer[512] = {0};
+char *pad(char *s, int padding, char type) {
+    int len = strlen(s);
+    if (len > padding) {
+        return s;
+    } else {
+        char *ret = (char *)sys_alloc_mem(padding);
+        for (int i = 0; i < padding - len; i++) {
+            ret[i] = type;
+        }
+        for (int i = padding - len, j = 0; i < padding; j++, i++) {
+            ret[i] = s[j];
+        }
+        return ret;
+    }
+
+}
+char *formatCore(const char *format, va_list valist) {
+    char *buffer = (char *)sys_alloc_mem(512);
     char ch;
     int index = 0;
 
@@ -106,7 +122,7 @@ int sprintf(char* str, const char* format, ...) {
     char *temp_str;
     int temp_int;
 
-    while (ch = *(format++)) {
+    while ((ch = *(format++))) {
         if (ch == '%') {
             start:
             switch (ch = *format++) {
@@ -139,11 +155,13 @@ int sprintf(char* str, const char* format, ...) {
                 default:
                     if (ch == '.') {
                         pad_with_zeros = 1;
+                        ch = *format++;
                     }
                     if (isdigit(ch)) {
                         char temp[4] = {0};
-                        int ptr = 0;
-                        while (isdigit(*(format + 1))) {
+                        temp[0] = ch;
+                        int ptr = 1;
+                        while (isdigit(*(format))) {
                             ch = *format++;
                             temp[ptr++] = ch;
                         }
@@ -159,10 +177,17 @@ int sprintf(char* str, const char* format, ...) {
             buffer[index++] = ch;
         }
     }
+
+    buffer[index] = '\0';
+    return buffer;
+}
+int sprintf(char* str, const char* format, ...) {
+    va_list valist;
+    va_start(valist, format);
+    char* buffer = formatCore(format,valist);
     va_end(valist);
     for (int i = 0; buffer[i]; i++) {
         str[i] = buffer[i];
     }
-    str[index] = '\0';
-    return index;
+    return strlen(str);
 }

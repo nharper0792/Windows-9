@@ -18,6 +18,6 @@ int isspace(int c);
  * @param c character to check
  * @return Non-zero if digit, 0 if not
  */
-int isdigit(int c)
+int isdigit(int c);
 
 #endif
