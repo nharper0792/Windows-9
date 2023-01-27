@@ -15,7 +15,6 @@
 int bcdToDec(int src);
 int decToBcd(int src);
 int read();
-void write(enum index i, int num);
 
 //typedef containg list of all ports to use
 typedef enum index{
@@ -31,6 +30,7 @@ typedef enum index{
     Year = 0x09
 }index;
 
+void write(enum index i, int num);
 
 /*
 Function Name   : getDate
