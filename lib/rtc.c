@@ -62,6 +62,31 @@ void setDate(char* newDate){
     }
 }
 
+char* getTime() {
+    char* buf = (char*)sys_alloc_mem(200);
+    sprintf(buf, "%d:%d:%d", read(Hours), read(Minutes), read(Seconds));
+    return buf;
+}
+
+void setTime(char* newTime) {
+    char *time[3] = {(char*)sys_alloc_mem(3), (char*)sys_alloc_mem(3), (char*)sys_alloc_mem(3)};
+    for (int i = 0, seek = 0; newTime[seek] != '\0'; i++, seek++) {
+        for (int p = 0 ;; p++, seek++) {
+            if (newTime[seek] == ':' || newTime[seek] == '\0') {
+                time[i][p] = '\0';
+                break;
+            } else {
+                time[i][p] = newTime[seek];
+            }
+        }
+    }
+
+    index indexes[3] = {Hours, Minutes, Seconds};
+    for (size_t i = 0; i<sizeof(time)/sizeof(time[0]); i++) {
+        write(indexes[i], atoi(time[i]));
+    }
+}
+
 int read(index in){
     outb(IndexRegister, in);
     return bcdToDec(inb(DataRegister));
