@@ -32,19 +32,24 @@ typedef enum index{
 }index;
 
 
-/**
- *
- * @return a char* containing the date in mm/dd/yy format
- */
+/*
+Function Name   : getDate
+Function Desc   : reads date from ports, converts from BCD to decimal, and returns as char*
+
+@return char* : formatted char* of the received date
+*/
 char* getDate(){
     char* buf = (char*)sys_alloc_mem(100);
     sprintf(buf, "%d/%d/%d",read(Month),read(DayOfMonth),read(Year));
     return buf;
 }
-/**
- *
- * @param newDate a char* with the new date in mm/dd/yy format
- */
+
+/*
+Function Name   : setDate
+Function Desc   : takes parameter newDate and writes to ports to set new date
+
+@param newDate (char*) : char formatted as MM/DD/YYYY
+*/
 void setDate(char* newDate){
     char *date[3] = {(char*)sys_alloc_mem(3),(char*)sys_alloc_mem(3),(char*)sys_alloc_mem(3)};
     for (int i = 0, seek = 0; newDate[seek] != '\0'; seek++, i++) {
