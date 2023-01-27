@@ -1,14 +1,3 @@
-/*
-TODO COMHAND
-
-WORK ON FULL WORDS (polling)
-WORK ON EXTRA COMMANDS
-CONFIRM ERROR CASES
-CONFIRM EDGE CASES
-
-CONVERT ALL TO PUTS**[done, need to push]
-*/
-
 #include <mpx/comhand.h>
 #include <mpx/serial.h>
 #include <memory.h>
@@ -41,6 +30,7 @@ void init_comhand(void) {
 	Purpose	: This variable provides a way to save space by using a single pointer to output the various texts used throughout the init_comhand() function
 	*/
 	puts("$:You have arrived!:\n");
+	comhand_help();
 
 	for (;;)
 	{
@@ -64,7 +54,7 @@ void init_comhand(void) {
 		char textversion[] = "version\0";
 		//version
 		//process 010
-		if ((strcmp(textversion, buf) == 0) && nread == 10) {
+		if ((strcmp(textversion, buf) == 0)) {
 			curr_process = 010;
 			comhand_version();
 		}
@@ -72,7 +62,7 @@ void init_comhand(void) {
 		char textshutdown[] = "shutdown\0";
 		//shutdown
 		//process 020
-		if ((strcmp(textshutdown, buf) == 0) && (nread == 10)) {
+		if ((strcmp(textshutdown, buf) == 0)) {
 			curr_process = 020;
 			comhand_shutdown();
 
@@ -85,7 +75,7 @@ void init_comhand(void) {
 		char texthelp[] = "help";
 		//help
 		//process 040
-		if ((strcmp(texthelp, buf) == 0) && nread == 10) {
+		if ((strcmp(texthelp, buf) == 0)) {
 			curr_process = 040;
 			comhand_help();
 		}
@@ -93,11 +83,19 @@ void init_comhand(void) {
 		char textrtc[] = "rtc\0";
 		//help
 		//process 050
-		if ((strcmp(textrtc, buf) == 0) && nread == 10) {
+		if ((strcmp(textrtc, buf) == 0)) {
 			curr_process = 050;
 			comhand_rtc();
 		}
-
+		/*
+		else {
+			puts(
+				"$:Sorry, that command wasn't recognized:"\
+				"$:Please enter a valid prompt:"\
+				"$:See help command for more information."
+			);
+		}
+		*/
 	}
 }
 
@@ -118,7 +116,7 @@ void comhand_version(void) {
 		"\n == Windows 9 JB Edition == "\
 		"\nVersion R1.0\n"
 	);
-	curr_process = 0;
+	curr_process = 000;
 	return;
 }
 
@@ -132,8 +130,8 @@ Function Desc	: Will prompt the user to shutdown the OS, must be cofirmed.
 void comhand_shutdown(void) {
 	puts(
 		"\n$:Are you sure you want to shutdown?:"\
-		"\n$:	1) yes"\
-		"\n$:	1) no"
+		"\n$:	yes"\
+		"\n$:	no"
 	);
 
 	for (;;) {
@@ -207,12 +205,12 @@ Function Desc	: Will display the help results. User can enter additional number 
 void comhand_help(void) {
 	puts(
 		"\n$:Help Commands:"\
+		"\n$:	0) help"\
 		"\n$:	1) shutdown"\
 		"\n$:	2) version"\
 		"\n$:	3) jb"\
 		"\n$:	4) rtc"\
-		"\n$:	"\
-		"\n\n"
+		"\n$:\n"
 	);
 	
 
