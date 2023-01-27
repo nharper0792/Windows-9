@@ -112,7 +112,7 @@ int serial_poll(device dev, char* buffer, size_t len)
             }
             else if (c == '\033') {
                 c = inb(dev);
-                //c= inb(dev);
+                c = inb(dev);
                 if (c == 'C') {
                     ind++;
                     serial_out(dev, "\033[C", 3);
