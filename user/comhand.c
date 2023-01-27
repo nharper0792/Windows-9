@@ -29,9 +29,7 @@ void init_comhand(void) {
 	Use		: mutates pointer into string needed for current output
 	Purpose	: This variable provides a way to save space by using a single pointer to output the various texts used throughout the init_comhand() function
 	*/
-	puts("$:You have arrived!:\n");
 	comhand_help();
-
 	for (;;)
 	{
 		/*
@@ -46,22 +44,27 @@ void init_comhand(void) {
 		int nread = sys_req(READ, COM1, buf, sizeof(buf));
 		sys_req(WRITE, COM1, buf, nread);
 
-		//==
+		//==================================================================
 		//	SMALL TEXT GROUPS
 		//		This area contains the command prompts that are simple text.
-		//==
+		//==================================================================
 
 		char textversion[] = "version\0";
 		//version
 		//process 010
+		char textshutdown[] = "shutdown\0";
+		//shutdown
+		//process 020
+		char texthelp[] = "help\0";
+		//help
+		//process 040
+		char textrtc[] = "rtc\0";
+		//help
+		//process 050
 		if ((strcmp(textversion, buf) == 0)) {
 			curr_process = 010;
 			comhand_version();
 		}
-
-		char textshutdown[] = "shutdown\0";
-		//shutdown
-		//process 020
 		if ((strcmp(textshutdown, buf) == 0)) {
 			curr_process = 020;
 			comhand_shutdown();
@@ -71,31 +74,22 @@ void init_comhand(void) {
 			else
 				curr_process = 000;
 		}
-
-		char texthelp[] = "help";
-		//help
-		//process 040
 		if ((strcmp(texthelp, buf) == 0)) {
 			curr_process = 040;
 			comhand_help();
 		}
-
-		char textrtc[] = "rtc\0";
-		//help
-		//process 050
 		if ((strcmp(textrtc, buf) == 0)) {
 			curr_process = 050;
 			comhand_rtc();
 		}
-		/*
 		else {
 			puts(
-				"$:Sorry, that command wasn't recognized:"\
-				"$:Please enter a valid prompt:"\
-				"$:See help command for more information."
+				"\n$:Sorry, that command wasn't recognized:"\
+				"\n$:Please enter a valid prompt:"\
+				"\n$:See help command for more information."\
+				"\n"
 			);
 		}
-		*/
 	}
 }
 
@@ -114,7 +108,8 @@ void comhand_version(void) {
 	puts(
 		"\n$:Version:"\
 		"\n == Windows 9 JB Edition == "\
-		"\nVersion R1.0\n"
+		"\nVersion R1.0"\
+		"\n"
 	);
 	curr_process = 000;
 	return;
@@ -131,7 +126,8 @@ void comhand_shutdown(void) {
 	puts(
 		"\n$:Are you sure you want to shutdown?:"\
 		"\n$:	yes"\
-		"\n$:	no"
+		"\n$:	no"\
+		"\n"
 	);
 
 	for (;;) {
@@ -139,7 +135,7 @@ void comhand_shutdown(void) {
 		int nread = sys_req(READ, COM1, shutdownconfirmation, sizeof(shutdownconfirmation));
 		sys_req(WRITE, COM1, shutdownconfirmation, nread);
 
-		char yesprompt[] = "yes\0";
+		char yesprompt[]	= "yes\0";
 		if (strcmp(shutdownconfirmation, yesprompt) == 0)
 		{
 			sys_req(-1);
@@ -154,7 +150,8 @@ void comhand_shutdown(void) {
 		{
 			puts(
 				"\n$:Aborting shutdown:"\
-				"\n$:You will be returned to the main menu:"
+				"\n$:You will be returned to the main menu:"\
+				"\n"
 			);
 
 			curr_process = 000;
@@ -183,7 +180,10 @@ void comhand_rtc(void) {
 	);
 	char* textrtc_landingtime = getTime();
 	sys_req(WRITE, COM1, textrtc_landingtime, sizeof(textrtc_landingtime) + 4);
-
+	//add extra line for clarity
+	puts(
+		"\n"
+	)
 	curr_process = 000;
 	return;
 }
@@ -204,12 +204,12 @@ Function Desc	: Will display the help results. User can enter additional number 
 */
 void comhand_help(void) {
 	puts(
-		"\n$:Help Commands:"\
+		"\n$:Commands:"\
+		"\n$:"\
 		"\n$:	0) help"\
 		"\n$:	1) shutdown"\
 		"\n$:	2) version"\
-		"\n$:	3) jb"\
-		"\n$:	4) rtc"\
+		"\n$:	3) rtc"\
 		"\n$:\n"
 	);
 	
