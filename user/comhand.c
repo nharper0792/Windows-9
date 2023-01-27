@@ -183,7 +183,7 @@ void comhand_rtc(void) {
 	//add extra line for clarity
 	puts(
 		"\n"
-	)
+	);
 	curr_process = 000;
 	return;
 }
