@@ -66,26 +66,29 @@ char* getDate(){
 @param newDate (char*) : char formatted as MM/DD/YYYY
 */
 void setDate(char* newDate){
-    char *date[3] = {(char*)sys_alloc_mem(3),(char*)sys_alloc_mem(3),(char*)sys_alloc_mem(3)};
+    int date[3];
     for (int i = 0, seek = 0; newDate[seek] != '\0'; seek++, i++) {
         for (int p = 0; ; seek++, p++) {
+            char* temp = (char*)sys_alloc_mem(3);
             if (newDate[seek] == '/'|| newDate[seek] == '\0') {
-                date[i][p] = '\0';
+                temp[p] = '\0';
+                date[i] = atoi(temp);
                 break;
             } else {
-                date[i][p] = newDate[seek];
+                temp[p] = newDate[seek];
             }
+            sys_free_mem(temp);
         }
     }
-    if(atoi(date[1])>MonthDays[atoi(date[0])]){
-        if(!(atoi(date[0]) == 2 && atoi(date[1]) == 29 && atoi(date[2]) %4 ==0)){
+    if(date[1]>MonthDays[date[0]]){
+        if(!(date[0] == 2 && date[1] == 29 && date[2] %4 ==0)){
             puts("Invalid Date\n");
             return;
         }
     }
     index indexes[3] = {Month, DayOfMonth, Year};
     for(size_t i = 0;i<sizeof(date)/sizeof(date[0]);i++){
-        write(indexes[i],atoi(date[i]));
+        write(indexes[i],date[i]);
     }
 }
 
