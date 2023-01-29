@@ -13,6 +13,20 @@
 #define IndexRegister 0x70
 #define DataRegister 0x71
 
+int MonthDays[] = {0,
+                  31,//January
+                  28,//February
+                  31,//March
+                  30,//April
+                  31,//May
+                  30,//June
+                  31,//July
+                  31,//August
+                  30,//September
+                  31,//October
+                  30,//November
+                  31,//December
+                  };
 int bcdToDec(int src);
 int decToBcd(int src);
 int read();
@@ -45,9 +59,9 @@ char* getDate(){
     return buf;
 }
 
-/*
-Function Name   : setDate
-Function Desc   : takes parameter newDate and writes to ports to set new date
+/**
+@name   : setDate
+@brief  : takes parameter newDate and writes to ports to set new date
 
 @param newDate (char*) : char formatted as MM/DD/YYYY
 */
@@ -63,15 +77,21 @@ void setDate(char* newDate){
             }
         }
     }
+    if(atoi(date[1])>MonthDays[atoi(date[0])]){
+        if(!(atoi(date[0]) == 2 && atoi(date[1]) == 29 && atoi(date[2]) %4 ==0)){
+            puts("Invalid Date\n");
+            return;
+        }
+    }
     index indexes[3] = {Month, DayOfMonth, Year};
     for(size_t i = 0;i<sizeof(date)/sizeof(date[0]);i++){
         write(indexes[i],atoi(date[i]));
     }
 }
 
-/*
-Function Name   : getTime
-Function Desc   : will get time from ports, convert frm BCD to decimal, and return as a char*
+/**
+@name   : getTime
+@brief   : will get time from ports, convert frm BCD to decimal, and return as a char*
  
 @return char* : formatted char* of the recieved time
 */
@@ -86,9 +106,9 @@ char* getTime() {
     return buf;
 }
 
-/*
-Function Name  : setTime
-Function Desc  : takes parameter of char* and writes to to ports to set the new time
+/**
+@name  : setTime
+@brief : takes parameter of char* and writes to ports to set the new time
 
 @param newTime (char* newTime) : char formatted as H:M:S
 */
