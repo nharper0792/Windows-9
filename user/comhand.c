@@ -30,7 +30,7 @@ void init_comhand(void) {
 	Use		: mutates pointer into string needed for current output
 	Purpose	: This variable provides a way to save space by using a single pointer to output the various texts used throughout the init_comhand() function
 	*/
-	comhand_help();
+	comhand_menu();
 	for (;;)
 	{
 		/*
@@ -237,9 +237,9 @@ void comhand_setDate(void) {
 	for (;;) {
 		puts(
 			"\n$:Please enter a new date in the following format:"\
-			"\n$:	MM/DD/YYYY:"\
+			"\n$:	MM/DD/YY:"\
 			"\n$:"\
-			"\n$:	e.g [February 18, 2008 = 02/18/2008]:"\
+			"\n$:	e.g [February 18, 2008 = 02/18/08]:"\
 			"\n"
 		);
 
@@ -269,7 +269,7 @@ void comhand_setDate(void) {
 //========================================
 
 /*
-Function Name	:
+Function Name	: comhand_help/comhand_menu
 Function Desc	: Will display the help results. User can enter additional number to indicate which subsection they would like to see more details on
 
 @params			: N/A
@@ -291,6 +291,20 @@ void comhand_help(void) {
 		"\n$:		Prompts the user to change the time of the real-time clock."\
 		"\n$:	5) dateset"\
 		"\n$:		Prompts the user to change the date of the real-time clock."\
+		"\n$:\n"
+	);
+	return;
+}
+void comhand_menu(void) {
+	puts(
+		"\n$:Commands:"\
+		"\n$:"\
+		"\n$:	0) help"\
+		"\n$:	1) shutdown"\
+		"\n$:	2) version"\
+		"\n$:	3) rtc"\
+		"\n$:	4) timeset"\
+		"\n$:	5) dateset"\
 		"\n$:\n"
 	);
 	return;

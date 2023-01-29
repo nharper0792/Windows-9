@@ -21,6 +21,12 @@ void comhand_version(void);
 //				: See comhand.c for more information
 void comhand_help(void);
 
+//menu			: displays all raw commands possible to the user
+//				: takes no parameters and returns nothing
+//				:
+//				: See comhand.c for more information
+void comhand_menu(void);
+
 //shutdown		: commences shutdown sequence
 //				: takes no parameters and returns nothing
 //				:
