@@ -40,7 +40,6 @@ void init_comhand(void) {
 		Variable: nread
 		Use		: takes a byte of input, to be processed
 		*/
-
 		char buf[100] = { 0 };
 		int nread = sys_req(READ, COM1, buf, sizeof(buf));
 		sys_req(WRITE, COM1, buf, nread);
@@ -103,6 +102,7 @@ void init_comhand(void) {
 				"\n"
 			);
 		}
+		//after user buffer has been read, will update the current process to 0
 		curr_process = 000;
 	}
 }
@@ -200,52 +200,30 @@ Function Desc	: Will prompt the user for changing the time of the real time cloc
 @return			: N/A
 */
 void comhand_setTime(void) {
-	puts(
-		"\n\n$:Would you like to set a new time?:"\
-		"\n$:	yes"\
-		"\n$:	no"\
-		"\n"
-	);
 	for (;;) {
+		puts(
+			"\n$:Please enter a new time in the following format:"\
+			"\n$:	HH:MM:SS"\
+			"\n$:"\
+			"\n$:	e.g [Fifteen and a half minutes past noon = 12:15:30]:"\
+			"\n"
+		);
 
-		char rtcprompt[10] = { 0 };
+		char rtcprompt[100] = { 0 };
 		int nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
 		sys_req(WRITE, COM1, rtcprompt, nread2);
-
-		if (strcmp(rtcprompt, yesprompt) == 0) {
-			puts(
-				"\n$:Please enter a new time in the following format:"\
-				"\n$:	HH:MM:SS"\
-				"\n$:"\
-				"\n$:	e.g [Fifteen and a half minutes past noon = 12:15:30]:"\
-				"\n"
-			);
-			for (;;) {
-				//TODO : CHECK TIME FOR COMPATIBILTY
-				setTime(rtcprompt);
-				//
-				nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
-				sys_req(WRITE, COM1, rtcprompt, nread2);
-				puts(
-					"\n$:Time has been changed to:"\
-					"\n$:"
-				);
-				puts(getTime());
-				puts("\n");
-				puts(
-					"\n$:Returning to Menu...:"\
-					"\n"
-				);
-				return;
-			}
-		}
-		else {
-			puts(
-				"\n$:Returning to Menu...:"\
-				"\n"
-			);
-			return;
-		}
+		setTime(rtcprompt);
+		puts(
+			"\n$:Time has been changed to:"\
+			"\n$:"
+		);
+		puts(getTime());
+		puts("\n");
+		puts(
+			"\n$:Returning to Menu...:"\
+			"\n"
+		);
+		return;
 	}
 }
 /*
@@ -257,46 +235,29 @@ Function Desc	: Will prompt the user for changing the date of the real time cloc
 */
 void comhand_setDate(void) {
 	for (;;) {
+		puts(
+			"\n$:Please enter a new date in the following format:"\
+			"\n$:	MM/DD/YYYY:"\
+			"\n$:"\
+			"\n$:	e.g [February 18, 2008 = 02/18/2008]:"\
+			"\n"
+		);
 
-
-		char rtcprompt[10] = { 0 };
+		char rtcprompt[100] = { 0 };
 		int nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
 		sys_req(WRITE, COM1, rtcprompt, nread2);
-
-		if (strcmp(rtcprompt, yesprompt) == 0) {
-			puts(
-				"\n$:Please enter a new date in the following format:"\
-				"\n$:	MM/DD/YYY:"\
-				"\n$:"\
-				"\n$:	e.g [February 18, 2008 = 02/18/2008]:"\
-				"\n"
-			);
-			for (;;) {
-				//TODO : CHECK TIME FOR COMPATIBILTY
-				setDate(rtcprompt);
-				//
-				nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
-				sys_req(WRITE, COM1, rtcprompt, nread2);
-				puts(
-					"\n$:Date has been changed to:"\
-					"\n$:"
-				);
-				puts(getDate());
-				puts("\n");
-				puts(
-					"\n$:Returning to Menu...:"\
-					"\n"
-				);
-				return;
-			}
-		}
-		else {
-			puts(
-				"\n$:Returning to Menu...:"\
-				"\n"
-			);
-			return;
-		}
+		setDate(rtcprompt);
+		puts(
+			"\n$:Date has been changed to:"\
+			"\n$:"
+		);
+		puts(getDate());
+		puts("\n");
+		puts(
+			"\n$:Returning to Menu...:"\
+			"\n"
+		);
+		return;
 	}
 }
 
