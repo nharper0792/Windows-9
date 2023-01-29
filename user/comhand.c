@@ -182,12 +182,12 @@ void comhand_rtc(void) {
 		"\n$:Real-Time Clock:"
 		"\n$:Current Time: "
 	);
-	char* textrtc_landingclock = getDate();
+	char* textrtc_landingclock = getTime();
 	sys_req(WRITE, COM1, textrtc_landingclock, sizeof(textrtc_landingclock) + 5);
 	puts(
-		"\n$:Time: "
+		"\n$:Current Date: "
 	);
-	char* textrtc_landingtime = getTime();
+	char* textrtc_landingtime = getDate();
 	sys_req(WRITE, COM1, textrtc_landingtime, sizeof(textrtc_landingtime) + 4);
 	puts("\n");
 	return;
