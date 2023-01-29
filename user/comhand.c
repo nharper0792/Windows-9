@@ -21,7 +21,8 @@ Variable: curr_process
 
 */
 int	curr_process = 000;
-
+char yesprompt[] = "yes\0";
+char noprompt[] = "no\0";
 //==
 void init_comhand(void) {
 	/*
@@ -56,11 +57,17 @@ void init_comhand(void) {
 		//shutdown
 		//process 020
 		char texthelp[] = "help\0";
-		//help
+		//rtc
 		//process 040
 		char textrtc[] = "rtc\0";
 		//help
 		//process 050
+		char textsettime[] = "timeset\0";
+		//time set
+		//process 060
+		char textsetdate[] = "dateset\0";
+		//date set
+		//process 070
 		if ((strcmp(textversion, buf) == 0)) {
 			curr_process = 010;
 			comhand_version();
@@ -68,11 +75,8 @@ void init_comhand(void) {
 		if ((strcmp(textshutdown, buf) == 0)) {
 			curr_process = 020;
 			comhand_shutdown();
-
 			if (curr_process == 021)
 				return;
-			else
-				curr_process = 000;
 		}
 		if ((strcmp(texthelp, buf) == 0)) {
 			curr_process = 040;
@@ -82,14 +86,24 @@ void init_comhand(void) {
 			curr_process = 050;
 			comhand_rtc();
 		}
-		else {
+		if ((strcmp(textsettime, buf) == 0)) {
+			curr_process = 060;
+			comhand_setTime();
+		}
+		if ((strcmp(textsetdate, buf) == 0)) {
+			curr_process = 070;
+			comhand_setDate();
+		}
+		//displays a message to the user stating their prompt wasn't recognized
+		//only displays if the user is in the menu process, updates everytime the [ENTER KEY] is read by serial polling.
+		else if (curr_process == 000) {
 			puts(
 				"\n$:Sorry, that command wasn't recognized:"\
-				"\n$:Please enter a valid prompt:"\
-				"\n$:See help command for more information."\
+				"\n$:Please enter a valid prompt, see help for more information.:"\
 				"\n"
 			);
 		}
+		curr_process = 000;
 	}
 }
 
@@ -111,10 +125,8 @@ void comhand_version(void) {
 		"\nVersion R1.0"\
 		"\n"
 	);
-	curr_process = 000;
 	return;
 }
-
 /*
 Function Name	: comhand_shutdown
 Function Desc	: Will prompt the user to shutdown the OS, must be cofirmed.
@@ -131,16 +143,16 @@ void comhand_shutdown(void) {
 	);
 
 	for (;;) {
-		char shutdownconfirmation[25] = { 0 };
+		char shutdownconfirmation[10] = { 0 };
 		int nread = sys_req(READ, COM1, shutdownconfirmation, sizeof(shutdownconfirmation));
 		sys_req(WRITE, COM1, shutdownconfirmation, nread);
 
-		char yesprompt[]	= "yes\0";
+
 		if (strcmp(shutdownconfirmation, yesprompt) == 0)
 		{
 			sys_req(-1);
 			sys_req(EXIT);
-			
+
 			//update process to 021
 			//process : commence shutdown
 			curr_process = 021;
@@ -153,14 +165,11 @@ void comhand_shutdown(void) {
 				"\n$:You will be returned to the main menu:"\
 				"\n"
 			);
-
-			curr_process = 000;
 			return;
 		}
 	}
 
 }
-
 /*
 Function Name	: comhand_rtc
 Function Desc	: Will display both the month and time of the real time clock. See rtc.c/rtc.h for more information.
@@ -180,12 +189,115 @@ void comhand_rtc(void) {
 	);
 	char* textrtc_landingtime = getTime();
 	sys_req(WRITE, COM1, textrtc_landingtime, sizeof(textrtc_landingtime) + 4);
-	//add extra line for clarity
+	puts("\n");
+	return;
+}
+/*
+Function Name	: comhand_setTime
+Function Desc	: Will prompt the user for changing the time of the real time clock. See rtc.c/rtc.h for more information.
+
+@params			: N/A
+@return			: N/A
+*/
+void comhand_setTime(void) {
 	puts(
+		"\n\n$:Would you like to set a new time?:"\
+		"\n$:	yes"\
+		"\n$:	no"\
 		"\n"
 	);
-	curr_process = 000;
-	return;
+	for (;;) {
+
+		char rtcprompt[10] = { 0 };
+		int nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
+		sys_req(WRITE, COM1, rtcprompt, nread2);
+
+		if (strcmp(rtcprompt, yesprompt) == 0) {
+			puts(
+				"\n$:Please enter a new time in the following format:"\
+				"\n$:	HH:MM:SS"\
+				"\n$:"\
+				"\n$:	e.g [Fifteen and a half minutes past noon = 12:15:30]:"\
+				"\n"
+			);
+			for (;;) {
+				//TODO : CHECK TIME FOR COMPATIBILTY
+				setTime(rtcprompt);
+				//
+				nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
+				sys_req(WRITE, COM1, rtcprompt, nread2);
+				puts(
+					"\n$:Time has been changed to:"\
+					"\n$:"
+				);
+				puts(getTime());
+				puts("\n");
+				puts(
+					"\n$:Returning to Menu...:"\
+					"\n"
+				);
+				return;
+			}
+		}
+		else {
+			puts(
+				"\n$:Returning to Menu...:"\
+				"\n"
+			);
+			return;
+		}
+	}
+}
+/*
+Function Name	: comhand_setDate
+Function Desc	: Will prompt the user for changing the date of the real time clock. See rtc.c/rtc.h for more information.
+
+@params			: N/A
+@return			: N/A
+*/
+void comhand_setDate(void) {
+	for (;;) {
+
+
+		char rtcprompt[10] = { 0 };
+		int nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
+		sys_req(WRITE, COM1, rtcprompt, nread2);
+
+		if (strcmp(rtcprompt, yesprompt) == 0) {
+			puts(
+				"\n$:Please enter a new date in the following format:"\
+				"\n$:	MM/DD/YYY:"\
+				"\n$:"\
+				"\n$:	e.g [February 18, 2008 = 02/18/2008]:"\
+				"\n"
+			);
+			for (;;) {
+				//TODO : CHECK TIME FOR COMPATIBILTY
+				setDate(rtcprompt);
+				//
+				nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
+				sys_req(WRITE, COM1, rtcprompt, nread2);
+				puts(
+					"\n$:Date has been changed to:"\
+					"\n$:"
+				);
+				puts(getDate());
+				puts("\n");
+				puts(
+					"\n$:Returning to Menu...:"\
+					"\n"
+				);
+				return;
+			}
+		}
+		else {
+			puts(
+				"\n$:Returning to Menu...:"\
+				"\n"
+			);
+			return;
+		}
+	}
 }
 
 //========================================
@@ -207,13 +319,18 @@ void comhand_help(void) {
 		"\n$:Commands:"\
 		"\n$:"\
 		"\n$:	0) help"\
+		"\n$:		Displays all available commands to the user."\
 		"\n$:	1) shutdown"\
+		"\n$:		Prompts the user for the shutdown procedure."\
 		"\n$:	2) version"\
+		"\n$:		Displays the Windows-9 current version."\
 		"\n$:	3) rtc"\
+		"\n$:		Displays the realtime clock, and prompts the user for clock changes."\
+		"\n$:	4) timeset"\
+		"\n$:		Prompts the user to change the time of the real-time clock."\
+		"\n$:	5) dateset"\
+		"\n$:		Prompts the user to change the date of the real-time clock."\
 		"\n$:\n"
 	);
-	
-
-	curr_process = 000;
 	return;
 }

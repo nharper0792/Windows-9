@@ -32,4 +32,14 @@ void comhand_shutdown(void);
 //				:
 //				: See comhand.c for more information
 void comhand_rtc(void);
+//setTime		: sets the realtime clock's time
+//				: takes no parameters and returns nothing
+//				:
+//				: See comhand.c for more information
+void comhand_setTime(void);
+//setDate		: sets the realtime clock's date
+//				: takes no parameters and returns nothing
+//				:
+//				: See comhand.c for more information
+void comhand_setDate(void);
 #endif
