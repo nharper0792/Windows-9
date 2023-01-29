@@ -131,11 +131,13 @@ int serial_poll(device dev, char* buffer, size_t len)
             //enter
             else if (c == 13 || c == 10)
             {
-                buffer[ind] = '\0';
-                outb(dev, '\n');
-                outb(dev, '\r');
+                if (count > 0) {
+                    buffer[ind] = '\0';
+                    outb(dev, '\n');
+                    outb(dev, '\r');
 
-                return count;
+                    return count;
+                }  
             }
             else
             {//should print out alphanumerics 

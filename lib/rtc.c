@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <mpx/interrupts.h>
+#include <stdio.h>
 
 #define IndexRegister 0x70
 #define DataRegister 0x71
@@ -110,7 +111,26 @@ void setTime(char* newTime) {
         }
     }
 
-    //Going through each section of new time and writing to each port
+    //Validating that date entered was correct
+    int hours = atoi(time[0]);
+    int minutes = atoi(time[1]);
+    int seconds = atoi(time[2]);
+
+    if (hours >= 24 || hours < 0) {
+        //hours is not between 0-23
+        puts("Invalid time!");
+        return;
+    } else if (minutes >= 60 || minutes < 0) {
+        //minutes is not between 0-59 
+        puts("Invalid time!");
+        return;
+    } else if (seconds >= 60 || seconds < 0) {
+        //seconds is not beyween 0-59
+        puts("Invalid time!");
+        return;
+    }
+        
+    //Going through each section of new time and writing to each port as time entered is valid
     index indexes[3] = {Hours, Minutes, Seconds};
     for (size_t i = 0; i<sizeof(time)/sizeof(time[0]); i++) {
         write(indexes[i], atoi(time[i]));
