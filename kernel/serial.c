@@ -101,14 +101,17 @@ int serial_poll(device dev, char* buffer, size_t len)
             //delete
             else if (c == 127)
             {
-                outb(dev, '\b');
-                outb(dev, ' ');
-                outb(dev, '\b');
-                buffer[ind] = '\0';
-                ind--;
-                count--;
+                if (ind != 0)
+                {
+                    outb(dev, '\b');
+                    outb(dev, ' ');
+                    outb(dev, '\b');
 
+                    buffer[ind] = '\0';
 
+                    ind--;
+                    count--;
+                }
             }
             else if (c == '\033') {
                 c = inb(dev);
