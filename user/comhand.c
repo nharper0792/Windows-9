@@ -212,18 +212,57 @@ void comhand_setTime(void) {
 		char rtcprompt[100] = { 0 };
 		int nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
 		sys_req(WRITE, COM1, rtcprompt, nread2);
-		setTime(rtcprompt);
-		puts(
-			"\n$:Time has been changed to:"\
-			"\n$:"
-		);
-		puts(getTime());
-		puts("\n");
-		puts(
-			"\n$:Returning to Menu...:"\
-			"\n"
-		);
-		return;
+		if (
+			(rtcprompt[2] == ':') && (rtcprompt[5] == ':')		//string has separators in indexes 2 and 5
+			&& ((strlen(rtcprompt)) <= (size_t)8)				//string is less than 8 characters long
+			) {
+			for (;;) {
+				puts(
+					"\n$:Is this the time you'd like to set?"\
+					"\n$: "
+				);
+				puts(rtcprompt);
+				puts(
+					"\n$:	yes"\
+					"\n$:	no"\
+					"\n"
+				);
+
+				char timeconfirmation[10] = { 0 };
+				int nread2 = sys_req(READ, COM1, timeconfirmation, sizeof(timeconfirmation));
+				sys_req(WRITE, COM1, timeconfirmation, nread2);
+
+				if (strcmp(timeconfirmation, yesprompt) == 0) {
+					break;
+				}
+				else
+				{
+					puts(
+						"\n$:Time not set:"\
+						"\n$:Returning to menu...:"\
+						"\n"
+					);
+					return;
+				}
+			}
+			setTime(rtcprompt);
+			puts(
+				"\n$:Time has been changed to:"\
+				"\n$:"
+			);
+			puts(getTime());
+			puts(
+				"\n$:Returning to Menu...:"\
+				"\n"
+			);
+			return;
+		}
+		else
+		{
+			puts(
+				"\n$:Invalid format. Please try again:"
+			);
+		}
 	}
 }
 /*
@@ -237,7 +276,7 @@ void comhand_setDate(void) {
 	for (;;) {
 		puts(
 			"\n$:Please enter a new date in the following format:"\
-			"\n$:	MM/DD/YY:"\
+			"\n$:	MM/DD/YY"\
 			"\n$:"\
 			"\n$:	e.g [February 18, 2008 = 02/18/08]:"\
 			"\n"
@@ -246,18 +285,58 @@ void comhand_setDate(void) {
 		char rtcprompt[100] = { 0 };
 		int nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
 		sys_req(WRITE, COM1, rtcprompt, nread2);
-		setDate(rtcprompt);
-		puts(
-			"\n$:Date has been changed to:"\
-			"\n$:"
-		);
-		puts(getDate());
-		puts("\n");
-		puts(
-			"\n$:Returning to Menu...:"\
-			"\n"
-		);
-		return;
+		//test for correct formatting
+		if (
+			(rtcprompt[2] == '/') && (rtcprompt[5] == '/')		//string has separators in indexes 2 and 5
+			&& ((strlen(rtcprompt)) <= (size_t)8)				//string is less than 8 characters long
+			) {
+			for (;;) {
+				puts(
+					"\n$:Is this the date you'd like to set?"\
+					"\n$: "
+				);
+				puts(rtcprompt);
+				puts(
+					"\n$:	yes"\
+					"\n$:	no"\
+					"\n"
+				);
+
+				char dateconfirmation[10] = { 0 };
+				int nread2 = sys_req(READ, COM1, dateconfirmation, sizeof(dateconfirmation));
+				sys_req(WRITE, COM1, dateconfirmation, nread2);
+
+				if (strcmp(dateconfirmation, yesprompt) == 0) {
+					break;
+				}
+				else 
+				{
+					puts(
+						"\n$:Date not set:"\
+						"\n$:Returning to menu...:"\
+						"\n"
+					);
+					return;
+				}
+			}
+			setDate(rtcprompt);
+			puts(
+				"\n$:Date has been changed to:"\
+				"\n$:"
+			);
+			puts(getDate());
+			puts(
+				"\n$:Returning to Menu...:"\
+				"\n"
+			);
+			return;
+		}
+		else 
+		{
+			puts(
+				"\n$:Invalid format. Please try again:"
+			);
+		}
 	}
 }
 
@@ -305,7 +384,9 @@ void comhand_menu(void) {
 		"\n$:	3) rtc"\
 		"\n$:	4) timeset"\
 		"\n$:	5) dateset"\
-		"\n$:\n"
+		"\n$:"\
+		"\n$:See help command for more information.:"\
+		"\n"
 	);
 	return;
 }
