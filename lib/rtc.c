@@ -141,15 +141,15 @@ void setTime(char* newTime) {
 
     if (hours >= 24 || hours < 0) {
         //hours is not between 0-23
-        puts("Invalid time!");
+        puts("\nInvalid time!");
         return;
     } else if (minutes >= 60 || minutes < 0) {
         //minutes is not between 0-59 
-        puts("Invalid time!");
+        puts("\nInvalid time!");
         return;
     } else if (seconds >= 60 || seconds < 0) {
         //seconds is not beyween 0-59
-        puts("Invalid time!");
+        puts("\nInvalid time!");
         return;
     }
         
