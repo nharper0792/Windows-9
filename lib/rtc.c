@@ -59,9 +59,9 @@ char* getDate(){
     return buf;
 }
 
-/**
-@name   : setDate
-@brief  : takes parameter newDate and writes to ports to set new date
+/*
+Function Name   : setDate
+Function Desc   : takes parameter newDate and writes to ports to set new date
 
 @param newDate (char*) : char formatted as MM/DD/YYYY
 */
@@ -93,8 +93,8 @@ void setDate(char* newDate){
 }
 
 /**
-@name   : getTime
-@brief   : will get time from ports, convert frm BCD to decimal, and return as a char*
+Function Name   : getTime
+Function Desc   : will get time from ports, convert frm BCD to decimal, and return as a char*
  
 @return char* : formatted char* of the recieved time
 */
@@ -110,8 +110,8 @@ char* getTime() {
 }
 
 /**
-@name  : setTime
-@brief : takes parameter of char* and writes to ports to set the new time
+Function Name   : setTime
+Function Desc   : takes parameter of char* and writes to ports to set the new time
 
 @param newTime (char* newTime) : char formatted as H:M:S
 */
