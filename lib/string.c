@@ -121,59 +121,66 @@ char *formatCore(const char *format, va_list valist) {
     int pad_with_zeros = 0;
     char *temp_str;
     int temp_int;
-
+    //loop through each character in the string
     while ((ch = *(format++))) {
+        //checks for a %
         if (ch == '%') {
-            start:
-            switch (ch = *format++) {
-                case '%':
-                    buffer[index++] = '%';
-                    break;
-                case 's':
-                    temp_str = va_arg(valist, char *);
-                    if (padding) {
-                        temp_str = pad(temp_str, padding, ' ');
-                    }
-                    for (int i = 0; temp_str[i]; i++) {
-                        buffer[index++] = temp_str[i];
-                    }
-                    break;
-                case 'c':
-                    buffer[index++] = va_arg(valist, int);
-                    break;
-                case 'd':
-                case 'i':
-                    temp_int = va_arg(valist, int);
-                    temp_str = itoa(temp_int, NULL);
-                    if (padding) {
-                        temp_str = pad(temp_str, padding, pad_with_zeros ? '0' : ' ');
-                    }
-                    for (int i = 0; temp_str[i]; i++) {
-                        buffer[index++] = temp_str[i];
-                    }
-                    break;
-                default:
-                    if (ch == '.') {
-                        pad_with_zeros = 1;
-                        ch = *format++;
-                    }
-                    if (isdigit(ch)) {
-                        char temp[4] = {0};
-                        temp[0] = ch;
-                        int ptr = 1;
-                        while (isdigit(*(format))) {
-                            ch = *format++;
-                            temp[ptr++] = ch;
+            do {
+                switch (ch = *format++) {
+                    case '%':
+                        buffer[index++] = '%';
+                        break;
+                    case 's': //string
+                        temp_str = va_arg(valist,
+                        char *);
+                        if (padding) {//check for current padding value
+                            temp_str = pad(temp_str, padding, ' ');
                         }
-                        padding = atoi(temp);
-                        goto start;
-                    }
-                    break;
-            }
+                        for (int i = 0; temp_str[i]; i++) {
+                            buffer[index++] = temp_str[i];
+                        }
+                        break;
+                    case 'c'://char
+                        buffer[index++] = va_arg(valist,
+                        int);
+                        break;
+                    case 'd'://int
+                    case 'i'://int
+                        temp_int = va_arg(valist,
+                        int);
+                        temp_str = itoa(temp_int, NULL);
+                        if (padding) {//check for padding
+                            temp_str = pad(temp_str, padding, pad_with_zeros ? '0' : ' ');
+                        }
+                        for (int i = 0; temp_str[i]; i++) {
+                            buffer[index++] = temp_str[i];
+                        }
+                        break;
+                    default:
+                        if (ch == '.') {//check for padding with 0s
+                            pad_with_zeros = 1;
+                            ch = *format++;
+                        }
+                        if (isdigit(ch)) {
+                            char temp[4] = {0};
+                            temp[0] = ch;
+                            int ptr = 1;
+                            while (isdigit(*(format))) {//keep checking for integers to create
+                                ch = *format++;
+                                temp[ptr++] = ch;
+                            }
+                            padding = atoi(temp);
+                            //jump to the beginning of the switch
+                            continue;
+                        }
+                        break;
+                }
 
-            padding = 0;
-            pad_with_zeros = 0;
-        } else {
+                padding = 0;
+                pad_with_zeros = 0;
+            }while(padding>0);
+        }
+        else {//if current char is a regular
             buffer[index++] = ch;
         }
     }
@@ -181,13 +188,13 @@ char *formatCore(const char *format, va_list valist) {
     buffer[index] = '\0';
     return buffer;
 }
-int sprintf(char* str, const char* format, ...) {
+int sprintf(char* dest, const char* format, ...) {
     va_list valist;
     va_start(valist, format);
     char* buffer = formatCore(format,valist);
     va_end(valist);
     for (int i = 0; buffer[i]; i++) {
-        str[i] = buffer[i];
+        dest[i] = buffer[i];
     }
-    return strlen(str);
+    return strlen(dest);
 }

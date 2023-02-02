@@ -5,5 +5,5 @@
 #ifndef WINDOWS_9_STDIO_H
 #define WINDOWS_9_STDIO_H
 void printf(char* format,...);
-void puts(char* str);
+void puts(char* buf);
 #endif //WINDOWS_9_STDIO_H

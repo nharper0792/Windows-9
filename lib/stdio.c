@@ -15,6 +15,6 @@ void printf(char* format,...){
     va_end(valist);
     puts(buffer);
 }
-void puts(char* str){
-    sys_req(WRITE,COM1,str,strlen(str));
+void puts(char* buf){
+    sys_req(WRITE,COM1,buf,strlen(buf));
 }
