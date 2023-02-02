@@ -28,7 +28,7 @@ int atoi(const char *s)
 	return res;
 }
 
-char *itoa(int i, char* buf) {
+char *itoa(int i, char* dest) {
     int p = 0;
     static char res[10] = {0};
     int isNegative = 0;
@@ -56,11 +56,11 @@ char *itoa(int i, char* buf) {
         res[j] = res[p];
         res[p] = temp;
     }
-    if(buf ==NULL){
+    if(dest ==NULL){
         return res;
     }
     for(size_t j = 0;j<=strlen(res);j++){
-        *(buf+j) = res[j];
+        *(dest+j) = res[j];
     }
     return res;
 }

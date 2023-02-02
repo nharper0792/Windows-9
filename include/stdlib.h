@@ -18,6 +18,6 @@ int atoi(const char *s);
  * @param i an integer
  * @return A char* containing the string representation of i
  */
-char* itoa(int i,char* buf);
+char* itoa(int i,char* dest);
 
 #endif
