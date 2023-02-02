@@ -30,6 +30,7 @@ int MonthDays[] = {0,
 int bcdToDec(int src);
 int decToBcd(int src);
 int read();
+void formatTime(int timeToFormat, char* stringPtr);
 
 //typedef containg list of all ports to use
 typedef enum index{
@@ -102,18 +103,50 @@ char* getTime() {
     //Creating buffer char*
     char* buf = (char*)sys_alloc_mem(200);
 
-    //Using sprintf to read from ports and format buffer for return
-    sprintf(buf, "%d:%d:%d", read(Hours), read(Minutes), read(Seconds));
+    //Reading from ports
+    int hours = read(Hours);
+    int minutes = read(Minutes);
+    int seconds = read(Seconds);
+
+    //Creating char* variables for output
+    char* hoursOutput = (char*)sys_alloc_mem(50);
+    char* minutesOutput = (char*)sys_alloc_mem(50);
+    char* secondsOutput = (char*)sys_alloc_mem(50);
+
+    //Formatting time using formatTime
+    formatTime(hours, hoursOutput);
+    formatTime(minutes, minutesOutput);
+    formatTime(seconds, secondsOutput);
+
+    //Using sprintf to form
+    sprintf(buf, "%s:%s:%s", hoursOutput, minutesOutput, secondsOutput);
 
     //Returning buffer
     return buf;
 }
 
+/*
+Function Name   : formatTime
+Function Desc   : take time as int and string pointer, and formats time correctly to be outputted
+
+@param timeToFormat (int) : time that needs to be formatted
+@param stringPtr (char*) : pointer used to to save outputted string
+*/
+void formatTime(int timeToFormat, char* stringPtr) {
+    if (timeToFormat == 0) {
+        sprintf(stringPtr, "%s", "00");
+    } else if (timeToFormat < 10) {
+        sprintf(stringPtr, "%s%d", "0", timeToFormat);
+    } else {
+        sprintf(stringPtr, "%d", timeToFormat);
+    }
+} 
+
 /**
 Function Name   : setTime
 Function Desc   : takes parameter of char* and writes to ports to set the new time
 
-@param newTime (char* newTime) : char formatted as H:M:S
+@param newTime (char*) : char formatted as HH:MM:SS
 */
 void setTime(char* newTime) {
     //Creating char* array containing each hours, minutes, and seconds
