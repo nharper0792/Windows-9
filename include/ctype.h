@@ -20,4 +20,10 @@ int isspace(int c);
  */
 int isdigit(int c);
 
+/**
+ Convert all characters to uppercase
+ @param string char* to convert case
+ @return new string
+*/
+char* toupper(char* string);
 #endif

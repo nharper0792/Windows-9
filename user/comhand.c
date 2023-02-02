@@ -5,6 +5,7 @@
 #include <string.h>
 #include <rtc.h>
 #include <stdio.h>
+#include <ctype.h>
 
 /*
 Variable: curr_process
@@ -21,18 +22,14 @@ Variable: curr_process
 
 */
 int	curr_process = 000;
-char yesprompt[] = "yes\0";
-char noprompt[] = "no\0";
+char yesprompt[] = "YES\0";
+char noprompt[] = "NO\0";
 //==
 void init_comhand(void) {
-	/*
-	Variable: dummy
-	Use		: mutates pointer into string needed for current output
-	Purpose	: This variable provides a way to save space by using a single pointer to output the various texts used throughout the init_comhand() function
-	*/
 	comhand_menu();
 	for (;;)
 	{
+		puts("\n> ");
 		/*
 		Variable: buf
 		Use		: buffers packets of data from input devices
@@ -49,47 +46,47 @@ void init_comhand(void) {
 		//		This area contains the command prompts that are simple text.
 		//==================================================================
 
-		char textversion[] = "version\0";
+		char textversion[] = "VERSION\0";
 		//version
 		//process 010
-		char textshutdown[] = "shutdown\0";
+		char textshutdown[] = "SHUTDOWN\0";
 		//shutdown
 		//process 020
-		char texthelp[] = "help\0";
+		char texthelp[] = "HELP\0";
 		//rtc
 		//process 040
-		char textrtc[] = "rtc\0";
+		char textrtc[] = "RTC\0";
 		//help
 		//process 050
-		char textsettime[] = "timeset\0";
+		char textsettime[] = "TIMESET\0";
 		//time set
 		//process 060
-		char textsetdate[] = "dateset\0";
+		char textsetdate[] = "DATESET\0";
 		//date set
 		//process 070
-		if ((strcmp(textversion, buf) == 0)) {
+		if ((strcmp(textversion, toupper(buf)) == 0)) {
 			curr_process = 010;
 			comhand_version();
 		}
-		if ((strcmp(textshutdown, buf) == 0)) {
+		if ((strcmp(textshutdown, toupper(buf)) == 0)) {
 			curr_process = 020;
 			comhand_shutdown();
 			if (curr_process == 021)
 				return;
 		}
-		if ((strcmp(texthelp, buf) == 0)) {
+		if ((strcmp(texthelp, toupper(buf)) == 0)) {
 			curr_process = 040;
 			comhand_help();
 		}
-		if ((strcmp(textrtc, buf) == 0)) {
+		if ((strcmp(textrtc, toupper(buf)) == 0)) {
 			curr_process = 050;
 			comhand_rtc();
 		}
-		if ((strcmp(textsettime, buf) == 0)) {
+		if ((strcmp(textsettime, toupper(buf)) == 0)) {
 			curr_process = 060;
 			comhand_setTime();
 		}
-		if ((strcmp(textsetdate, buf) == 0)) {
+		if ((strcmp(textsetdate, toupper(buf)) == 0)) {
 			curr_process = 070;
 			comhand_setDate();
 		}
@@ -125,6 +122,7 @@ void comhand_version(void) {
 		"\nVersion R1.0"\
 		"\n"
 	);
+	comhand_menu();
 	return;
 }
 /*
@@ -139,7 +137,8 @@ void comhand_shutdown(void) {
 		"\n$:Are you sure you want to shutdown?:"\
 		"\n$:	yes"\
 		"\n$:	no"\
-		"\n"
+		"\n"\
+		"\n>"
 	);
 
 	for (;;) {
@@ -148,7 +147,7 @@ void comhand_shutdown(void) {
 		sys_req(WRITE, COM1, shutdownconfirmation, nread);
 
 
-		if (strcmp(shutdownconfirmation, yesprompt) == 0)
+		if (strcmp(toupper(shutdownconfirmation), yesprompt) == 0)
 		{
 			sys_req(-1);
 			sys_req(EXIT);
@@ -165,6 +164,7 @@ void comhand_shutdown(void) {
 				"\n$:You will be returned to the main menu:"\
 				"\n"
 			);
+			comhand_menu();
 			return;
 		}
 	}
@@ -206,7 +206,8 @@ void comhand_setTime(void) {
 			"\n$:	HH:MM:SS"\
 			"\n$:"\
 			"\n$:	e.g [Fifteen and a half minutes past noon = 12:15:30]:"\
-			"\n"
+			"\n"\
+			"\n>"
 		);
 
 		char rtcprompt[100] = { 0 };
@@ -225,14 +226,15 @@ void comhand_setTime(void) {
 				puts(
 					"\n$:	yes"\
 					"\n$:	no"\
-					"\n"
+					"\n"\
+					"\n>"
 				);
 
 				char timeconfirmation[10] = { 0 };
 				int nread2 = sys_req(READ, COM1, timeconfirmation, sizeof(timeconfirmation));
 				sys_req(WRITE, COM1, timeconfirmation, nread2);
 
-				if (strcmp(timeconfirmation, yesprompt) == 0) {
+				if (strcmp(toupper(timeconfirmation), yesprompt) == 0) {
 					break;
 				}
 				else
@@ -242,6 +244,7 @@ void comhand_setTime(void) {
 						"\n$:Returning to menu...:"\
 						"\n"
 					);
+					comhand_menu();
 					return;
 				}
 			}
@@ -255,6 +258,7 @@ void comhand_setTime(void) {
 				"\n$:Returning to Menu...:"\
 				"\n"
 			);
+			comhand_menu();
 			return;
 		}
 		else
@@ -279,7 +283,8 @@ void comhand_setDate(void) {
 			"\n$:	MM/DD/YY"\
 			"\n$:"\
 			"\n$:	e.g [February 18, 2008 = 02/18/08]:"\
-			"\n"
+			"\n"\
+			"\n>"
 		);
 
 		char rtcprompt[100] = { 0 };
@@ -299,14 +304,15 @@ void comhand_setDate(void) {
 				puts(
 					"\n$:	yes"\
 					"\n$:	no"\
-					"\n"
+					"\n"\
+					"\n>"
 				);
 
 				char dateconfirmation[10] = { 0 };
 				int nread2 = sys_req(READ, COM1, dateconfirmation, sizeof(dateconfirmation));
 				sys_req(WRITE, COM1, dateconfirmation, nread2);
 
-				if (strcmp(dateconfirmation, yesprompt) == 0) {
+				if (strcmp(toupper(dateconfirmation), yesprompt) == 0) {
 					break;
 				}
 				else 
@@ -316,6 +322,7 @@ void comhand_setDate(void) {
 						"\n$:Returning to menu...:"\
 						"\n"
 					);
+					comhand_menu();
 					return;
 				}
 			}
@@ -329,6 +336,7 @@ void comhand_setDate(void) {
 				"\n$:Returning to Menu...:"\
 				"\n"
 			);
+			comhand_menu();
 			return;
 		}
 		else 
@@ -340,12 +348,12 @@ void comhand_setDate(void) {
 	}
 }
 
-//========================================
-//COMHAND HELP SECTION
+//========================================================================
+//  COMHAND HELP SECTION
 // 
 //	CONTAINS THE VARIOUS HELP COMMANDS AND DESCRIPTIONS ON HOW TO USE THEM
 // 
-//========================================
+//========================================================================
 
 /*
 Function Name	: comhand_help/comhand_menu
