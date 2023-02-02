@@ -1,6 +1,6 @@
 Travis Mueller		- Serial Polling
 
-Nate Harper			- get/set date, sprintf, itoa, puts, isDigit
+Nate Harper			- get/set date, sprintf, printf, itoa, puts, isDigit
 
 Ethan Washington	- Command Handler
 

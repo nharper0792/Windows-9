@@ -60,6 +60,9 @@ char* getDate(){
     return buf;
 }
 
+void printDateError(){
+    puts("\n\n$:Invalid Date, reverting to previous date.");
+}
 /*
 Function Name   : setDate
 Function Desc   : takes parameter newDate and writes to ports to set new date
@@ -69,8 +72,8 @@ Function Desc   : takes parameter newDate and writes to ports to set new date
 void setDate(char* newDate){
     int date[3];
     for (int i = 0, seek = 0; newDate[seek] != '\0'; seek++, i++) {
+        char* temp = (char*)sys_alloc_mem(3);
         for (int p = 0; ; seek++, p++) {
-            char* temp = (char*)sys_alloc_mem(3);
             if (newDate[seek] == '/'|| newDate[seek] == '\0') {
                 temp[p] = '\0';
                 date[i] = atoi(temp);
@@ -78,12 +81,16 @@ void setDate(char* newDate){
             } else {
                 temp[p] = newDate[seek];
             }
-            sys_free_mem(temp);
         }
+        sys_free_mem(temp);
+    }
+    if(date[0]<=0||date[0]>12||date[2]<0||date[1]<=0){
+        printDateError();
+        return;
     }
     if(date[1]>MonthDays[date[0]]){
         if(!(date[0] == 2 && date[1] == 29 && date[2] %4 ==0)){
-            puts("Invalid Date\n");
+            printDateError();
             return;
         }
     }
