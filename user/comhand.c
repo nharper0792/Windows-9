@@ -117,9 +117,9 @@ Function Desc	: Will display the current version of the OS. This needs to be man
 */
 void comhand_version(void) {
 	puts(
-		"\n$:Version:"\
+		"\n \e[1;95m $:Version:"\
 		"\n == Windows 9 JB Edition == "\
-		"\nVersion R1.0"\
+		"\nVersion R1.0 \e[0m"\
 		"\n"
 	);
 	comhand_menu();
@@ -179,17 +179,17 @@ Function Desc	: Will display both the month and time of the real time clock. See
 */
 void comhand_rtc(void) {
 	puts(
-		"\n$:Real-Time Clock:"
+		"\e[1;34m \n$:Real-Time Clock:"
 		"\n$:Current Time: "
 	);
 	char* textrtc_landingclock = getTime();
 	sys_req(WRITE, COM1, textrtc_landingclock, sizeof(textrtc_landingclock) + 5);
 	puts(
-		"\n$:Current Date: "
+		"\n$:Current Date:"
 	);
 	char* textrtc_landingtime = getDate();
 	sys_req(WRITE, COM1, textrtc_landingtime, sizeof(textrtc_landingtime) + 4);
-	puts("\n");
+	puts("\e[0m \n");
 	return;
 }
 /*
@@ -202,10 +202,10 @@ Function Desc	: Will prompt the user for changing the time of the real time cloc
 void comhand_setTime(void) {
 	for (;;) {
 		puts(
-			"\n$:Please enter a new time in the following format:"\
+			"\e[1;33m \n$:Please enter a new time in the following format:"\
 			"\n$:	HH:MM:SS"\
 			"\n$:"\
-			"\n$:	e.g [Fifteen and a half minutes past noon = 12:15:30]:"\
+			"\n$:	e.g [Fifteen and a half minutes past noon = 12:15:30]: \e[0m"\
 			"\n"\
 			"\n>"
 		);
@@ -219,13 +219,13 @@ void comhand_setTime(void) {
 			) {
 			for (;;) {
 				puts(
-					"\n$:Is this the time you'd like to set?"\
+					"\e[1;33m \n$:Is this the time you'd like to set? \e[0m"\
 					"\n$: "
 				);
 				puts(rtcprompt);
 				puts(
-					"\n$:	yes"\
-					"\n$:	no"\
+					"\e[1;33m \n$:	yes"\
+					"\n$:	no \e[0m"\
 					"\n"\
 					"\n>"
 				);
@@ -240,8 +240,8 @@ void comhand_setTime(void) {
 				else
 				{
 					puts(
-						"\n$:Time not set:"\
-						"\n$:Returning to menu...:"\
+						"\e[1;33m \n$:Time not set:"\
+						"\n$:Returning to menu...: \e[0m"\
 						"\n"
 					);
 					comhand_menu();
@@ -250,12 +250,12 @@ void comhand_setTime(void) {
 			}
 			setTime(rtcprompt);
 			puts(
-				"\n$:Time has been changed to:"\
+				"\e[1;33m \n$:Time has been changed to: \e[0m"\
 				"\n$:"
 			);
 			puts(getTime());
 			puts(
-				"\n$:Returning to Menu...:"\
+				"\e[1;33m \n$:Returning to Menu...: \e[0m"\
 				"\n"
 			);
 			comhand_menu();
@@ -279,12 +279,12 @@ Function Desc	: Will prompt the user for changing the date of the real time cloc
 void comhand_setDate(void) {
 	for (;;) {
 		puts(
-			"\n$:Please enter a new date in the following format:"\
+			"\e[1;36m \n$:Please enter a new date in the following format:"\
 			"\n$:	MM/DD/YY"\
 			"\n$:"\
 			"\n$:	e.g [February 18, 2008 = 02/18/08]:"\
 			"\n"\
-			"\n>"
+			" \e[0m \n>"
 		);
 
 		char rtcprompt[100] = { 0 };
@@ -297,15 +297,15 @@ void comhand_setDate(void) {
 			) {
 			for (;;) {
 				puts(
-					"\n$:Is this the date you'd like to set?"\
-					"\n$: "
+					"\e[1;36m \n$:Is this the date you'd like to set? \e[0m"\
+					"\n$:  "
 				);
 				puts(rtcprompt);
 				puts(
-					"\n$:	yes"\
+					"\e[1;36m \n$:	yes"\
 					"\n$:	no"\
 					"\n"\
-					"\n>"
+					"\n \e[0m >"
 				);
 
 				char dateconfirmation[10] = { 0 };
@@ -318,8 +318,8 @@ void comhand_setDate(void) {
 				else 
 				{
 					puts(
-						"\n$:Date not set:"\
-						"\n$:Returning to menu...:"\
+						"\e[1;36m \n$:Date not set:"\
+						"\n$:Returning to menu...: \e[0m"\
 						"\n"
 					);
 					comhand_menu();
@@ -328,12 +328,12 @@ void comhand_setDate(void) {
 			}
 			setDate(rtcprompt);
 			puts(
-				"\n$:Date has been changed to:"\
+				"\e[1;36m \n$:Date has been changed to: \e[0m"\
 				"\n$:"
 			);
 			puts(getDate());
 			puts(
-				"\n$:Returning to Menu...:"\
+				"\e[1;36m \n$:Returning to Menu...: \e[0m"\
 				"\n"
 			);
 			comhand_menu();
@@ -364,7 +364,7 @@ Function Desc	: Will display the help results. User can enter additional number 
 */
 void comhand_help(void) {
 	puts(
-		"\n$:Commands:"\
+		"\n \e[1;92m $:Commands:"\
 		"\n$:"\
 		"\n$:	0) help"\
 		"\n$:		Displays all available commands to the user."\
@@ -377,14 +377,14 @@ void comhand_help(void) {
 		"\n$:	4) timeset"\
 		"\n$:		Prompts the user to change the time of the real-time clock."\
 		"\n$:	5) dateset"\
-		"\n$:		Prompts the user to change the date of the real-time clock."\
-		"\n$:\n"
+		"\n$:		Prompts the user to change the date of the real-time clock. "\
+		"\n$:  \n \e[0m"
 	);
 	return;
 }
 void comhand_menu(void) {
 	puts(
-		"\n$:Commands:"\
+		"\n \e[0;91m $:Commands:"\
 		"\n$:"\
 		"\n$:	0) help"\
 		"\n$:	1) shutdown"\
@@ -393,8 +393,8 @@ void comhand_menu(void) {
 		"\n$:	4) timeset"\
 		"\n$:	5) dateset"\
 		"\n$:"\
-		"\n$:See help command for more information.:"\
-		"\n"
+		"\n$:See help command for more information.: "\
+		"\n \e[0m"
 	);
 	return;
 }
