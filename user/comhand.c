@@ -64,6 +64,7 @@ void init_comhand(void) {
 		char textsetdate[]				= "DATESET\0";
 		//date set
 		//process 070
+		char textjoeburrow[]			= "JOE BURROW\0";
 
 		/* STAY COMMENTED UNTIL PCB COMMANDS IMPLEMENTED - WILL NOT MAKE IF UNCOMMENTED
 		*
@@ -128,6 +129,10 @@ void init_comhand(void) {
 		if ((strcasecmp(textsetdate, buf) == 0)) {
 			curr_process = 070;
 			comhand_setDate();
+		}
+		if ((strcasecmp(textjoeburrow, buf) == 0)) {
+			curr_process = 100;
+			comhand_joeburrow();
 		}
 		//displays a message to the user stating their prompt wasn't recognized
 		//only displays if the user is in the menu process, updates everytime the [ENTER KEY] is read by serial polling.
@@ -394,9 +399,86 @@ void comhand_setDate(void) {
 @return			: N/A
 */
 void comhand_joeburrow(void) {
-	for (;;) {
-
+	char burrowbuf[100] = { 0 };
+	puts(
+		"\n$:This is the System Admin:"\
+		"\n$:Giving control to world-renowned football star:"\
+		"\n$:Joseph \"Joe\" Thomas Burrow Jr!:"\
+	);
+	puts(
+		"\n"\
+		"\n$:Type any prompt to continue..."\
+		"\n"\
+		"\n> "
+	);
+	int nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(WRITE, COM1, burrowbuf, nread);
+	puts(
+		"\n(%): It's me, Joe Burrow! I'm a real person!"\
+		"\n(%): You gotta help me save the superbowl from the Chiefs!"\
+		"\n(%): Will you help me?"\
+		"\n"\
+		"\n> "
+	);
+	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(WRITE, COM1, burrowbuf, nread);
+	if (strcasecmp(burrowbuf, yesprompt) == 0) {
+		puts(
+			"\n(%): Awesome! Glad you could be a help, my little buddy."\
+			"\n(%): Now let's get you up to speed."\
+			"\n(%): The window is my whole career."\
+			"\n(%): ..."\
+			"\n(%): Will you be my whole career?"\
+			"\n"\
+			"\n> "
+		);
 	}
+	else {
+		puts(
+			"\n\e[1;95mJoe Burrow looks at you with a sad look on his face."\
+			"\n\e[1;95mHe lets out a sigh, mumbling \"Who dey, who dey\" under his breath."\
+			"\n\e[1;95mHe leaves, never to be seen again."
+		);
+		puts(
+			"\n\e[1;00m$:Returning to menu...:"
+		);
+		comhand_menu();
+		return;
+	}
+	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(WRITE, COM1, burrowbuf, nread);
+	if (strcasecmp(burrowbuf, yesprompt) == 0) {
+		puts(
+			"\n(%): Really? No one has ever...played football..."\
+			"\n(%): with me..."\
+			"\n(%): You'd really play...with me?"\
+			"\n"\
+			"\n> "
+		);
+	}
+	else {
+		puts(
+			"\n\e[1;95mJoe Burrow liked this conversation until now."\
+			"\n\e[1;95mHe lets out a sigh, mumbling \"The Bengals are going all the way this year\" under his breath."\
+			"\n\e[1;95mHe uses his winged feet to fly away, taking his true place amongst the clouds."
+		);
+		puts(
+			"\n\e[1;00m$:Returning to menu...:"
+		);
+		comhand_menu();
+		return;
+	}
+	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(WRITE, COM1, burrowbuf, nread);
+	puts(
+		"\n\e[1;95mJoe Burrow looks at you with deep, tear-filled eyes."\
+		"\n\e[1;95mHe doesn't know how to process what you just said."\
+	);
+	puts(
+		"\n\e[1;00m$:Returning to menu...:"
+	);
+	comhand_menu();
+	return;
 }
 
 //========================================================================
@@ -415,7 +497,7 @@ void comhand_joeburrow(void) {
 */
 void comhand_help(void) {
 	puts(
-		"\n \e[1;92m $:Commands:"\
+		"\n\e[1;92m $:Commands:"\
 		"\n$:"\
 		"\n$:	0) help"\
 		"\n$:		Displays all available commands to the user."\
@@ -428,14 +510,16 @@ void comhand_help(void) {
 		"\n$:	4) timeset"\
 		"\n$:		Prompts the user to change the time of the real-time clock."\
 		"\n$:	5) dateset"\
-		"\n$:		Prompts the user to change the date of the real-time clock. "\
+		"\n$:		Prompts the user to change the date of the real-time clock."\
+		"\n$:	6) joe burrow"\
+		"\n$:		Gives you a real-life chat with superstar Joe Burrow!"\
 		"\n$:  \n \e[0m"
 	);
 	return;
 }
 void comhand_menu(void) {
 	puts(
-		"\n $:Commands:"\
+		"\n$:Commands:"\
 		"\n$:"\
 		"\n$:	0) help"\
 		"\n$:	1) shutdown"\
@@ -443,6 +527,7 @@ void comhand_menu(void) {
 		"\n$:	3) rtc"\
 		"\n$:	4) timeset"\
 		"\n$:	5) dateset"\
+		"\n$:	6) joe burrow"\
 		"\n$:"\
 		"\n$:See help command for more information.: "\
 		"\n"
