@@ -264,7 +264,7 @@ void comhand_setTime(void) {
 		else
 		{
 			puts(
-				"\n$:Invalid format. Please try again:"
+				"\e[0;91m \n$:Invalid format. Please try again: \e[0m"
 			);
 		}
 	}
@@ -342,7 +342,7 @@ void comhand_setDate(void) {
 		else 
 		{
 			puts(
-				"\n$:Invalid format. Please try again:"
+				"\e[0;91m \n$:Invalid format. Please try again: \e[0m"
 			);
 		}
 	}
@@ -384,7 +384,7 @@ void comhand_help(void) {
 }
 void comhand_menu(void) {
 	puts(
-		"\n \e[0;91m $:Commands:"\
+		"\n $:Commands:"\
 		"\n$:"\
 		"\n$:	0) help"\
 		"\n$:	1) shutdown"\
@@ -394,7 +394,7 @@ void comhand_menu(void) {
 		"\n$:	5) dateset"\
 		"\n$:"\
 		"\n$:See help command for more information.: "\
-		"\n \e[0m"
+		"\n"
 	);
 	return;
 }
