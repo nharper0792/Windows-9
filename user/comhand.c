@@ -414,6 +414,44 @@ void comhand_joeburrow(void) {
 	int nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
 	sys_req(WRITE, COM1, burrowbuf, nread);
 	puts(
+		"\n$:Do you really not know who Joe Burrow is?:"\
+		"\n$:I mean the American football player Joseph \"Joe\" Thomas Burrow, Jr.:"
+	);
+	puts(
+		"\n"\
+		"\n$:Type any prompt to continue..."\
+		"\n"\
+		"\n> "
+	);
+	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(WRITE, COM1, burrowbuf, nread);
+	puts(
+		"\n$:He is a quarterback for the Cincinnati Bengals.:"\
+		"\n$:He is one of the best quarterbacks the NFL has ever seen in the past several years.:"\
+	);
+	puts(
+		"\n"\
+		"\n$:Type any prompt to continue...:"\
+		"\n"\
+		"\n> "
+	);
+	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(WRITE, COM1, burrowbuf, nread);
+	puts(
+		"\n$:And if my memory holds up correctly,:"\ 
+		"\n$:he recently won the NFL award as the Most Valuable Player.:"\
+		"\n$:Still no? Well, here he is, Joe Burrow!:"
+	);
+	puts(
+		"\n"\
+		"\n$:Type any prompt to continue...:"\
+		"\n"\
+		"\n> "
+	);
+	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(WRITE, COM1, burrowbuf, nread);
+
+	puts(
 		"\n(%): It's me, Joe Burrow! I'm a real person!"\
 		"\n(%): You gotta help me save the superbowl from the Chiefs!"\
 		"\n(%): Will you help me?"\
