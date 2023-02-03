@@ -8,13 +8,11 @@
 //				:
 //Notes			: See comhand.c for more information.
 void init_comhand(void);
-
 //version		: displays the current version of the program to the user
 //				: takes no parameters and returns nothing
 //				:
 //				: See comhand.c for more information
 void comhand_version(void);
-
 //help			: displays all commands possible to the user
 //				: takes no parameters and returns nothing
 //				:
@@ -26,13 +24,11 @@ void comhand_help(void);
 //				:
 //				: See comhand.c for more information
 void comhand_menu(void);
-
 //shutdown		: commences shutdown sequence
 //				: takes no parameters and returns nothing
 //				:
 //				: See comhand.c for more information
 void comhand_shutdown(void);
-
 //rtc			: displays real-time clock
 //				: takes no parameters and returns nothing
 //				:
@@ -48,4 +44,6 @@ void comhand_setTime(void);
 //				:
 //				: See comhand.c for more information
 void comhand_setDate(void);
+
+void comhand_joeburrow(void);
 #endif

@@ -46,24 +46,63 @@ void init_comhand(void) {
 		//		This area contains the command prompts that are simple text.
 		//==================================================================
 
-		char textversion[] = "VERSION\0";
+		char textversion[]				= "VERSION\0";
 		//version
 		//process 010
-		char textshutdown[] = "SHUTDOWN\0";
+		char textshutdown[]				= "SHUTDOWN\0";
 		//shutdown
 		//process 020
-		char texthelp[] = "HELP\0";
+		char texthelp[]					= "HELP\0";
 		//rtc
 		//process 040
-		char textrtc[] = "RTC\0";
+		char textrtc[]					= "RTC\0";
 		//help
 		//process 050
-		char textsettime[] = "TIMESET\0";
+		char textsettime[]				= "TIMESET\0";
 		//time set
 		//process 060
-		char textsetdate[] = "DATESET\0";
+		char textsetdate[]				= "DATESET\0";
 		//date set
 		//process 070
+
+		/* STAY COMMENTED UNTIL PCB COMMANDS IMPLEMENTED - WILL NOT MAKE IF UNCOMMENTED
+		*
+		char textpcbcreate[]			= "PCB CREATE\0";
+		//create PCB
+		//process 080
+		char textpcbdelete[]			= "PCB DELETE\0";
+		//delete PCB
+		//process 081
+		char textpcbblock[]				= "PCB BLOCK\0";
+		//block PCB
+		//process 082
+		char textpcbunblock[]			= "PCB UNBLOCK\0";
+		//unblock PCB
+		//process 083
+		char textpcbsuspend[]			= "PCB SUSPEND\0";
+		//suspend PCB
+		//process 084
+		char textpcbresume[]			= "PCB RESUME\0";
+		//resume PCB
+		//process 085
+		char textpcbpriority[]			= "PCB PRIORITY\0";
+		//priority PCB set
+		//process 086
+		char textpcbshow[]				= "PCB SHOW\0";
+		//show PCB
+		//process 087
+		char textpcbshowready[]			= "PCB SHOW READY\0";
+		//show PCBs in ready state
+		//process 088
+		char textpcbshowblocked[]		= "PCB SHOW BLOCKED\0";
+		//show PCBs in blocked state
+		//process 089
+		char textpcbshowall[]			= "PCB SHOW ALL\0";
+		//show all PCBs
+		//process 0810
+		*
+		*/
+
 		if ((strcasecmp(textversion, buf) == 0)) {
 			curr_process = 010;
 			comhand_version();
@@ -109,28 +148,28 @@ void init_comhand(void) {
 //==============================================================
 
 /*
-Function Name	: comhand_version
-Function Desc	: Will display the current version of the OS. This needs to be manually updated.
+@Name			: comhand_version
+@brief			: Will display the current version of the OS. This needs to be manually updated.
 
 @params			: N/A
-@return			: N/A
+@returns		: N/A
 */
 void comhand_version(void) {
 	puts(
 		"\n \e[1;95m $:Version:"\
 		"\n == Windows 9 JB Edition == "\
-		"\nVersion R1.0 \e[0m"\
+		"\nVersion R2.0 \e[0m"\
 		"\n"
 	);
 	comhand_menu();
 	return;
 }
 /*
-Function Name	: comhand_shutdown
-Function Desc	: Will prompt the user to shutdown the OS, must be cofirmed.
+@Name			: comhand_shutdown
+@brief			: Will prompt the user to shutdown the OS, must be cofirmed.
 
 @params			: N/A
-@return			: N/A
+@returns		: N/A
 */
 void comhand_shutdown(void) {
 	puts(
@@ -171,8 +210,8 @@ void comhand_shutdown(void) {
 
 }
 /*
-Function Name	: comhand_rtc
-Function Desc	: Will display both the month and time of the real time clock. See rtc.c/rtc.h for more information.
+@Name			: comhand_rtc
+@brief			: Will display both the month and time of the real time clock. See rtc.c/rtc.h for more information.
 
 @params			: N/A
 @return			: N/A
@@ -193,8 +232,8 @@ void comhand_rtc(void) {
 	return;
 }
 /*
-Function Name	: comhand_setTime
-Function Desc	: Will prompt the user for changing the time of the real time clock. See rtc.c/rtc.h for more information.
+@Name			: comhand_setTime
+@brief			: Will prompt the user for changing the time of the real time clock. See rtc.c/rtc.h for more information.
 
 @params			: N/A
 @return			: N/A
@@ -270,8 +309,8 @@ void comhand_setTime(void) {
 	}
 }
 /*
-Function Name	: comhand_setDate
-Function Desc	: Will prompt the user for changing the date of the real time clock. See rtc.c/rtc.h for more information.
+@Name			: comhand_setDate
+@brief			: Will prompt the user for changing the date of the real time clock. See rtc.c/rtc.h for more information.
 
 @params			: N/A
 @return			: N/A
@@ -315,7 +354,7 @@ void comhand_setDate(void) {
 				if (strcasecmp(dateconfirmation, yesprompt) == 0) {
 					break;
 				}
-				else 
+				else
 				{
 					puts(
 						"\e[1;36m \n$:Date not set:"\
@@ -339,12 +378,24 @@ void comhand_setDate(void) {
 			comhand_menu();
 			return;
 		}
-		else 
+		else
 		{
 			puts(
 				"\e[0;91m \n$:Invalid format. Please try again: \e[0m"
 			);
 		}
+	}
+}
+/*
+@Name			: comhand_joeburrow
+@brief			: Joe Burrow!
+
+@params			: N/A
+@return			: N/A
+*/
+void comhand_joeburrow(void) {
+	for (;;) {
+
 	}
 }
 
@@ -356,8 +407,8 @@ void comhand_setDate(void) {
 //========================================================================
 
 /*
-Function Name	: comhand_help/comhand_menu
-Function Desc	: Will display the help results. User can enter additional number to indicate which subsection they would like to see more details on
+@Name			: comhand_help/comhand_menu
+@brief			: Will display the help results. User can enter additional number to indicate which subsection they would like to see more details on
 
 @params			: N/A
 @return			: N/A
