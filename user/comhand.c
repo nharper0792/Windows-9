@@ -64,29 +64,29 @@ void init_comhand(void) {
 		char textsetdate[] = "DATESET\0";
 		//date set
 		//process 070
-		if ((strcmp(textversion, toupper(buf)) == 0)) {
+		if ((strcasecmp(textversion, buf) == 0)) {
 			curr_process = 010;
 			comhand_version();
 		}
-		if ((strcmp(textshutdown, toupper(buf)) == 0)) {
+		if ((strcasecmp(textshutdown, buf) == 0)) {
 			curr_process = 020;
 			comhand_shutdown();
 			if (curr_process == 021)
 				return;
 		}
-		if ((strcmp(texthelp, toupper(buf)) == 0)) {
+		if ((strcasecmp(texthelp, buf) == 0)) {
 			curr_process = 040;
 			comhand_help();
 		}
-		if ((strcmp(textrtc, toupper(buf)) == 0)) {
+		if ((strcasecmp(textrtc, buf) == 0)) {
 			curr_process = 050;
 			comhand_rtc();
 		}
-		if ((strcmp(textsettime, toupper(buf)) == 0)) {
+		if ((strcasecmp(textsettime, buf) == 0)) {
 			curr_process = 060;
 			comhand_setTime();
 		}
-		if ((strcmp(textsetdate, toupper(buf)) == 0)) {
+		if ((strcasecmp(textsetdate, buf) == 0)) {
 			curr_process = 070;
 			comhand_setDate();
 		}
@@ -147,7 +147,7 @@ void comhand_shutdown(void) {
 		sys_req(WRITE, COM1, shutdownconfirmation, nread);
 
 
-		if (strcmp(toupper(shutdownconfirmation), yesprompt) == 0)
+		if (strcasecmp(shutdownconfirmation, yesprompt) == 0)
 		{
 			sys_req(-1);
 			sys_req(EXIT);
@@ -234,7 +234,7 @@ void comhand_setTime(void) {
 				int nread2 = sys_req(READ, COM1, timeconfirmation, sizeof(timeconfirmation));
 				sys_req(WRITE, COM1, timeconfirmation, nread2);
 
-				if (strcmp(toupper(timeconfirmation), yesprompt) == 0) {
+				if (strcasecmp(timeconfirmation, yesprompt) == 0) {
 					break;
 				}
 				else
@@ -312,7 +312,7 @@ void comhand_setDate(void) {
 				int nread2 = sys_req(READ, COM1, dateconfirmation, sizeof(dateconfirmation));
 				sys_req(WRITE, COM1, dateconfirmation, nread2);
 
-				if (strcmp(toupper(dateconfirmation), yesprompt) == 0) {
+				if (strcasecmp(dateconfirmation, yesprompt) == 0) {
 					break;
 				}
 				else 

@@ -60,12 +60,9 @@ char* getDate(){
     return buf;
 }
 
-void printDateError(){
-    puts("\n\n$:Invalid Date, reverting to previous date.");
-}
-/*
-Function Name   : setDate
-Function Desc   : takes parameter newDate and writes to ports to set new date
+/**
+@name   : setDate
+@brief  : takes parameter newDate and writes to ports to set new date
 
 @param newDate (char*) : char formatted as MM/DD/YYYY
 */
@@ -84,13 +81,21 @@ void setDate(char* newDate){
         }
         sys_free_mem(temp);
     }
-    if(date[0]<=0||date[0]>12||date[2]<0||date[1]<=0){
-        printDateError();
+    if(date[0]<=0||date[0]>12) {
+        puts("\n\n\e[0;91m$:Invalid Month, reverting to previous date.\e[0m");
         return;
+    }
+        if(date[2]<0){
+
+            puts("\n\n\e[0;91m$:Invalid day, reverting to previous date.\e[0m");
+    return;
+}
+        if(date[1]<=0){
+            puts("\n\n\e[0;91m$:Invalid month, reverting to previous date.\e[0m");
     }
     if(date[1]>MonthDays[date[0]]){
         if(!(date[0] == 2 && date[1] == 29 && date[2] %4 ==0)){
-            printDateError();
+            puts("\n\n\e[0;91m$:Date does not exist, reverting to previous date.\e[0m");
             return;
         }
     }

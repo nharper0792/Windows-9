@@ -49,4 +49,5 @@ char* strtok(char * restrict s1, const char * restrict s2);
 char* formatCore(const char* format,va_list valist);
 int sprintf(char* str, const char* format, ...);
 
+int strcasecmp(char* s1, char* s2);
 #endif
