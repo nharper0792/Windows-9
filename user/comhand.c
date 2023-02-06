@@ -3,6 +3,7 @@
 #include <memory.h>
 #include <sys_req.h>
 #include <string.h>
+#include <stdlib.h>
 #include <rtc.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -104,33 +105,33 @@ void init_comhand(void) {
 		*
 		*/
 
-		if ((strcasecmp(textversion, buf) == 0)) {
+		if ((strcasecmp(textversion, buf) == 0) || atoi(buf) == 0) {
 			curr_process = 010;
 			comhand_version();
 		}
-		if ((strcasecmp(textshutdown, buf) == 0)) {
+		if ((strcasecmp(textshutdown, buf) == 0) || atoi(buf) == 1) {
 			curr_process = 020;
 			comhand_shutdown();
 			if (curr_process == 021)
 				return;
 		}
-		if ((strcasecmp(texthelp, buf) == 0)) {
+		if ((strcasecmp(texthelp, buf) == 0) || atoi(buf) == 2) {
 			curr_process = 040;
 			comhand_help();
 		}
-		if ((strcasecmp(textrtc, buf) == 0)) {
+		if ((strcasecmp(textrtc, buf) == 0) || atoi(buf) == 3) {
 			curr_process = 050;
 			comhand_rtc();
 		}
-		if ((strcasecmp(textsettime, buf) == 0)) {
+		if ((strcasecmp(textsettime, buf) == 0) || atoi(buf) == 4) {
 			curr_process = 060;
 			comhand_setTime();
 		}
-		if ((strcasecmp(textsetdate, buf) == 0)) {
+		if ((strcasecmp(textsetdate, buf) == 0) || atoi(buf) == 5) {
 			curr_process = 070;
 			comhand_setDate();
 		}
-		if ((strcasecmp(textjoeburrow, buf) == 0)) {
+		if ((strcasecmp(textjoeburrow, buf) == 0) || atoi(buf) == 6) {
 			curr_process = 100;
 			comhand_joeburrow();
 		}
@@ -191,7 +192,7 @@ void comhand_shutdown(void) {
 		sys_req(WRITE, COM1, shutdownconfirmation, nread);
 
 
-		if (strcasecmp(shutdownconfirmation, yesprompt) == 0)
+		if (strcasecmp(shutdownconfirmation, yesprompt) == 0 )
 		{
 			sys_req(-1);
 			sys_req(EXIT);
@@ -438,8 +439,8 @@ void comhand_joeburrow(void) {
 	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
 	sys_req(WRITE, COM1, burrowbuf, nread);
 	puts(
-		"\n$:And if my memory holds up correctly,:"\ 
-		"\n$:he recently won the NFL award as the Most Valuable Player.:"\
+		"\n$:And if my memory holds up correctly,:" \
+		"\n$:he recently won the NFL award as the Most Valuable Player.:" \
 		"\n$:Still no? Well, here he is, Joe Burrow!:"
 	);
 	puts(

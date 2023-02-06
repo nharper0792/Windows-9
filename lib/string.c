@@ -146,6 +146,7 @@ char *formatCore(const char *format, va_list valist) {
                         for (int i = 0; temp_str[i]; i++) {
                             buffer[index++] = temp_str[i];
                         }
+			sys_free_mem(temp_str);
                         break;
                     case 'c'://char
                         buffer[index++] = va_arg(valist,
@@ -162,6 +163,7 @@ char *formatCore(const char *format, va_list valist) {
                         for (int i = 0; temp_str[i]; i++) {
                             buffer[index++] = temp_str[i];
                         }
+			sys_free_mem(temp_str);
                         break;
                     default:
                         if (ch == '.') {//check for padding with 0s
@@ -204,4 +206,61 @@ int sprintf(char* dest, const char* format, ...) {
         dest[i] = buffer[i];
     }
     return strlen(dest);
+}
+
+char* strcpy(char* dest, char* src){
+    for(size_t i = 0;i<strlen(src);i++){
+        dest[i] = src[i];
+    }
+    dest[strlen(src)] = '\0';
+    return dest;
+}
+
+char *itoa(int i, char* dest) {
+    int p = 0;
+    static char res[10] = {0};
+    int isNegative = 0;
+    if (i < 0) {
+        res[p++] = '-';
+        isNegative = 1;
+        i = -i;
+    }
+    for (int j = 10;; j *= 10) {
+        if (i < j / 10) {
+            res[p] = '\0';
+            break;
+        } else {
+            int remainder = (i % j) / (j / 10);
+            if (remainder == 0) {
+                res[p++] = '0';
+            } else {
+                res[p++] = (char)(remainder + 48);
+            }
+        }
+    }
+    p--;
+    for (int j = isNegative; j < p; j++, p--) {
+        char temp = res[j];
+        res[j] = res[p];
+        res[p] = temp;
+    }
+    if(dest ==NULL){
+        return res;
+    }
+    for(size_t j = 0;j<=strlen(res);j++){
+        *(dest+j) = res[j];
+    }
+    return res;
+}
+
+char* ftoa(float f, char* dest, int afterpoint){
+    itoa((int)f/1,dest);
+    float fpart = f - ((int)f/1);
+    for(int i = 0;i<afterpoint;i++){
+        fpart*=10;
+    }
+    dest[strlen(dest)] = '.';
+    itoa((int)fpart/1,dest+strlen(dest));
+    dest[strlen(dest)] = '\0';
+    return dest;
 }

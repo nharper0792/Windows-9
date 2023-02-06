@@ -99,11 +99,17 @@ void setDate(char* newDate){
             return;
         }
     }
-    index indexes[3] = {Month, DayOfMonth, Year};
-    for(size_t i = 0;i<sizeof(date)/sizeof(date[0]);i++){
-        write(indexes[i],date[i]);
+    write(Year,date[2]);
+    if(bcdToDec(date[1])>MonthDays[read(Month)]){
+        write(Month,date[0]);
+        write(DayOfMonth,date[1]);
     }
-}
+    else {
+        write(DayOfMonth, date[1]);
+        write(Month, date[0]);
+    }
+
+    }
 
 /**
 Function Name   : getTime
@@ -200,7 +206,7 @@ void setTime(char* newTime) {
         
     //Going through each section of new time and writing to each port as time entered is valid
     index indexes[3] = {Hours, Minutes, Seconds};
-    for (size_t i = 0; i<sizeof(time)/sizeof(time[0]); i++) {
+    for (size_t i = 2; i>0; i--) {
         write(indexes[i], atoi(time[i]));
     }
 }
@@ -225,12 +231,11 @@ Function Desc  : takes parameters of where and what to writes, and writes to the
 @param num (int) : the value to be written
 */
 void write(enum index i, int num){
-    sti();
+
     {
         outb(IndexRegister,i);
         outb(DataRegister, decToBcd(num));
     }
-    cli();
 }
 
 /*

@@ -50,4 +50,15 @@ char* formatCore(const char* format,va_list valist);
 int sprintf(char* str, const char* format, ...);
 
 int strcasecmp(char* s1, char* s2);
+
+char* strcpy(char* dest, char* src);
+
+/**
+ * Converts an integer to a ASCII string
+ * @param i an integer
+ * @return A char* containing the string representation of i
+ */
+char* itoa(int i,char* dest);
+
+char* ftoa(float f,char* dest, int afterpoint);
 #endif

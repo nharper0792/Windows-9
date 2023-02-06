@@ -13,11 +13,6 @@
 */
 int atoi(const char *s);
 
-/**
- * Converts an integer to a ASCII string
- * @param i an integer
- * @return A char* containing the string representation of i
- */
-char* itoa(int i,char* dest);
+
 
 #endif
