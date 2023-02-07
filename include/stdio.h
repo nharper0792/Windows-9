@@ -6,4 +6,9 @@
 #define WINDOWS_9_STDIO_H
 void printf(char* format,...);
 void puts(char* buf);
+
+#ifndef NULL
+#define NULL    0
+#endif
+
 #endif //WINDOWS_9_STDIO_H

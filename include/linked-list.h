@@ -26,10 +26,9 @@ node* getHead();
 node* add();
 
 /**
- adds node to the end of the list
- @return node* : node that was added
-*/
-node* addToEnd();
+ adds node as the head of list
+ */
+node* addToHead();
 
 /**
  removes node from list
@@ -42,5 +41,12 @@ node* remove();
  @return node* : pointer of head node that was removed
 */
 node* removeHead();
+
+/**
+ iterates through list to see if node is contained in the list
+ @param nodePtr (*node) : pointer to node to check for
+ @return int : returns 1 if node is contained in the list, returns 0 if node is not in the list
+ */
+int contains(list* listPtr, node* nodePtr);
 
 #endif
