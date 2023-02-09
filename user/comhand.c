@@ -153,6 +153,10 @@ void init_comhand(void) {
 //CONTAINS FUNCTIONS USED WITHIN FOREVER LOOP OF COMMAND HANDLER
 //==============================================================
 
+//-------------------------------
+//BASIC COMMAND HANDLER FUNCTIONS
+//-------------------------------
+
 /*
 @Name			: comhand_version
 @brief			: Will display the current version of the OS. This needs to be manually updated.
@@ -520,6 +524,91 @@ void comhand_joeburrow(void) {
 	return;
 }
 
+//-------------
+//PCB FUNCTIONS
+//-------------
+
+/*
+@Name			: 
+@brief			: 
+
+@params			: N/A
+@returns		: N/A
+*/
+void comhand_pcbCreate(void) {
+	return;
+}
+/*
+@Name			:
+@brief			:
+
+@params			: N/A
+@returns		: N/A
+*/
+void comhand_pcbDelete(void) {
+	return;
+}
+/*
+@Name			:
+@brief			:
+
+@params			: N/A
+@returns		: N/A
+*/
+void comhand_pcbBlock(void) {
+	return;
+}
+/*
+@Name			:
+@brief			:
+
+@params			: N/A
+@returns		: N/A
+*/
+void comhand_pcbUnblock(void) {
+	return;
+}
+/*
+@Name			:
+@brief			:
+
+@params			: N/A
+@returns		: N/A
+*/
+void comhand_pcbSuspend(void) {
+	return;
+}
+/*
+@Name			:
+@brief			:
+
+@params			: N/A
+@returns		: N/A
+*/
+void comhand_pcbResume(void) {
+	return;
+}
+/*
+@Name			:
+@brief			:
+
+@params			: N/A
+@returns		: N/A
+*/
+void comhand_pcbPriority(void) {
+	return;
+}
+/*
+@Name			:
+@brief			:
+
+@params			: N/A
+@returns		: N/A
+*/
+void comhand_pcbShow(int entry) {
+	(void)entry;
+	return;
+}
 //========================================================================
 //  COMHAND HELP SECTION
 // 
