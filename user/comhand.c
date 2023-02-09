@@ -105,33 +105,33 @@ void init_comhand(void) {
 		*
 		*/
 
-		if ((strcasecmp(textversion, buf) == 0) || atoi(buf) == 0) {
-			curr_process = 010;
-			comhand_version();
+		if ((strcasecmp(texthelp, buf) == 0) || atoi(buf) == 1) {
+			curr_process = 040;
+			comhand_help();
 		}
-		if ((strcasecmp(textshutdown, buf) == 0) || atoi(buf) == 1) {
+		if ((strcasecmp(textshutdown, buf) == 0) || atoi(buf) == 2) {
 			curr_process = 020;
 			comhand_shutdown();
 			if (curr_process == 021)
 				return;
 		}
-		if ((strcasecmp(texthelp, buf) == 0) || atoi(buf) == 2) {
-			curr_process = 040;
-			comhand_help();
-		}
-		if ((strcasecmp(textrtc, buf) == 0) || atoi(buf) == 3) {
+		if ((strcasecmp(textversion, buf) == 0) || atoi(buf) == 3) {
+			curr_process = 010;
+			comhand_version();
+		}		
+		if ((strcasecmp(textrtc, buf) == 0) || atoi(buf) == 4) {
 			curr_process = 050;
 			comhand_rtc();
 		}
-		if ((strcasecmp(textsettime, buf) == 0) || atoi(buf) == 4) {
+		if ((strcasecmp(textsettime, buf) == 0) || atoi(buf) == 5) {
 			curr_process = 060;
 			comhand_setTime();
 		}
-		if ((strcasecmp(textsetdate, buf) == 0) || atoi(buf) == 5) {
+		if ((strcasecmp(textsetdate, buf) == 0) || atoi(buf) == 6) {
 			curr_process = 070;
 			comhand_setDate();
 		}
-		if ((strcasecmp(textjoeburrow, buf) == 0) || atoi(buf) == 6) {
+		if ((strcasecmp(textjoeburrow, buf) == 0) || atoi(buf) == 7) {
 			curr_process = 100;
 			comhand_joeburrow();
 		}
@@ -627,19 +627,19 @@ void comhand_help(void) {
 	puts(
 		"\n\e[1;92m $:Commands:"\
 		"\n$:"\
-		"\n$:	0) help"\
+		"\n$:	1) help"\
 		"\n$:		Displays all available commands to the user."\
-		"\n$:	1) shutdown"\
+		"\n$:	2) shutdown"\
 		"\n$:		Prompts the user for the shutdown procedure."\
-		"\n$:	2) version"\
+		"\n$:	3) version"\
 		"\n$:		Displays the Windows-9 current version."\
-		"\n$:	3) rtc"\
+		"\n$:	4) rtc"\
 		"\n$:		Displays the realtime clock, and prompts the user for clock changes."\
-		"\n$:	4) timeset"\
+		"\n$:	5) timeset"\
 		"\n$:		Prompts the user to change the time of the real-time clock."\
-		"\n$:	5) dateset"\
+		"\n$:	6) dateset"\
 		"\n$:		Prompts the user to change the date of the real-time clock."\
-		"\n$:	6) joe burrow"\
+		"\n$:	7) joe burrow"\
 		"\n$:		Gives you a real-life chat with superstar Joe Burrow!"\
 		"\n$:  \n \e[0m"
 	);
@@ -649,13 +649,13 @@ void comhand_menu(void) {
 	puts(
 		"\n$:Commands:"\
 		"\n$:"\
-		"\n$:	0) help"\
-		"\n$:	1) shutdown"\
-		"\n$:	2) version"\
-		"\n$:	3) rtc"\
-		"\n$:	4) timeset"\
-		"\n$:	5) dateset"\
-		"\n$:	6) joe burrow"\
+		"\n$:	1) help"\
+		"\n$:	2) shutdown"\
+		"\n$:	3) version"\
+		"\n$:	4) rtc"\
+		"\n$:	5) timeset"\
+		"\n$:	6) dateset"\
+		"\n$:	7) joe burrow"\
 		"\n$:"\
 		"\n$:See help command for more information.: "\
 		"\n"
