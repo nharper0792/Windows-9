@@ -7,7 +7,10 @@ int isspace(int c)
 	return (c == ' ' || c == '\n' || c == '\r' || c == '\f' || c == '\t' || c == '\v');
 }
 int isdigit(int c){
-    return (c>=48 && c<=57);
+	if (c >= 48 && c <= 57)
+		return (c >= 48 && c <= 57);
+	else
+		return -1;
 }
 
 //multi-char input

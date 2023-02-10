@@ -13,7 +13,7 @@ Variable: curr_process
 	Use		: tracks which process the handler is currently in
 			-	Is counted using a 3-digit base-10 duo of numbers.
 			-					e.g 103, 502, 307, etc.
-			-	The 100s & 10s place combined (103) represents the current process.
+			-	The 100s & 10s place combined (103) represents the current process, ranging [0-7,10-infinity].
 			_								   ^^
 								e.g process [10]
 			-	The 1s place (103) represents the state of the current process.
@@ -67,73 +67,79 @@ void init_comhand(void) {
 		//process 070
 		char textjoeburrow[]			= "JOE BURROW\0";
 
-		/* STAY COMMENTED UNTIL PCB COMMANDS IMPLEMENTED - WILL NOT MAKE IF UNCOMMENTED
-		*
+		//STAY COMMENTED UNTIL PCB COMMANDS IMPLEMENTED - WILL NOT MAKE IF UNCOMMENTED
+		
 		char textpcbcreate[]			= "PCB CREATE\0";
 		//create PCB
-		//process 080
+		//process 100
+
+		/*
 		char textpcbdelete[]			= "PCB DELETE\0";
 		//delete PCB
-		//process 081
+		//process 101
 		char textpcbblock[]				= "PCB BLOCK\0";
 		//block PCB
-		//process 082
+		//process 102
 		char textpcbunblock[]			= "PCB UNBLOCK\0";
 		//unblock PCB
-		//process 083
+		//process 103
 		char textpcbsuspend[]			= "PCB SUSPEND\0";
 		//suspend PCB
-		//process 084
+		//process 104
 		char textpcbresume[]			= "PCB RESUME\0";
 		//resume PCB
-		//process 085
+		//process 105
 		char textpcbpriority[]			= "PCB PRIORITY\0";
 		//priority PCB set
-		//process 086
+		//process 106
 		char textpcbshow[]				= "PCB SHOW\0";
 		//show PCB
-		//process 087
+		//process 107
 		char textpcbshowready[]			= "PCB SHOW READY\0";
 		//show PCBs in ready state
-		//process 088
+		//process 108
 		char textpcbshowblocked[]		= "PCB SHOW BLOCKED\0";
 		//show PCBs in blocked state
-		//process 089
+		//process 109
 		char textpcbshowall[]			= "PCB SHOW ALL\0";
 		//show all PCBs
-		//process 0810
+		//process 1010
 		*
 		*/
 
-		if ((strcasecmp(texthelp, buf) == 0) || atoi(buf) == 1) {
+		if ((strcasecmp(texthelp, buf) == 0) ||			atoi(buf) == 1) {
 			curr_process = 040;
 			comhand_help();
 		}
-		if ((strcasecmp(textshutdown, buf) == 0) || atoi(buf) == 2) {
+		if ((strcasecmp(textshutdown, buf) == 0) ||		atoi(buf) == 2) {
 			curr_process = 020;
 			comhand_shutdown();
 			if (curr_process == 021)
 				return;
 		}
-		if ((strcasecmp(textversion, buf) == 0) || atoi(buf) == 3) {
+		if ((strcasecmp(textversion, buf) == 0) ||		atoi(buf) == 3) {
 			curr_process = 010;
 			comhand_version();
 		}		
-		if ((strcasecmp(textrtc, buf) == 0) || atoi(buf) == 4) {
+		if ((strcasecmp(textrtc, buf) == 0) ||			atoi(buf) == 4) {
 			curr_process = 050;
 			comhand_rtc();
 		}
-		if ((strcasecmp(textsettime, buf) == 0) || atoi(buf) == 5) {
+		if ((strcasecmp(textsettime, buf) == 0) ||		atoi(buf) == 5) {
 			curr_process = 060;
 			comhand_setTime();
 		}
-		if ((strcasecmp(textsetdate, buf) == 0) || atoi(buf) == 6) {
+		if ((strcasecmp(textsetdate, buf) == 0) ||		atoi(buf) == 6) {
 			curr_process = 070;
 			comhand_setDate();
 		}
-		if ((strcasecmp(textjoeburrow, buf) == 0) || atoi(buf) == 7) {
+		if ((strcasecmp(textjoeburrow, buf) == 0) ||	atoi(buf) == 7) {
 			curr_process = 100;
 			comhand_joeburrow();
+		}
+		if ((strcasecmp(textpcbcreate, buf) == 0) ||	atoi(buf) == 8) {
+			curr_process = 100;
+			comhand_pcbCreate();
 		}
 		//displays a message to the user stating their prompt wasn't recognized
 		//only displays if the user is in the menu process, updates everytime the [ENTER KEY] is read by serial polling.
@@ -232,9 +238,9 @@ void comhand_rtc(void) {
 		"\n$:Current Time: "
 	);
 	char* textrtc_landingclock = getTime();
-	sys_req(WRITE, COM1, textrtc_landingclock, sizeof(textrtc_landingclock) + 5);
+	sys_req(WRITE, COM1, textrtc_landingclock, sizeof(textrtc_landingclock) + 8);
 	puts(
-		"\n$:Current Date:"
+		"\n$:Current Date: "
 	);
 	char* textrtc_landingtime = getDate();
 	sys_req(WRITE, COM1, textrtc_landingtime, sizeof(textrtc_landingtime) + 4);
@@ -536,6 +542,181 @@ void comhand_joeburrow(void) {
 @returns		: N/A
 */
 void comhand_pcbCreate(void) {
+	char pcbbuf[100] = { 0 };
+
+	for (;;) {
+		//prompt for user, yes or no question
+		puts(
+			"\n$:Would you like to create a new PCB?:"\
+			"\n$:	yes"\
+			"\n$:	no"\
+			"\n> "
+		);
+		//read buffer||give user command
+		int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		sys_req(WRITE, COM1, pcbbuf, nread);
+		//yes case
+		if (strcasecmp(pcbbuf, yesprompt) == 0) {
+			puts(
+				"\n$:Entering PCB creation...:"\
+				"\n"
+			);
+			break;
+		}
+		//no case
+		else if (strcasecmp(pcbbuf, noprompt) == 0) {
+			puts(
+				"\n$:PCB creation cancelled."\
+				"\n$:Returning to menu...:"\
+				"\n"
+			);
+			comhand_menu();
+			return;
+		}
+		//anything else case
+		else {
+			puts(
+				"\n$:Invalid format. Please try again.:"\
+				"\n"
+			);
+		}
+	}
+	//pcb name
+	puts(
+		"\n$:Please enter the desired name of your new PCB:"\
+		"\n> "
+	);
+	//read buffer||give user command
+	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	sys_req(WRITE, COM1, pcbbuf, nread);
+	//capture pcb name
+	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
+	strcpy(pcbName, pcbbuf);
+	/*
+	Variable Name : pcbClass
+	Variable Desc : Captures the class of the user prompt PCB.
+					This ranges from 0-1, 0 being a user process and 1 being a system process
+	*/
+	int pcbClass;
+	//pcb class
+	for (;;) {
+		puts(
+			"\n$:Please enter the desired class of your new PCB:"\
+			"\n$:	user"\
+			"\n$:	system"\
+			"\n> "
+		);
+		//read buffer||give user command
+		nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		sys_req(WRITE, COM1, pcbbuf, nread);
+		//capture pcb class
+		char pcbuserprompt[] = "USER\0";
+		char pcbsystemprompt[] = "SYSTEM\0";
+		//user case
+		if (strcasecmp(pcbuserprompt, pcbbuf) == 0) {
+			puts(
+				"\n$:Your new PCB has been given the [user] class"\
+				"\n"
+			);
+			pcbClass = 0;
+			break;
+		}
+		//system case
+		else if (strcasecmp(pcbsystemprompt, pcbbuf) == 0) {
+			puts(
+				"\n$:Your new PCB has been given the [system] class"\
+				"\n"
+			);
+			pcbClass = 1;
+			break;
+		}
+		//all other input
+		else {
+			puts(
+				"\n$:Invalid format. Please try again.:"\
+				"\n"
+			);
+		}
+	}
+	/*
+	Variable Name : pcbPriority
+	Variable Desc : Captures the priority of the user prompt PCB.
+					This ranges from 0-9.
+	*/
+	int pcbPriority;
+	//pcb priority
+	for (;;) {
+		puts(
+			"\n$:Please enter the desired priority of your new PCB:"\
+			"\n$:This number must range from [0-9]."\
+			"\n> "
+		);
+		//read buffer||give user command
+		nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		sys_req(WRITE, COM1, pcbbuf, nread);
+		//capture pcb name
+		if (strlen(pcbbuf) == 1 &&
+			(isdigit(pcbbuf[0]) >= 0) &&
+			(isdigit(pcbbuf[0]) <= 9)) {
+			pcbPriority = atoi(pcbbuf);
+			puts("\n$:PCB Priority set to ");
+			puts(pcbbuf);
+			puts(":");
+			break;
+		}
+		else {
+			puts(
+				"\n$:Invalid format. Please try again:"\
+				"\n"
+			);
+		}
+	}
+	//print name
+	printf(
+		"\n"\
+		"\n$:Creating new PCB with these parameters."\
+		"\n$:Name: %s",
+		pcbName
+	);
+	
+	//print class
+	puts("\n$:Class: ");
+	if (pcbClass == 0)
+		puts("USER");
+	else
+		puts("SYSTEM");
+	//print priority
+	printf("\n$:Priority: %i",pcbPriority);
+	//confirmation message
+	for (;;) {
+		puts(
+			"\n"\
+			"\n$:Confirm creation of PCB with these settings?"\
+			"\n$:	yes"\
+			"\n$:	no"\
+			"\n> "
+		);
+		nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		sys_req(WRITE, COM1, pcbbuf, nread);
+		//yes case
+		if (strcasecmp(yesprompt, pcbbuf) == 0) {
+			puts("\nThis is where we put creation of PCB");
+			break;
+		}
+		else if (strcasecmp(noprompt, pcbbuf) == 0) {
+			puts("\n$:PCB creation cancelled:");
+			break;
+		}
+		else {
+			puts("\n$:Invalid format. Please try again:");
+		}
+	}
+	//return statement
+	puts(
+		"\n$:Returning to menu...:"\
+		"\n"
+	);
+	comhand_menu();
 	return;
 }
 /*
@@ -641,6 +822,8 @@ void comhand_help(void) {
 		"\n$:		Prompts the user to change the date of the real-time clock."\
 		"\n$:	7) joe burrow"\
 		"\n$:		Gives you a real-life chat with superstar Joe Burrow!"\
+		"\n$:	8) pcb create"\
+		"\n$:		Enters PCB creation mode, where parameters are inputted to create a new PCB."\
 		"\n$:  \n \e[0m"
 	);
 	return;
@@ -656,6 +839,7 @@ void comhand_menu(void) {
 		"\n$:	5) timeset"\
 		"\n$:	6) dateset"\
 		"\n$:	7) joe burrow"\
+		"\n$:	8) pcb create"\
 		"\n$:"\
 		"\n$:See help command for more information.: "\
 		"\n"
