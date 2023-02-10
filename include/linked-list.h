@@ -2,10 +2,16 @@
 #define MPX_CTYPE_H
 
 //list structure
-struct list;
+typedef struct list {
+    struct node* headPtr;
+}list;
 
 //node structure
-struct node;
+typedef struct node {
+    struct node* prevPtr;
+    struct node* nextPtr;
+    void* data;
+}node;
 
 /**
  gets node at index and returns node structure, ____ if error

@@ -182,6 +182,30 @@ char *formatCore(const char *format, va_list valist) {
                         strcpy(buffer+index,temp_str);
                         index+=strlen(temp_str);
                         break;
+                    case 'o':
+                        temp_int = va_arg(valist,int);
+                        temp_str = itoa(temp_int,NULL,8);
+                        if(padding_after_decimal){
+                            temp_str = pad(temp_str, padding_after_decimal, '0');
+                        }
+                        if (padding) {//check for padding
+                            temp_str = pad(temp_str, padding, ' ');
+                        }
+                        strcpy(buffer+index,temp_str);
+                        index += strlen(temp_str);
+                        break;
+                    case 'x':
+                        temp_int = va_arg(valist,int);
+                        temp_str = itoa(temp_int,NULL,16);
+                        if(padding_after_decimal){
+                            temp_str = pad(temp_str, padding_after_decimal, '0');
+                        }
+                        if (padding) {//check for padding
+                            temp_str = pad(temp_str, padding, ' ');
+                        }
+                        strcpy(buffer+index,temp_str);
+                        index += strlen(temp_str);
+                        break;
                     default:
                         if (ch == '.') {//check for padding with 0s
                             decimal_point = 1;

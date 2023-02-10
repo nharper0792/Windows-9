@@ -1,19 +1,17 @@
 #include <stdio.h>
-
+#include <linked-list.h>
 //list structure
-struct list {
-    struct node* headPtr;
-}list;
+
 
 //node structure
-struct node {
-    struct node* prevPtr;
-    struct node* nextPtr;
 
-}node;
 
-struct node* get(struct list* listPtr, int index) {
-    
+struct node* get(list* listPtr, int index) {
+    node* curr = listPtr->headPtr;
+    for(int i = 0;i<index-1;i++){
+        curr = curr->nextPtr;
+    }
+    return curr;
 }
 
 /*
@@ -41,10 +39,8 @@ struct node* add(struct list* listPtr, struct node* nodePtr) {
     } else {
         //creates node pointers to traverse lsit
         struct node* currentPtr = listPtr->headPtr;
-        struct node* prevPtr = currentPtr;
 
         while (currentPtr->nextPtr != NULL) {
-            prevPtr = currentPtr;
             currentPtr = currentPtr->nextPtr;
         }
 
@@ -88,18 +84,15 @@ struct node* remove(struct list* listPtr, struct node* nodePtr) {
     }
 
     //creating pointers to traverse list
-    struct node* currentPtr = listPtr->headPtr;
-    struct node* prevPtr = currentPtr;
 
-    while (currentPtr != NULL) {
-        if (currentPtr == nodePtr) {
-            struct node* tempPtr = currentPtr->prevPtr;
-            tempPtr->nextPtr = currentPtr->nextPtr;
+    for(node* currentPtr = listPtr->headPtr;currentPtr!=NULL;currentPtr = currentPtr->nextPtr) {
+        if (currentPtr->data == nodePtr->data) {
+            currentPtr->prevPtr->nextPtr = currentPtr->nextPtr;
+            currentPtr->nextPtr->prevPtr = currentPtr->prevPtr;
+            return currentPtr;
         }
-
-        prevPtr = currentPtr;
-        currentPtr = currentPtr->nextPtr;
     }
+    return NULL;
 }
 
 /*
@@ -129,14 +122,11 @@ Function Desc   : checks to see if node is within the list
 int contains(struct list* listPtr, struct node* nodePtr) {
     //creating nodes to traverse
     struct node* currentPtr = listPtr->headPtr;
-    struct node* prevPtr = currentPtr;
 
     while (currentPtr != NULL) {
         if (currentPtr == nodePtr) {
             return 1;
-        } 
-
-        prevPtr = currentPtr;
+        }
         currentPtr = currentPtr->nextPtr;
     }
 

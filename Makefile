@@ -13,7 +13,8 @@ lib/ctype.o\
 lib/stdlib.o\
 lib/string.o\
 lib/rtc.o\
-lib/stdio.o
+lib/stdio.o\
+lib/linked-list.o
 
 USER_OBJECTS =\
 user/system.o\
