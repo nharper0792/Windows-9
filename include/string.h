@@ -58,7 +58,7 @@ char* strcpy(char* dest, char* src);
  * @param i an integer
  * @return A char* containing the string representation of i
  */
-char* itoa(int i,char* dest);
+char* itoa(int i,char* dest,int base);
 
 char* ftoa(float f,char* dest, int afterpoint);
 #endif

@@ -158,7 +158,7 @@ char *formatCore(const char *format, va_list valist) {
                     case 'i'://int
                         temp_int = va_arg(valist,
                         int);
-                        temp_str = itoa(temp_int, NULL);
+                        temp_str = itoa(temp_int, NULL,10);
                         if(padding_after_decimal){
                             temp_str = pad(temp_str, padding_after_decimal, '0');
                         }
@@ -210,7 +210,7 @@ char *formatCore(const char *format, va_list valist) {
                 padding = 0;
                 decimal_point = 0;
                 padding_after_decimal = 0;
-            }while(padding>0 || padding_after_zero>0);
+            }while(padding>0 || padding_after_decimal>0);
         }
         else {//if current char is a regular
             buffer[index++] = ch;
@@ -239,48 +239,53 @@ char* strcpy(char* dest, char* src){
     return dest;
 }
 
-char *itoa(int i, char* dest) {
+char *itoa(int i, char* dest, int base) {
+    char hex[] = {"0123456789abcdef"};
     int p = 0;
-    static char res[10] = {0};
+    if(dest == NULL){
+        dest = sys_alloc_mem(10);
+    }
     int isNegative = 0;
     if (i < 0) {
-        res[p++] = '-';
+        if (base != 2) {
+            dest[p++] = '-';
+        } else {
+            dest[p++] = '1';
+        }
         isNegative = 1;
         i = -i;
+    } else {
+        if (base == 2) {
+            dest[p++] = '0';
+        }
     }
-    for (int j = 10;; j *= 10) {
-        if (i < j / 10) {
-            res[p] = '\0';
+    for (int j = base;; j *= base) {
+        if (i < j / base) {
+            dest[p] = '\0';
             break;
         } else {
-            int remainder = (i % j) / (j / 10);
+            int remainder = (i % j) / (j / base);
             if (remainder == 0) {
-                res[p++] = '0';
+                dest[p++] = '0';
             } else {
-                res[p++] = (char)(remainder + 48);
+                dest[p++] = hex[remainder];
             }
         }
     }
     p--;
-    for (int j = isNegative; j < p; j++, p--) {
-        char temp = res[j];
-        res[j] = res[p];
-        res[p] = temp;
+    for (int j = isNegative || base == 2; j < p; j++, p--) {
+        char temp = dest[j];
+        dest[j] = dest[p];
+        dest[p] = temp;
     }
-    if(dest ==NULL){
-        return res;
-    }
-    for(size_t j = 0;j<=strlen(res);j++){
-        *(dest+j) = res[j];
-    }
-    return res;
+    return dest;
 }
 
 char* ftoa(float f, char* dest, int afterpoint){
     if(dest==NULL){
         dest = sys_alloc_mem(40);
     }
-    itoa((int)f/1,dest);
+    itoa((int)f/1,dest,10);
     if(afterpoint==0){
         return dest;
     }
@@ -289,7 +294,7 @@ char* ftoa(float f, char* dest, int afterpoint){
         fpart*=10;
     }
     dest[strlen(dest)] = '.';
-    itoa((int)fpart/1,dest+strlen(dest));
+    itoa((int)fpart/1,dest+strlen(dest),10);
     dest[strlen(dest)] = '\0';
     return dest;
 }
