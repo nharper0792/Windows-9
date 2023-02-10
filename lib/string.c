@@ -125,9 +125,11 @@ char *formatCore(const char *format, va_list valist) {
     int index = 0;
 
     int padding = 0;
-    int pad_with_zeros = 0;
+    int decimal_point = 0;
+    int padding_after_decimal = 0;
     char *temp_str;
     int temp_int;
+    double temp_float;
     //loop through each character in the string
     while ((ch = *(format++))) {
         //checks for a %
@@ -157,17 +159,32 @@ char *formatCore(const char *format, va_list valist) {
                         temp_int = va_arg(valist,
                         int);
                         temp_str = itoa(temp_int, NULL);
+                        if(padding_after_decimal){
+                            temp_str = pad(temp_str, padding_after_decimal, '0');
+                        }
                         if (padding) {//check for padding
-                            temp_str = pad(temp_str, padding, pad_with_zeros ? '0' : ' ');
+                            temp_str = pad(temp_str, padding, ' ');
                         }
                         for (int i = 0; temp_str[i]; i++) {
                             buffer[index++] = temp_str[i];
                         }
 			sys_free_mem(temp_str);
                         break;
+                    case 'f':
+                        temp_float = va_arg(valist, double);
+                        if(!decimal_point){
+                            padding_after_decimal = 6;
+                        }
+                        temp_str = ftoa(temp_float,NULL,padding_after_decimal);
+                        if(padding){
+                            temp_str = pad(temp_str,padding,' ');
+                        }
+                        strcpy(buffer+index,temp_str);
+                        index+=strlen(temp_str);
+                        break;
                     default:
                         if (ch == '.') {//check for padding with 0s
-                            pad_with_zeros = 1;
+                            decimal_point = 1;
                             ch = *format++;
                         }
                         if (isdigit(ch)) {
@@ -178,7 +195,12 @@ char *formatCore(const char *format, va_list valist) {
                                 ch = *format++;
                                 temp[ptr++] = ch;
                             }
-                            padding = atoi(temp);
+                            if(decimal_point){
+                                padding_after_decimal = atoi(temp);
+                            }
+                            else {
+                                padding = atoi(temp);
+                            }
                             //jump to the beginning of the switch
                             continue;
                         }
@@ -186,8 +208,9 @@ char *formatCore(const char *format, va_list valist) {
                 }
 
                 padding = 0;
-                pad_with_zeros = 0;
-            }while(padding>0);
+                decimal_point = 0;
+                padding_after_decimal = 0;
+            }while(padding>0 || padding_after_zero>0);
         }
         else {//if current char is a regular
             buffer[index++] = ch;
@@ -254,7 +277,13 @@ char *itoa(int i, char* dest) {
 }
 
 char* ftoa(float f, char* dest, int afterpoint){
+    if(dest==NULL){
+        dest = sys_alloc_mem(40);
+    }
     itoa((int)f/1,dest);
+    if(afterpoint==0){
+        return dest;
+    }
     float fpart = f - ((int)f/1);
     for(int i = 0;i<afterpoint;i++){
         fpart*=10;
