@@ -1,7 +1,7 @@
 //
 // Created on 2/13/2023.
 //
-
+#include <linked-list.h>
 #ifndef WINDOWS_9_PCB_H
 #define WINDOWS_9_PCB_H
 
@@ -14,11 +14,6 @@ enum classes{
 enum states{
     READY,RUNNING,BLOCKED,SUSPENDED,NOT_SUSPENDED
 };
-
-extern list* ready;
-extern list* blocked;
-extern list* suspendedReady;
-extern list* suspendedBlocked;
 
 typedef struct pcb{
     char* name;
