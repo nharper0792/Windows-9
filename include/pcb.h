@@ -15,6 +15,11 @@ enum states{
     READY,RUNNING,BLOCKED,SUSPENDED,NOT_SUSPENDED
 };
 
+extern list* ready;
+extern list* blocked;
+extern list* suspendedReady;
+extern list* suspendedBlocked;
+
 typedef struct pcb{
     char* name;
     enum classes class;

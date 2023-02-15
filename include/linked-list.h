@@ -13,6 +13,10 @@ typedef struct node {
     void* data;
 }node;
 
+list* createList(void);
+
+node* createNode(void* data);
+
 /**
  gets node at index and returns node structure, ____ if error
  @return node* : node structure
@@ -54,5 +58,7 @@ node* removeHead(list* listPtr);
  @return int : returns 1 if node is contained in the list, returns 0 if node is not in the list
  */
 int contains(list* listPtr, node* nodePtr);
+
+void* getData(node*);
 
 #endif

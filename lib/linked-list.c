@@ -1,5 +1,17 @@
 #include <stdio.h>
 #include <linked-list.h>
+#include <memory.h>
+
+list* createList(){
+    list* newList = (list*)sys_alloc_mem(sizeof(list));
+    return newList;
+}
+
+node* createNode(void* data){
+    node* newNode =  (node*)sys_alloc_mem(sizeof(node));
+    newNode->data = data;
+    return newNode;
+}
 
 /*
 Function Name   : get
@@ -155,4 +167,8 @@ int contains(list* listPtr, node* nodePtr) {
 
     //node was not found
     return 0;
+}
+
+void* getData(node* ptr){
+    return ptr->data;
 }
