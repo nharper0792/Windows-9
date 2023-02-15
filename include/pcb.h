@@ -5,6 +5,7 @@
 #ifndef WINDOWS_9_PCB_H
 #define WINDOWS_9_PCB_H
 
+#define MAX_NAME_LENGTH 12
 enum classes{
     USER = 0,
     SYSTEM = 1
@@ -14,12 +15,16 @@ enum states{
     READY,RUNNING,BLOCKED,SUSPENDED,NOT_SUSPENDED
 };
 
-extern typedef struct pcb{
+typedef struct pcb{
     char* name;
     enum classes class;
     int priority;
     enum states executionState;
     enum states dispatchingState;
+    char stack[1024];
+    char* stackPtr;
+    struct pcb* nextPtr;
+    struct pcb* prevPtr;
 }pcb;
 
 /**
