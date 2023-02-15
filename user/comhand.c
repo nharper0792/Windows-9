@@ -7,6 +7,7 @@
 #include <rtc.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <pcb.h>
 
 /*
 Variable: curr_process
@@ -535,8 +536,8 @@ void comhand_joeburrow(void) {
 //-------------
 
 /*
-@Name			: 
-@brief			: 
+@Name			: comhand_pcbCreate
+@brief			: Will prompt the user to enter formatted parameters for PCB creation. Will then ask if they want to confirm changes, adding the PCB to the appropriate list.
 
 @params			: N/A
 @returns		: N/A
@@ -686,7 +687,10 @@ void comhand_pcbCreate(void) {
 	else
 		puts("SYSTEM");
 	//print priority
-	printf("\n$:Priority: %i",pcbPriority);
+	printf(
+		"\n$:Priority: %i",
+		pcbPriority
+	);
 	//confirmation message
 	for (;;) {
 		puts(
@@ -700,13 +704,24 @@ void comhand_pcbCreate(void) {
 		sys_req(WRITE, COM1, pcbbuf, nread);
 		//yes case
 		if (strcasecmp(yesprompt, pcbbuf) == 0) {
-			puts("\nThis is where we put creation of PCB");
+			pcb_setup(
+				pcbName, 
+				pcbClass, 
+				pcbPriority
+			);
+			printf(
+				"\n$:Creation of PCB %s was successful:"\
+				"\n",
+				pcbName
+			);
 			break;
 		}
+		//no case
 		else if (strcasecmp(noprompt, pcbbuf) == 0) {
 			puts("\n$:PCB creation cancelled:");
 			break;
 		}
+		//all other responses
 		else {
 			puts("\n$:Invalid format. Please try again:");
 		}
@@ -716,18 +731,51 @@ void comhand_pcbCreate(void) {
 		"\n$:Returning to menu...:"\
 		"\n"
 	);
+	//free(pcbName);
 	comhand_menu();
 	return;
 }
 /*
-@Name			:
-@brief			:
+@Name			: comhand_pcbDelete
+@brief			: This command will prompt the user to input the name of a PCB that they want to delete. 
+				  If found, will delete that PCB. If not, returns to menu.
 
 @params			: N/A
 @returns		: N/A
 */
 void comhand_pcbDelete(void) {
-	return;
+	char pcbbuf[100] = { 0 };
+		//pcb name
+		puts(
+			"\n$:Please enter the name of the PCB you would like to delete:"\
+			"\n> "
+		);
+		//read buffer||give user command
+		int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		sys_req(WRITE, COM1, pcbbuf, nread);
+		//capture pcb name
+		char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
+		strcpy(pcbName, pcbbuf);
+		//if found, delete
+		if (pcb_find(pcbName) != NULL) {
+			// TODO: finish PCB deletion
+			puts(
+				"\nThis is where it would be deleted"
+			);
+			return;
+		}
+		else {
+			printf(
+				"\n$:PCB %s not found in PCB list(s):"\
+				"\n",
+				pcbName
+			);
+		}
+
+		//free(pcbName);
+		comhand_menu();
+		return;
+	
 }
 /*
 @Name			:
@@ -770,14 +818,86 @@ void comhand_pcbResume(void) {
 	return;
 }
 /*
-@Name			:
-@brief			:
+@Name			: comhand_pcbPriority
+@brief			: Prompts the user to enter the name of the PCB they want to change the priority of. 
+				  Then changes the priority of that PCB.
 
 @params			: N/A
 @returns		: N/A
 */
 void comhand_pcbPriority(void) {
+	char pcbbuf[100] = { 0 };
+	//pcb name
+	puts(
+		"\n$:Please enter the name of the PCB you would like to change priority:"\
+		"\n> "
+	);
+	//read buffer||give user command
+	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	sys_req(WRITE, COM1, pcbbuf, nread);
+	//capture pcb name
+	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
+	strcpy(pcbName, pcbbuf);
+
+	//if found, prompt for new priority
+	if (pcb_find(pcbName) != NULL) {
+		//assign dummyPCB for modification of user-specified PCB
+		struct pcb* dummyPCB = pcb_find(pcbName);
+		printf(
+			"\n$:PCB %s currently has priority %i:",
+			pcbName, 
+			dummyPCB->priority
+		);
+
+		int pcbPriority;
+		//pcb priority capture
+		for (;;) {
+			printf(
+				"\n$:Please enter the new desired priority of PCB %s:"\
+				"\n$:This number must range from [0-9]."\
+				"\n> ",
+				pcbName
+			);
+			//read buffer||give user command
+			nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+			sys_req(WRITE, COM1, pcbbuf, nread);
+			//capture pcb name
+			if (strlen(pcbbuf) == 1 &&
+				(isdigit(pcbbuf[0]) >= 0) &&
+				(isdigit(pcbbuf[0]) <= 9)) {
+				pcbPriority = atoi(pcbbuf);
+				printf(
+					"\n$:PCB %s's priority set to %s :",
+					pcbName, 
+					pcbbuf
+				);
+				break;
+			}
+			//fail case
+			else {
+				puts(
+					"\n$:Invalid format. Please try again:"\
+					"\n"
+				);
+			}
+		}
+		//update PCB's priority
+		dummyPCB->priority = pcbPriority;
+		//free dummy
+		pcb_free(dummyPCB);
+	}
+	else {
+		printf(
+			"\n$:PCB %s not found in PCB list(s):"\
+			"\n",
+			pcbName
+		);
+	}
+
+	//free(pcbName);
+	comhand_menu();
 	return;
+
 }
 /*
 @Name			:
@@ -787,6 +907,27 @@ void comhand_pcbPriority(void) {
 @returns		: N/A
 */
 void comhand_pcbShow(int entry) {
+	//char pcbbuf[100] = { 0 };
+	//show specific PCB, prompt user
+	if (entry == 0) {
+		for (;;) {
+
+		}
+	}
+	//show ready PCBs
+	if (entry == 1) {
+
+	}
+	//show blocked PCBs
+	if (entry == 2) {
+
+	}
+	//show all PCBs
+	if (entry == 3) {
+		for (;;) {
+			
+		}
+	}
 	(void)entry;
 	return;
 }
