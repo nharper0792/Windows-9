@@ -2,11 +2,22 @@
 #include <linked-list.h>
 #include <memory.h>
 
+/*
+Function Name   : createList
+Function Desc   : creates the list allocates memory for this list
+@return list* : pointer to list created
+*/
 list* createList(){
     list* newList = (list*)sys_alloc_mem(sizeof(list));
     return newList;
 }
 
+/*
+Function Name   : createNode
+Function Desc   : creates pointer to node and allocates the memory and sets void pointer to data and returns node
+@param data (void*) : void pointer to set in list node
+@return node* : pointer to created node
+*/
 node* createNode(void* data){
     node* newNode =  (node*)sys_alloc_mem(sizeof(node));
     newNode->data = data;

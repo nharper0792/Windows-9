@@ -13,8 +13,17 @@ typedef struct node {
     void* data;
 }node;
 
+/**
+ creates a List object
+ @return list* : pointer to list
+*/
 list* createList(void);
 
+/**
+ create a Node object
+ @param data : void pointer to data to set in node
+ @return node* : pointer to node
+*/
 node* createNode(void* data);
 
 /**
