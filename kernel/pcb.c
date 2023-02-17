@@ -110,7 +110,7 @@ int pcb_remove(pcb* target){
     }
     return 1;
 }
-int create_pcb(char *procName, int procClass, int procPriority)
+int pcb_create(char *procName, int procClass, int procPriority)
 {
 
   if (pcb_find(procName) != NULL)
