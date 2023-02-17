@@ -2,6 +2,7 @@
 #include <linked-list.h>
 #include <string.h>
 #include <memory.h>
+#include <stdio.h>
 
 void addToReady(list* listPtr, node* nodePtr);
 list* ready;
@@ -109,10 +110,10 @@ int pcb_remove(pcb* target){
     }
     return 1;
 }
-int create_pcb(char procName, int procClass, int procPriority)
+int create_pcb(char *procName, int procClass, int procPriority)
 {
 
-  if (find_pcb(procName) != NULL)
+  if (pcb_find(procName) != NULL)
   {
     printf("error: inputted name already exists\n");
     return 1;
@@ -129,11 +130,11 @@ int create_pcb(char procName, int procClass, int procPriority)
   }
   if (procClass != USER && procClass != SYSTEM)
   {
-    sysreq_write("error: Input must either be 1 or 2\n");
+    printf("error: Input must either be 1 or 2\n");
     return 1;
   }
 
-  insert_pcb(setup_pcb(procName, procClass, procPriority));
+  pcb_insert(pcb_setup(procName, procClass, procPriority));
 
   printf("PCB was created successfully\n");
   return 0;

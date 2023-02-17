@@ -6,7 +6,8 @@ KERNEL_OBJECTS =\
 kernel/irq.o\
 kernel/core.o\
 kernel/kmain.o\
-kernel/serial.o
+kernel/serial.o\
+kernel/pcb.o
 
 LIB_OBJECTS =\
 lib/ctype.o\
@@ -14,8 +15,7 @@ lib/stdlib.o\
 lib/string.o\
 lib/rtc.o\
 lib/stdio.o\
-lib/linked-list.o\
-lib/pcb.o
+lib/linked-list.o
 
 USER_OBJECTS =\
 user/system.o\
