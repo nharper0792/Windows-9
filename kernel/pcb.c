@@ -109,3 +109,32 @@ int pcb_remove(pcb* target){
     }
     return 1;
 }
+int create_pcb(char procName, int procClass, int procPriority)
+{
+
+  if (find_pcb(procName) != NULL)
+  {
+    printf("error: inputted name already exists\n");
+    return 1;
+  }
+   if (procName == NULL || strlen(procName) >= MAX_NAME_LENGTH)
+  {
+    printf("error: Inputted PCB name is either NULL or longer than 15 characters\n");
+    return 1;
+  }
+  if (procPriority < 0 || procPriority > 9)
+  {
+    printf("error: PCB priority must be between 0 and 9 inclusive\n");
+    return 1;
+  }
+  if (procClass != USER && procClass != SYSTEM)
+  {
+    sysreq_write("error: Input must either be 1 or 2\n");
+    return 1;
+  }
+
+  insert_pcb(setup_pcb(procName, procClass, procPriority));
+
+  printf("PCB was created successfully\n");
+  return 0;
+}
