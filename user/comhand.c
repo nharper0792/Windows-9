@@ -804,8 +804,8 @@ void comhand_pcbDelete(void) {
 	
 }
 /*
-@Name			:
-@brief			:
+@Name			: comhand_pcbBlock
+@brief			: prompts the user to input the name of a PCB they would like to switch to the [BLOCKED] execution state.
 
 @params			: N/A
 @returns		: N/A
@@ -953,10 +953,11 @@ void comhand_pcbPriority(void) {
 
 }
 /*
-@Name			:
-@brief			:
+@Name			: comhand_pcbShow
+@brief			: Will show existing PCBs to the user. 
+				  What type of show that is done is specified in main command handler by the user.
 
-@params			: N/A
+@param			entry : specifies which 'show' sequence to run
 @returns		: N/A
 */
 void comhand_pcbShow(int entry) {
