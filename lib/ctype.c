@@ -10,7 +10,7 @@ int isdigit(int c){
 	if (c >= 48 && c <= 57)
 		return (c >= 48 && c <= 57);
 	else
-		return -1;
+		return 0;
 }
 
 //multi-char input

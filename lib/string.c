@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <memory.h>
+#include <stdio.h>
 void *memcpy(void * restrict s1, const void * restrict s2, size_t n)
 {
 	unsigned char *dst = s1;
@@ -215,8 +216,8 @@ char *formatCore(const char *format, va_list valist) {
                             char temp[4] = {0};
                             temp[0] = ch;
                             int ptr = 1;
-                            while (isdigit(*(format))) {//keep checking for integers to create
-                                ch = *format++;
+                            while (isdigit(*(format+1))) {//keep checking for integers to create
+                                ch = *(++format);
                                 temp[ptr++] = ch;
                             }
                             if(decimal_point){
@@ -227,6 +228,7 @@ char *formatCore(const char *format, va_list valist) {
                             }
                             //jump to the beginning of the switch
                             continue;
+
                         }
                         break;
                 }
@@ -267,7 +269,7 @@ char *itoa(int i, char* dest, int base) {
     char hex[] = {"0123456789abcdef"};
     int p = 0;
     if(dest == NULL){
-        dest = sys_alloc_mem(10);
+        dest = (char*)sys_alloc_mem(10);
     }
     int isNegative = 0;
     if (i < 0) {
