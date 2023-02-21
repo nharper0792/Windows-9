@@ -73,14 +73,17 @@ void init_comhand(void) {
 		char textpcbcreate[]			= "PCB CREATE\0";
 		//create PCB
 		//process 100
-
-		/*
 		char textpcbdelete[]			= "PCB DELETE\0";
 		//delete PCB
 		//process 101
 		char textpcbblock[]				= "PCB BLOCK\0";
 		//block PCB
 		//process 102
+		char textpcbshow[]				= "PCB SHOW\0";
+		//show PCB
+		//process 107
+		/*
+
 		char textpcbunblock[]			= "PCB UNBLOCK\0";
 		//unblock PCB
 		//process 103
@@ -93,9 +96,7 @@ void init_comhand(void) {
 		char textpcbpriority[]			= "PCB PRIORITY\0";
 		//priority PCB set
 		//process 106
-		char textpcbshow[]				= "PCB SHOW\0";
-		//show PCB
-		//process 107
+
 		char textpcbshowready[]			= "PCB SHOW READY\0";
 		//show PCBs in ready state
 		//process 108
@@ -141,6 +142,18 @@ void init_comhand(void) {
 		if ((strcasecmp(textpcbcreate, buf) == 0) ||	atoi(buf) == 8) {
 			curr_process = 100;
 			comhand_pcbCreate();
+		}
+		if ((strcasecmp(textpcbdelete, buf) == 0) ||	atoi(buf) == 9) {
+			curr_process = 101;
+			comhand_pcbDelete();
+		}
+		if ((strcasecmp(textpcbshow, buf) == 0) ||		atoi(buf) == 10) {
+			curr_process = 107;
+			comhand_pcbShow(0);
+		}
+		if ((strcasecmp(textpcbblock, buf) == 0) ||		atoi(buf) == 13) {
+			curr_process = 102;
+			comhand_pcbBlock();
 		}
 		//displays a message to the user stating their prompt wasn't recognized
 		//only displays if the user is in the menu process, updates everytime the [ENTER KEY] is read by serial polling.
@@ -691,7 +704,7 @@ void comhand_pcbCreate(void) {
 		"\n$:Priority: %i",
 		pcbPriority
 	);
-	//confirmation message
+	//confirmation + message
 	for (;;) {
 		puts(
 			"\n"\
@@ -704,15 +717,19 @@ void comhand_pcbCreate(void) {
 		sys_req(WRITE, COM1, pcbbuf, nread);
 		//yes case
 		if (strcasecmp(yesprompt, pcbbuf) == 0) {
-			pcb_setup(
+			//create pcb
+			pcb* dummy = pcb_setup(
 				pcbName, 
 				pcbClass, 
 				pcbPriority
 			);
+			//insert pcb
+			pcb_insert(dummy);
+			//confirmation statement
 			printf(
 				"\n$:Creation of PCB %s was successful:"\
 				"\n",
-				pcbName
+				dummy->name
 			);
 			break;
 		}
@@ -756,11 +773,18 @@ void comhand_pcbDelete(void) {
 		//capture pcb name
 		char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
 		strcpy(pcbName, pcbbuf);
+		//create dummy pcb
+		pcb* dummy = pcb_find(pcbName);
 		//if found, delete
-		if (pcb_find(pcbName) != NULL) {
-			// TODO: finish PCB deletion
+		if (dummy != NULL) {
+			//remove pcb from pcb lists
+			pcb_remove(dummy);
+			//free pcb
+			pcb_free(dummy);
 			puts(
-				"\nThis is where it would be deleted"
+				"\n$:PCB deleted:"\
+				"\n$:Returning to menu...:"\
+				"\n"
 			);
 			return;
 		}
@@ -771,8 +795,10 @@ void comhand_pcbDelete(void) {
 				pcbName
 			);
 		}
-
-		//free(pcbName);
+		puts(
+			"\n$:Returning to menu...:"\
+			"\n"
+		);
 		comhand_menu();
 		return;
 	
@@ -785,6 +811,33 @@ void comhand_pcbDelete(void) {
 @returns		: N/A
 */
 void comhand_pcbBlock(void) {
+	char pcbbuf[100] = { 0 };
+	puts(
+		"\n$:Please enter the name of the PCB you would like to switch to the [BLOCKED] execution state:"\
+		"\n> "
+	);
+	//read buffer||give user command
+	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	sys_req(WRITE, COM1, pcbbuf, nread);
+	//capture input
+	const char* pcbName = pcbbuf;
+	
+	pcb* dummy = pcb_find(pcbName);
+
+	if (dummy != NULL) {
+		dummy->executionState = BLOCKED;
+		printf(
+			"\n$:PCB %s has been given the [BLOCKED] execution state",
+			pcbName
+		);
+	}
+	else {
+		puts(
+			"\n$:PCB not found."
+		);
+	}
+	//return
+	comhand_menu();
 	return;
 }
 /*
@@ -910,9 +963,39 @@ void comhand_pcbShow(int entry) {
 	//char pcbbuf[100] = { 0 };
 	//show specific PCB, prompt user
 	if (entry == 0) {
-		for (;;) {
-
+		char pcbbuf[100] = { 0 };
+		puts(
+			"\n$:Please enter the name of the PCB you would like to show:"\
+			"\n> "
+		);
+		//read buffer||give user command
+		int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		sys_req(WRITE, COM1, pcbbuf, nread);
+		//capture input
+		const char* pcbName = pcbbuf;
+		//create PCB from user input
+		pcb* dummy = pcb_find(pcbName);
+		if (dummy != NULL) {
+			printf(
+				"\n"\
+				"\n$:Your PCB's parameters are shown below:"\
+				"\n	Name				: %s "\
+				"\n	Priority			: %i "\
+				"\n	Class Level			: [FINISH ENUM CONVERSION] "\
+				"\n	Execution State		: [FINISH ENUM CONVERSION] "\
+				"\n	Dispatching State	: [FINISH ENUM CONVERSION] "\
+				"\n"
+			);
 		}
+		else {
+			printf(
+				"\n$:PCB %s not found:"\
+				"\n$:Returning to menu...:"\
+				"\n"
+			);
+		}
+		comhand_menu();
+		return;
 	}
 	//show ready PCBs
 	if (entry == 1) {
@@ -965,6 +1048,17 @@ void comhand_help(void) {
 		"\n$:		Gives you a real-life chat with superstar Joe Burrow!"\
 		"\n$:	8) pcb create"\
 		"\n$:		Enters PCB creation mode, where parameters are inputted to create a new PCB."\
+		"\n$:	9) pcb delete"\
+		"\n$:		Enters PCB deletion mode, where parameters are inputted to delete an existing PCB."\
+		"\n$:	10) pcb show"\
+		"\n$:		Will show the specific PCB that the user specifies."\
+		"\n$:	11)"\
+		"\n$:"\
+		"\n$:	12)"\
+		"\n$:"\
+		"\n$:	13) pcb block"\
+		"\n$:		Switches the state of a PCB to [BLOCKED] execution state."\
+		"\n$:"\
 		"\n$:  \n \e[0m"
 	);
 	return;
@@ -981,6 +1075,11 @@ void comhand_menu(void) {
 		"\n$:	6) dateset"\
 		"\n$:	7) joe burrow"\
 		"\n$:	8) pcb create"\
+		"\n$:	9) pcb delete"\
+		"\n$:	10) pcb show"\
+		"\n$:	11) "\
+		"\n$:	12) "\
+		"\n$:	13) pcb block "\
 		"\n$:"\
 		"\n$:See help command for more information.: "\
 		"\n"
