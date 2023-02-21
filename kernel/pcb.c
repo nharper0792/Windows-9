@@ -40,8 +40,10 @@ pcb* pcb_setup(char* name, int class, int priority){
 
 pcb* pcb_find(const char* name){
     list* lists[] = {ready,blocked,suspendedReady,suspendedBlocked};
-    for(size_t i = 0;i<sizeof(lists)/sizeof(lists[0]);i++){
-        for(node* currPtr = lists[i]->headPtr;currPtr->nextPtr != NULL;currPtr = currPtr->nextPtr){
+    size_t listlen = sizeof(lists)/sizeof(lists[0]);
+    for(size_t i = 0;i<listlen;i++){
+        while(lists[i]==NULL){i++;}
+        for(node* currPtr = getHead(lists[i]);currPtr->nextPtr != NULL && currPtr !=NULL && i<listlen;currPtr = currPtr->nextPtr){
             if(strcmp(((pcb*)getData(currPtr))->name,name) == 0){
                 return (pcb*)getData(currPtr);
             }

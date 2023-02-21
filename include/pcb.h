@@ -23,8 +23,6 @@ typedef struct pcb{
     enum states dispatchingState;
     char stack[1024];
     char* stackPtr;
-    struct pcb* nextPtr;
-    struct pcb* prevPtr;
 }pcb;
 
 /**
