@@ -45,7 +45,7 @@ int pcb_free(pcb* target);
  * @param priority: the priotity status of the PCB
  * @return a pointer to the new PCB
  */
- pcb* pcb_setup(char* name, int class, int priority);
+ pcb* pcb_setup(const char* name, int class, int priority);
 
 /**
  * @brief finds the specified name in the PCB list

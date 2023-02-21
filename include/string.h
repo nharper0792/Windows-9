@@ -51,7 +51,7 @@ int sprintf(char* str, const char* format, ...);
 
 int strcasecmp(char* s1, char* s2);
 
-char* strcpy(char* dest, char* src);
+char* strcpy(char* dest, const char* src);
 
 /**
  * Converts an integer to a ASCII string

@@ -26,7 +26,7 @@ int pcb_free(pcb* target){
 }
 
 
-pcb* pcb_setup(char* name, int class, int priority){
+pcb* pcb_setup(const char* name, int class, int priority){
     pcb* newPcb = pcb_allocate();
     if(strlen(name)<MAX_NAME_LENGTH){
         strcpy(newPcb->name,name);
@@ -43,7 +43,7 @@ pcb* pcb_find(const char* name){
     size_t listlen = sizeof(lists)/sizeof(lists[0]);
     for(size_t i = 0;i<listlen;i++){
         while(lists[i]==NULL){i++;}
-        for(node* currPtr = getHead(lists[i]);currPtr->nextPtr != NULL && currPtr !=NULL && i<listlen;currPtr = currPtr->nextPtr){
+        for(node* currPtr = getHead(lists[i]);currPtr !=NULL && i<listlen;currPtr = currPtr->nextPtr){
             if(strcmp(((pcb*)getData(currPtr))->name,name) == 0){
                 return (pcb*)getData(currPtr);
             }

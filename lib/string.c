@@ -257,7 +257,7 @@ int sprintf(char* dest, const char* format, ...) {
     return strlen(dest);
 }
 
-char* strcpy(char* dest, char* src){
+char* strcpy(char* dest, const char* src){
     for(size_t i = 0;i<strlen(src);i++){
         dest[i] = src[i];
     }
