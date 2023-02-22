@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 void addToReady(list* listPtr, node* nodePtr);
+int getPriority(node* nodePtr);
 list* ready;
 list* blocked;
 list* suspendedReady;
@@ -22,6 +23,7 @@ pcb* pcb_allocate(void){
 
 int pcb_free(pcb* target){
     sys_free_mem(target->stackPtr);
+    sys_free_mem(target->name);
     return sys_free_mem(target);
 }
 
@@ -52,18 +54,26 @@ pcb* pcb_find(const char* name){
     return NULL;
 }
 void addToReady(list* listPtr, node* nodePtr){
-    if(listPtr->headPtr == NULL){
-        listPtr->headPtr = nodePtr;
+    node* headPtr = getHead(listPtr);
+    if(headPtr == NULL){
+        add(listPtr,nodePtr);
     }
     else{
         node* currPtr;
-        for(currPtr = listPtr->headPtr;currPtr->nextPtr != NULL||((pcb*)getData(currPtr))->priority<((pcb*)getData(nodePtr))->priority;currPtr = currPtr->nextPtr);
+        for(currPtr = headPtr;currPtr->nextPtr != NULL && getPriority(currPtr)<getPriority(nodePtr);currPtr = currPtr->nextPtr);
+
+        if(currPtr->nextPtr != NULL){
         currPtr->nextPtr->prevPtr = nodePtr;
+        }
         nodePtr->nextPtr = currPtr->nextPtr;
         currPtr->nextPtr = nodePtr;
         nodePtr->prevPtr = currPtr;
     }
 }
+int getPriority(node* nodePtr){
+    return ((pcb*)getData(nodePtr))->priority;
+}
+
 void pcb_insert(pcb* newPcb){
     node* newNode = createNode(newPcb);
     if(newPcb->executionState == READY){

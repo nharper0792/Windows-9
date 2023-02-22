@@ -123,12 +123,19 @@ node* remove(list* listPtr, node* nodePtr) {
         return NULL;
     }
 
+    if(nodePtr->data == listPtr->headPtr->data){
+        listPtr->headPtr = listPtr->headPtr->nextPtr;
+        return nodePtr;
+    }
+
     //traversing list to find node to remove
     for(node* currentPtr = listPtr->headPtr;currentPtr!=NULL;currentPtr = currentPtr->nextPtr) {
         //seeing if data matches data to be removed
         if (currentPtr->data == nodePtr->data) {
             currentPtr->prevPtr->nextPtr = currentPtr->nextPtr;
-            currentPtr->nextPtr->prevPtr = currentPtr->prevPtr;
+            if(currentPtr->nextPtr != NULL) {
+                currentPtr->nextPtr->prevPtr = currentPtr->prevPtr;
+            }
             return currentPtr;
         }
     }
