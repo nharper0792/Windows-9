@@ -12,7 +12,11 @@ enum classes{
 };
 
 enum states{
-    READY,RUNNING,BLOCKED,SUSPENDED,NOT_SUSPENDED
+    READY = 0,
+    RUNNING = 1,
+    BLOCKED = 2,
+    SUSPENDED = 3,
+    NOT_SUSPENDED = 4
 };
 
 typedef struct pcb{

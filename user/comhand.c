@@ -615,6 +615,7 @@ void comhand_pcbCreate(void) {
 	//pcb class
 	for (;;) {
 		puts(
+			"\n"\
 			"\n$:Please enter the desired class of your new PCB:"\
 			"\n$:	user"\
 			"\n$:	system"\
@@ -629,6 +630,7 @@ void comhand_pcbCreate(void) {
 		//user case
 		if (strcasecmp(pcbuserprompt, pcbbuf) == 0) {
 			puts(
+				"\n"\
 				"\n$:Your new PCB has been given the [user] class"\
 				"\n"
 			);
@@ -673,9 +675,11 @@ void comhand_pcbCreate(void) {
 			(isdigit(pcbbuf[0]) >= 0) &&
 			(isdigit(pcbbuf[0]) <= 9)) {
 			pcbPriority = atoi(pcbbuf);
-			puts("\n$:PCB Priority set to ");
-			puts(pcbbuf);
-			puts(":");
+			printf(
+				"\n"\
+				"\n$:Your new PCB has been given the priority %d :",
+			pcbPriority
+			);
 			break;
 		}
 		else {
@@ -727,6 +731,7 @@ void comhand_pcbCreate(void) {
 			pcb_insert(dummy);
 			//confirmation statement
 			printf(
+				"\n"\
 				"\n$:Creation of PCB %s was successful:"\
 				"\n",
 				dummy->name
@@ -735,7 +740,11 @@ void comhand_pcbCreate(void) {
 		}
 		//no case
 		else if (strcasecmp(noprompt, pcbbuf) == 0) {
-			puts("\n$:PCB creation cancelled:");
+			puts(
+				"\n"\
+				"\n$:PCB creation cancelled:"\
+				"\n"
+			);
 			break;
 		}
 		//all other responses
@@ -821,21 +830,27 @@ void comhand_pcbBlock(void) {
 	sys_req(WRITE, COM1, pcbbuf, nread);
 	//capture input
 	const char* pcbName = pcbbuf;
-	
+	//find specified PCB
 	pcb* dummy = pcb_find(pcbName);
-
+	//change to blocked
 	if (dummy != NULL) {
 		dummy->executionState = BLOCKED;
 		printf(
-			"\n$:PCB %s has been given the [BLOCKED] execution state",
+			"\n$:PCB %s has been given the [BLOCKED] execution state"\
+			"\n",
 			pcbName
 		);
 	}
 	else {
 		puts(
-			"\n$:PCB not found."
+			"\n$:PCB not found."\
+			"\n"
 		);
 	}
+	puts(
+		"\n$:Returning to menu..."\
+		"\n"
+	);
 	//return
 	comhand_menu();
 	return;
@@ -961,7 +976,17 @@ void comhand_pcbPriority(void) {
 @returns		: N/A
 */
 void comhand_pcbShow(int entry) {
-	//char pcbbuf[100] = { 0 };
+	const char* STRINGOFENUM_CLASS[] = {
+		"USER",
+		"ADMIN"
+	};
+	const char* STRINGOFENUM_STATE[] = {
+		"READY",
+		"RUNNING",
+		"BLOCKED",
+		"SUSPENDED",
+		"NOT_SUSPENDED"
+	};
 	//show specific PCB, prompt user
 	if (entry == 0) {
 		char pcbbuf[100] = { 0 };
@@ -972,31 +997,36 @@ void comhand_pcbShow(int entry) {
 		//read buffer||give user command
 		int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 		sys_req(WRITE, COM1, pcbbuf, nread);
-		//capture input
-		const char* pcbName = pcbbuf;
 		//create PCB from user input
-		pcb* dummy = pcb_find(pcbName);
+		pcb* dummy = pcb_find(pcbbuf);
+		
+		//display values
 		if (dummy != NULL) {
 			printf(
 				"\n"\
 				"\n$:Your PCB's parameters are shown below:"\
-				"\n	Name				: %s "\
-				"\n	Priority			: %i "\
-				"\n	Class Level			: [FINISH ENUM CONVERSION] "\
-				"\n	Execution State		: [FINISH ENUM CONVERSION] "\
-				"\n	Dispatching State	: [FINISH ENUM CONVERSION] "\
-				"\n"
+				"\n$:"\
+				"\n$:Name: %s "\
+				"\n$:Priority: %i "\
+				"\n$:Class Level: %s "\
+				"\n$:Execution State: %s "\
+				"\n$:Dispatching State: %s "\
+				"\n",
+				dummy->name, 
+				dummy->priority, 
+				STRINGOFENUM_CLASS[dummy->class], 
+				STRINGOFENUM_STATE[dummy->executionState], 
+				STRINGOFENUM_STATE[dummy->dispatchingState]
 			);
 		}
 		else {
 			printf(
 				"\n$:PCB %s not found:"\
 				"\n$:Returning to menu...:"\
-				"\n"
+				"\n",
+				pcbbuf
 			);
 		}
-		comhand_menu();
-		return;
 	}
 	//show ready PCBs
 	if (entry == 1) {
@@ -1012,7 +1042,7 @@ void comhand_pcbShow(int entry) {
 			
 		}
 	}
-	(void)entry;
+	comhand_menu();
 	return;
 }
 //========================================================================
