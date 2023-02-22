@@ -67,9 +67,8 @@ void init_comhand(void) {
 		//date set
 		//process 070
 		char textjoeburrow[]			= "JOE BURROW\0";
-
-		//STAY COMMENTED UNTIL PCB COMMANDS IMPLEMENTED - WILL NOT MAKE IF UNCOMMENTED
-		
+		//joe burrow
+		//process 333
 		char textpcbcreate[]			= "PCB CREATE\0";
 		//create PCB
 		//process 100
@@ -79,11 +78,6 @@ void init_comhand(void) {
 		char textpcbblock[]				= "PCB BLOCK\0";
 		//block PCB
 		//process 102
-		char textpcbshow[]				= "PCB SHOW\0";
-		//show PCB
-		//process 107
-		/*
-
 		char textpcbunblock[]			= "PCB UNBLOCK\0";
 		//unblock PCB
 		//process 103
@@ -96,7 +90,10 @@ void init_comhand(void) {
 		char textpcbpriority[]			= "PCB PRIORITY\0";
 		//priority PCB set
 		//process 106
-
+		char textpcbshow[]				= "PCB SHOW\0";
+		//show PCB
+		//process 107
+		/*
 		char textpcbshowready[]			= "PCB SHOW READY\0";
 		//show PCBs in ready state
 		//process 108
@@ -136,7 +133,7 @@ void init_comhand(void) {
 			comhand_setDate();
 		}
 		if ((strcasecmp(textjoeburrow, buf) == 0) ||	atoi(buf) == 7) {
-			curr_process = 100;
+			curr_process = 333;
 			comhand_joeburrow();
 		}
 		if ((strcasecmp(textpcbcreate, buf) == 0) ||	atoi(buf) == 8) {
@@ -147,14 +144,32 @@ void init_comhand(void) {
 			curr_process = 101;
 			comhand_pcbDelete();
 		}
-		if ((strcasecmp(textpcbshow, buf) == 0) ||		atoi(buf) == 10) {
+		if ((strcasecmp(textpcbshow, buf) == 0) || atoi(buf) == 10) {
 			curr_process = 107;
 			comhand_pcbShow(0);
 		}
-		if ((strcasecmp(textpcbblock, buf) == 0) ||		atoi(buf) == 13) {
+		if ((strcasecmp(textpcbsuspend, buf) == 0) || atoi(buf) == 11) {
+			curr_process = 104;
+			comhand_pcbSuspend();
+		}
+		if ((strcasecmp(textpcbresume, buf) == 0) || atoi(buf) == 12) {
+			curr_process = 105;
+			comhand_pcbUnblock();
+		}
+		if ((strcasecmp(textpcbblock, buf) == 0) || atoi(buf) == 13) {
 			curr_process = 102;
 			comhand_pcbBlock();
 		}
+		if ((strcasecmp(textpcbunblock, buf) == 0) || atoi(buf) == 14) {
+			curr_process = 103;
+			comhand_pcbUnblock();
+		}
+		if ((strcasecmp(textpcbpriority, buf) == 0) || atoi(buf) == 15) {
+			curr_process = 106;
+			comhand_pcbPriority();
+		}
+
+	
 		//displays a message to the user stating their prompt wasn't recognized
 		//only displays if the user is in the menu process, updates everytime the [ENTER KEY] is read by serial polling.
 		else if (curr_process == 000) {
@@ -1182,12 +1197,16 @@ void comhand_help(void) {
 		"\n$:		Enters PCB deletion mode, where parameters are inputted to delete an existing PCB."\
 		"\n$:	10) pcb show"\
 		"\n$:		Will show the specific PCB that the user specifies."\
-		"\n$:	11)"\
-		"\n$:"\
-		"\n$:	12)"\
-		"\n$:"\
+		"\n$:	11) pcb suspend"\
+		"\n$:		Switches the state of a specific PCB to [SUSPENDED] dispatching state."\
+		"\n$:	12) pcb resume"\
+		"\n$:		Switches the state of a specific PCB to [NOT SUSPENDED] dispatching state."\
 		"\n$:	13) pcb block"\
-		"\n$:		Switches the state of a PCB to [BLOCKED] execution state."\
+		"\n$:		Switches the state of a specific PCB to [BLOCKED] execution state."\
+		"\n$:	14) pcb unblock"\
+		"\n$:		Switches the state of a specific PCB to [UNBLOCKED] execution state."\
+		"\n$:	15) pcb priority"\
+		"\n$:		Switches the priority of a specific PCB."\
 		"\n$:"\
 		"\n$:  \n \e[0m"
 	);
@@ -1207,9 +1226,11 @@ void comhand_menu(void) {
 		"\n$:	8) pcb create"\
 		"\n$:	9) pcb delete"\
 		"\n$:	10) pcb show"\
-		"\n$:	11) "\
-		"\n$:	12) "\
+		"\n$:	11) pcb suspend"\
+		"\n$:	12) pcb resume"\
 		"\n$:	13) pcb block "\
+		"\n$:	14) pcb unblock "\
+		"\n$:	15) pcb priority "\
 		"\n$:"\
 		"\n$:See help command for more information.: "\
 		"\n"
