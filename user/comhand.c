@@ -856,33 +856,132 @@ void comhand_pcbBlock(void) {
 	return;
 }
 /*
-@Name			:
-@brief			:
+@Name			: comhand_pcbUnblock
+@brief			: prompts the user to input the name of a PCB they would like to switch to the [READY] execution state
 
 @params			: N/A
 @returns		: N/A
 */
 void comhand_pcbUnblock(void) {
+	char pcbbuf[100] = { 0 };
+	puts(
+		"\n$:Please enter the name of the PCB you would like to switch to the [UNBLOCKED] execution state:"\
+		"\n> "
+	);
+	//read buffer||give user command
+	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	sys_req(WRITE, COM1, pcbbuf, nread);
+	//capture input
+	const char* pcbName = pcbbuf;
+	//find specified PCB
+	pcb* dummy = pcb_find(pcbName);
+	//change to blocked
+	if (dummy != NULL) {
+		dummy->executionState = READY;
+		printf(
+			"\n$:PCB %s has been given the [UNBLOCKED] execution state"\
+			"\n",
+			pcbName
+		);
+	}
+	else {
+		puts(
+			"\n$:PCB not found."\
+			"\n"
+		);
+	}
+	puts(
+		"\n$:Returning to menu..."\
+		"\n"
+	);
+	//return
+	comhand_menu();
 	return;
 }
 /*
-@Name			:
-@brief			:
+@Name			: comhand_pcbSuspend
+@brief			: prompts the user to input the name of a PCB they would like to switch to the [SUSPENDED] dispatching state
 
 @params			: N/A
 @returns		: N/A
 */
 void comhand_pcbSuspend(void) {
+	char pcbbuf[100] = { 0 };
+	puts(
+		"\n$:Please enter the name of the PCB you would like to switch to the [SUSPENDED] dispatching state:"\
+		"\n> "
+	);
+	//read buffer||give user command
+	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	sys_req(WRITE, COM1, pcbbuf, nread);
+	//capture input
+	const char* pcbName = pcbbuf;
+	//find specified PCB
+	pcb* dummy = pcb_find(pcbName);
+	//change to blocked
+	if (dummy != NULL) {
+		dummy->dispatchingState = SUSPENDED;
+		printf(
+			"\n$:PCB %s has been given the [SUSPENDED] dispatching state"\
+			"\n",
+			pcbName
+		);
+	}
+	else {
+		puts(
+			"\n$:PCB not found."\
+			"\n"
+		);
+	}
+	puts(
+		"\n$:Returning to menu..."\
+		"\n"
+	);
+	//return
+	comhand_menu();
 	return;
 }
 /*
-@Name			:
-@brief			:
+@Name			: comhand_pcbResume
+@brief			: prompts the user to input the name of a PCB they would like to switch to the [NOT SUSPENDED] dispatching state
 
 @params			: N/A
 @returns		: N/A
 */
 void comhand_pcbResume(void) {
+	char pcbbuf[100] = { 0 };
+	puts(
+		"\n$:Please enter the name of the PCB you would like to switch to the [NOT SUSPENDED] dispatching state:"\
+		"\n> "
+	);
+	//read buffer||give user command
+	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	sys_req(WRITE, COM1, pcbbuf, nread);
+	//capture input
+	const char* pcbName = pcbbuf;
+	//find specified PCB
+	pcb* dummy = pcb_find(pcbName);
+	//change to blocked
+	if (dummy != NULL) {
+		dummy->dispatchingState = NOT_SUSPENDED;
+		printf(
+			"\n$:PCB %s has been given the [NOT SUSPENDED] dispatching state"\
+			"\n",
+			pcbName
+		);
+	}
+	else {
+		puts(
+			"\n$:PCB not found."\
+			"\n"
+		);
+	}
+	puts(
+		"\n$:Returning to menu..."\
+		"\n"
+	);
+	//return
+	comhand_menu();
 	return;
 }
 /*
