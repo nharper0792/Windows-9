@@ -216,6 +216,11 @@ void comhand_version(void) {
 	puts(
 		"\n \e[1;95m $:Version:"\
 		"\n == Windows 9 JB Edition == "\
+		"\n  _________________________"\
+		"\n /                         \\"\
+		"\n<       +-+-+-+-+-+-+       >"\
+		"\n \\_________________________/"\
+		"\n"
 		"\nVersion R2.0 \e[0m"\
 		"\n"
 	);
