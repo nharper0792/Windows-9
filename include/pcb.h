@@ -71,4 +71,6 @@ void pcb_insert(pcb* newPCB);
  */
 int pcb_remove(pcb* target);
 
+int pcb_createcheck(char* procName);
+
 #endif //WINDOWS_9_PCB_H

@@ -105,7 +105,8 @@ void init_comhand(void) {
 		//process 1010
 		*
 		*/
-
+		//checks for user input to be equal to command
+		//if command is correct, will run that command and set current process
 		if ((strcasecmp(texthelp, buf) == 0) ||			atoi(buf) == 1) {
 			curr_process = 040;
 			comhand_help();
@@ -144,32 +145,30 @@ void init_comhand(void) {
 			curr_process = 101;
 			comhand_pcbDelete();
 		}
-		if ((strcasecmp(textpcbshow, buf) == 0) || atoi(buf) == 10) {
+		if ((strcasecmp(textpcbshow, buf) == 0) ||		atoi(buf) == 10) {
 			curr_process = 107;
 			comhand_pcbShow(0);
 		}
-		if ((strcasecmp(textpcbsuspend, buf) == 0) || atoi(buf) == 11) {
+		if ((strcasecmp(textpcbsuspend, buf) == 0) ||	atoi(buf) == 11) {
 			curr_process = 104;
 			comhand_pcbSuspend();
 		}
-		if ((strcasecmp(textpcbresume, buf) == 0) || atoi(buf) == 12) {
+		if ((strcasecmp(textpcbresume, buf) == 0) ||	atoi(buf) == 12) {
 			curr_process = 105;
 			comhand_pcbUnblock();
 		}
-		if ((strcasecmp(textpcbblock, buf) == 0) || atoi(buf) == 13) {
+		if ((strcasecmp(textpcbblock, buf) == 0) ||		atoi(buf) == 13) {
 			curr_process = 102;
 			comhand_pcbBlock();
 		}
-		if ((strcasecmp(textpcbunblock, buf) == 0) || atoi(buf) == 14) {
+		if ((strcasecmp(textpcbunblock, buf) == 0) ||	atoi(buf) == 14) {
 			curr_process = 103;
 			comhand_pcbUnblock();
 		}
-		if ((strcasecmp(textpcbpriority, buf) == 0) || atoi(buf) == 15) {
+		if ((strcasecmp(textpcbpriority, buf) == 0) ||	atoi(buf) == 15) {
 			curr_process = 106;
 			comhand_pcbPriority();
 		}
-
-	
 		//displays a message to the user stating their prompt wasn't recognized
 		//only displays if the user is in the menu process, updates everytime the [ENTER KEY] is read by serial polling.
 		else if (curr_process == 000) {
@@ -707,7 +706,7 @@ void comhand_pcbCreate(void) {
 	//print name
 	printf(
 		"\n"\
-		"\n$:Creating new PCB with these parameters."\
+		"\n$:New PCB's parameters:"\
 		"\n$:Name: %s",
 		pcbName
 	);
@@ -727,7 +726,7 @@ void comhand_pcbCreate(void) {
 	for (;;) {
 		puts(
 			"\n"\
-			"\n$:Confirm creation of PCB with these settings?"\
+			"\n$:Confirm creation of PCB with these parameters?"\
 			"\n$:	yes"\
 			"\n$:	no"\
 			"\n> "
@@ -742,16 +741,47 @@ void comhand_pcbCreate(void) {
 				pcbClass, 
 				pcbPriority
 			);
-			//insert pcb
-			pcb_insert(dummy);
-			//confirmation statement
-			printf(
-				"\n"\
-				"\n$:Creation of PCB %s was successful:"\
-				"\n",
-				dummy->name
-			);
-			break;
+			
+			//confirmation statements
+			//success case
+			if (pcb_createcheck(pcbName) == 1) {
+				//insert pcb
+				pcb_insert(dummy);
+				printf(
+					"\n"\
+					"\n$:Creation of PCB %s was successful:"\
+					"\n",
+					dummy->name
+				);
+				break;
+			}
+			else if (pcb_createcheck(pcbName) == -1) {
+				puts(
+					"\n"\
+					"\n$:Creation of PCB was unsuccessful:"\
+					"\n$:Error: inputted name already exists:"\
+					"\n"
+				);
+				break;
+			}
+			else if (pcb_createcheck(pcbName) == -2) {
+				puts(
+					"\n"\
+					"\n$:Creation of PCB was unsuccessful:"\
+					"\n$:Error: inputted PCB name is NULL:"\
+					"\n"
+				);
+				break;
+			}
+			else if (pcb_createcheck(pcbName) == -3) {
+				puts(
+					"\n"\
+					"\n$:Creation of PCB was unsuccessful:"\
+					"\n$:Error: inputted PCB name is longer than 15 characters:"\
+					"\n"
+				);
+				break;
+			}
 		}
 		//no case
 		else if (strcasecmp(noprompt, pcbbuf) == 0) {
