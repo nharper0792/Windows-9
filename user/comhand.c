@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <pcb.h>
+#include <linked-list.h>
 
 /*
 Variable: curr_process
@@ -93,7 +94,6 @@ void init_comhand(void) {
 		char textpcbshow[]				= "PCB SHOW\0";
 		//show PCB
 		//process 107
-		/*
 		char textpcbshowready[]			= "PCB SHOW READY\0";
 		//show PCBs in ready state
 		//process 108
@@ -103,71 +103,85 @@ void init_comhand(void) {
 		char textpcbshowall[]			= "PCB SHOW ALL\0";
 		//show all PCBs
 		//process 1010
+		/*
+		
 		*
 		*/
 		//checks for user input to be equal to command
 		//if command is correct, will run that command and set current process
-		if ((strcasecmp(texthelp, buf) == 0) ||			atoi(buf) == 1) {
+		if ((strcasecmp(texthelp, buf) == 0) ||				atoi(buf) == 1) {
 			curr_process = 040;
 			comhand_help();
 		}
-		if ((strcasecmp(textshutdown, buf) == 0) ||		atoi(buf) == 2) {
+		if ((strcasecmp(textshutdown, buf) == 0) ||			atoi(buf) == 2) {
 			curr_process = 020;
 			comhand_shutdown();
 			if (curr_process == 021)
 				return;
 		}
-		if ((strcasecmp(textversion, buf) == 0) ||		atoi(buf) == 3) {
+		if ((strcasecmp(textversion, buf) == 0) ||			atoi(buf) == 3) {
 			curr_process = 010;
 			comhand_version();
 		}		
-		if ((strcasecmp(textrtc, buf) == 0) ||			atoi(buf) == 4) {
+		if ((strcasecmp(textrtc, buf) == 0) ||				atoi(buf) == 4) {
 			curr_process = 050;
 			comhand_rtc();
 		}
-		if ((strcasecmp(textsettime, buf) == 0) ||		atoi(buf) == 5) {
+		if ((strcasecmp(textsettime, buf) == 0) ||			atoi(buf) == 5) {
 			curr_process = 060;
 			comhand_setTime();
 		}
-		if ((strcasecmp(textsetdate, buf) == 0) ||		atoi(buf) == 6) {
+		if ((strcasecmp(textsetdate, buf) == 0) ||			atoi(buf) == 6) {
 			curr_process = 070;
 			comhand_setDate();
 		}
-		if ((strcasecmp(textjoeburrow, buf) == 0) ||	atoi(buf) == 7) {
+		if ((strcasecmp(textjoeburrow, buf) == 0) ||		atoi(buf) == 7) {
 			curr_process = 333;
 			comhand_joeburrow();
 		}
-		if ((strcasecmp(textpcbcreate, buf) == 0) ||	atoi(buf) == 8) {
+		if ((strcasecmp(textpcbcreate, buf) == 0) ||		atoi(buf) == 8) {
 			curr_process = 100;
 			comhand_pcbCreate();
 		}
-		if ((strcasecmp(textpcbdelete, buf) == 0) ||	atoi(buf) == 9) {
+		if ((strcasecmp(textpcbdelete, buf) == 0) ||		atoi(buf) == 9) {
 			curr_process = 101;
 			comhand_pcbDelete();
 		}
-		if ((strcasecmp(textpcbshow, buf) == 0) ||		atoi(buf) == 10) {
-			curr_process = 107;
-			comhand_pcbShow(0);
-		}
-		if ((strcasecmp(textpcbsuspend, buf) == 0) ||	atoi(buf) == 11) {
+		if ((strcasecmp(textpcbsuspend, buf) == 0) ||		atoi(buf) == 10) {
 			curr_process = 104;
 			comhand_pcbSuspend();
 		}
-		if ((strcasecmp(textpcbresume, buf) == 0) ||	atoi(buf) == 12) {
+		if ((strcasecmp(textpcbresume, buf) == 0) ||		atoi(buf) == 11) {
 			curr_process = 105;
 			comhand_pcbUnblock();
 		}
-		if ((strcasecmp(textpcbblock, buf) == 0) ||		atoi(buf) == 13) {
+		if ((strcasecmp(textpcbblock, buf) == 0) ||			atoi(buf) == 12) {
 			curr_process = 102;
 			comhand_pcbBlock();
 		}
-		if ((strcasecmp(textpcbunblock, buf) == 0) ||	atoi(buf) == 14) {
+		if ((strcasecmp(textpcbunblock, buf) == 0) ||		atoi(buf) == 13) {
 			curr_process = 103;
 			comhand_pcbUnblock();
 		}
-		if ((strcasecmp(textpcbpriority, buf) == 0) ||	atoi(buf) == 15) {
+		if ((strcasecmp(textpcbpriority, buf) == 0) ||		atoi(buf) == 14) {
 			curr_process = 106;
 			comhand_pcbPriority();
+		}
+		if ((strcasecmp(textpcbshow, buf) == 0) ||			atoi(buf) == 15) {
+			curr_process = 107;
+			comhand_pcbShow(0);
+		}
+		if ((strcasecmp(textpcbshowready, buf) == 0) ||		atoi(buf) == 16) {
+			curr_process = 108;
+			comhand_pcbShow(1);
+		}
+		if ((strcasecmp(textpcbshowblocked, buf) == 0) ||	atoi(buf) == 17) {
+			curr_process = 109;
+			comhand_pcbShow(2);
+		}
+		if ((strcasecmp(textpcbshowall, buf) == 0) ||		atoi(buf) == 18) {
+			curr_process = 1010;
+			comhand_pcbShow(3);
 		}
 		//displays a message to the user stating their prompt wasn't recognized
 		//only displays if the user is in the menu process, updates everytime the [ENTER KEY] is read by serial polling.
@@ -1106,10 +1120,13 @@ void comhand_pcbPriority(void) {
 		);
 	}
 
-	//free(pcbName);
+	puts(
+		"\n$:Returning to menu..."\
+		"\n"
+	);
+	//return
 	comhand_menu();
 	return;
-
 }
 /*
 @Name			: comhand_pcbShow
@@ -1174,18 +1191,40 @@ void comhand_pcbShow(int entry) {
 	}
 	//show ready PCBs
 	if (entry == 1) {
-
+		if (1) {
+			puts(
+				"\n"\
+				"\n$:No PCBs in [READY] state."\
+				"\n"
+			);
+		}
 	}
+	//TODO: finish show PCB commands
 	//show blocked PCBs
 	if (entry == 2) {
-
+		if (1) {
+			puts(
+				"\n"\
+				"\n$:No PCBs in [BLOCKED] state."\
+				"\n"
+			);
+		}
 	}
 	//show all PCBs
 	if (entry == 3) {
-		for (;;) {
-			
+		if (1) {
+			puts(
+				"\n"\
+				"\n$:No PCBs found."\
+				"\n"
+			);
 		}
 	}
+	puts(
+		"\n$:Returning to menu..."\
+		"\n"
+	);
+	//return
 	comhand_menu();
 	return;
 }
@@ -1225,18 +1264,25 @@ void comhand_help(void) {
 		"\n$:		Enters PCB creation mode, where parameters are inputted to create a new PCB."\
 		"\n$:	9) pcb delete"\
 		"\n$:		Enters PCB deletion mode, where parameters are inputted to delete an existing PCB."\
-		"\n$:	10) pcb show"\
-		"\n$:		Will show the specific PCB that the user specifies."\
-		"\n$:	11) pcb suspend"\
+		"\n$:	10) pcb suspend"\
 		"\n$:		Switches the state of a specific PCB to [SUSPENDED] dispatching state."\
-		"\n$:	12) pcb resume"\
+		"\n$:	11) pcb resume"\
 		"\n$:		Switches the state of a specific PCB to [NOT SUSPENDED] dispatching state."\
-		"\n$:	13) pcb block"\
+		"\n$:	12) pcb block"\
 		"\n$:		Switches the state of a specific PCB to [BLOCKED] execution state."\
-		"\n$:	14) pcb unblock"\
+		"\n$:	13) pcb unblock"\
 		"\n$:		Switches the state of a specific PCB to [UNBLOCKED] execution state."\
-		"\n$:	15) pcb priority"\
+		"\n$:	14) pcb priority"\
 		"\n$:		Switches the priority of a specific PCB."\
+		"\n$:	15) pcb show"\
+		"\n$:		Will show the specific PCB that the user specifies."\
+		"\n$:	16) pcb show ready"\
+		"\n$:		Will show all PCBs that are ready."\
+		"\n$:	17) pcb show blocked"\
+		"\n$:		Will show all PCBs that are blocked."\
+		"\n$:	18) pcb show all"\
+		"\n$:		Will show all PCBs that exist."\
+		"\n$:"\
 		"\n$:"\
 		"\n$:  \n \e[0m"
 	);
@@ -1255,12 +1301,15 @@ void comhand_menu(void) {
 		"\n$:	7) joe burrow"\
 		"\n$:	8) pcb create"\
 		"\n$:	9) pcb delete"\
-		"\n$:	10) pcb show"\
-		"\n$:	11) pcb suspend"\
-		"\n$:	12) pcb resume"\
-		"\n$:	13) pcb block "\
-		"\n$:	14) pcb unblock "\
-		"\n$:	15) pcb priority "\
+		"\n$:	10) pcb suspend"\
+		"\n$:	11) pcb resume"\
+		"\n$:	12) pcb block "\
+		"\n$:	13) pcb unblock "\
+		"\n$:	14) pcb priority "\
+		"\n$:	15) pcb show"\
+		"\n$:	16) pcb show ready"\
+		"\n$:	17) pcb show blocked"\
+		"\n$:	18) pcb show all"\
 		"\n$:"\
 		"\n$:See help command for more information.: "\
 		"\n"

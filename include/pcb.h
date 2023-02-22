@@ -4,8 +4,8 @@
 #include <linked-list.h>
 #ifndef WINDOWS_9_PCB_H
 #define WINDOWS_9_PCB_H
-
 #define MAX_NAME_LENGTH 15
+
 enum classes{
     USER = 0,
     SYSTEM = 1

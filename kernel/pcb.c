@@ -4,12 +4,14 @@
 #include <memory.h>
 #include <stdio.h>
 
-void addToReady(list* listPtr, node* nodePtr);
-int getPriority(node* nodePtr);
 list* ready;
 list* blocked;
 list* suspendedReady;
 list* suspendedBlocked;
+
+void addToReady(list* listPtr, node* nodePtr);
+int getPriority(node* nodePtr);
+
 pcb* pcb_allocate(void){
     pcb* newPCB = (pcb*)sys_alloc_mem(sizeof(pcb));
     newPCB->name = (char*)sys_alloc_mem(MAX_NAME_LENGTH+1);
