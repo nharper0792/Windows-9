@@ -838,7 +838,9 @@ void comhand_pcbBlock(void) {
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
 	if (dummy != NULL) {
+        pcb_remove(dummy);
 		dummy->executionState = BLOCKED;
+        pcb_insert(dummy);
 		printf(
 			"\n$:PCB %s has been given the [BLOCKED] execution state"\
 			"\n",
@@ -885,7 +887,9 @@ void comhand_pcbUnblock(void) {
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
 	if (dummy != NULL) {
+        pcb_remove(dummy);
 		dummy->executionState = READY;
+        pcb_insert(dummy);
 		printf(
 			"\n$:PCB %s has been given the [UNBLOCKED] execution state"\
 			"\n",
@@ -932,7 +936,9 @@ void comhand_pcbSuspend(void) {
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
 	if (dummy != NULL) {
+        pcb_remove(dummy);
 		dummy->dispatchingState = SUSPENDED;
+        pcb_insert(dummy);
 		printf(
 			"\n$:PCB %s has been given the [SUSPENDED] dispatching state"\
 			"\n",
@@ -979,7 +985,9 @@ void comhand_pcbResume(void) {
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
 	if (dummy != NULL) {
+        pcb_remove(dummy);
 		dummy->dispatchingState = NOT_SUSPENDED;
+        pcb_insert(dummy);
 		printf(
 			"\n$:PCB %s has been given the [NOT SUSPENDED] dispatching state"\
 			"\n",
@@ -1135,19 +1143,13 @@ void comhand_pcbShow(int entry) {
 			);
 		}
 		else {
-			int index = 0;
-			pcb* currPtr = (pcb*)getData(get(getList(1), index));
-			while (currPtr != NULL) {
-				comhand_pcbShowHelper(currPtr);
-				index++;
-				currPtr = (pcb*)getData(get(getList(1), index));
-			}
+			comhand_printPcbList(getList(1));
 		}
 	}
 	//show blocked PCBs
 	if (entry == 2) {
 		//fail case
-		if (getList(1) == NULL) {
+		if (getList(2) == NULL) {
 			puts(
 				"\n"\
 				"\n$:No PCBs in [BLOCKED] state."\
@@ -1155,25 +1157,13 @@ void comhand_pcbShow(int entry) {
 			);
 		}
 		else {
-			int index = 0;
-			pcb* currPtr = (pcb*)getData(get(getList(3), index));
-			while (currPtr != NULL) {
-				comhand_pcbShowHelper(currPtr);
-				index++;
-
-				currPtr = (pcb*)getData(get(getList(3), index));
-			}
+			comhand_printPcbList(getList(2));
 		}
 	}
 	//show all PCBs
 	if (entry == 3) {
         for( int i = 1; i<5; i++){
-            list* li = getList(i);
-            if(li!=NULL){
-                for(node* currPtr = getHead(li);currPtr!=NULL;currPtr = currPtr->nextPtr){
-                    comhand_pcbShowHelper((pcb*)getData(currPtr));
-                }
-            }
+            comhand_printPcbList(getList(i));
         }
 		puts(
 			"\n$:All PCBs are shown above:"\
@@ -1188,6 +1178,13 @@ void comhand_pcbShow(int entry) {
 	//return
 	comhand_menu();
 	return;
+}
+void comhand_printPcbList(list* li){
+    if(li!=NULL){
+        for(node* currPtr = getHead(li);currPtr!=NULL;currPtr = currPtr->nextPtr){
+            comhand_pcbShowHelper((pcb*)getData(currPtr));
+        }
+    }
 }
 /*
 @Name			: comhand_pcbShowHelper
