@@ -1143,48 +1143,21 @@ void comhand_pcbShow(int entry) {
 			while (currPtr != NULL) {
 				comhand_pcbShowHelper(currPtr);
 				index++;
+
 				currPtr = (pcb*)getData(get(getList(3), index));
 			}
 		}
 	}
 	//show all PCBs
 	if (entry == 3) {
-		if (getList(1) != NULL) {
-			int index = 0;
-			pcb* currPtr = (pcb*)getData(get(getList(1), index));
-			while (currPtr != NULL) {
-				comhand_pcbShowHelper(currPtr);
-				index++;
-				currPtr = (pcb*)getData(get(getList(1), index));
-			}
-		}
-		if (getList(2) != NULL) {
-			int index = 0;
-			pcb* currPtr = (pcb*)getData(get(getList(2), index));
-			while (currPtr != NULL) {
-				comhand_pcbShowHelper(currPtr);
-				index++;
-				currPtr = (pcb*)getData(get(getList(2), index));
-			}
-		}
-		if (getList(3) != NULL) {
-			int index = 0;
-			pcb* currPtr = (pcb*)getData(get(getList(3), index));
-			while (currPtr != NULL) {
-				comhand_pcbShowHelper(currPtr);
-				index++;
-				currPtr = (pcb*)getData(get(getList(3), index));
-			}
-		}
-		if (getList(4) != NULL) {
-			int index = 0;
-			pcb* currPtr = (pcb*)getData(get(getList(4), index));
-			while (currPtr != NULL) {
-				comhand_pcbShowHelper(currPtr);
-				index++;
-				currPtr = (pcb*)getData(get(getList(4), index));
-			}
-		}
+        for( int i = 1; i<5; i++){
+            list* li = getList(i);
+            if(li!=NULL){
+                for(node* currPtr = getHead(li);currPtr!=NULL;currPtr = currPtr->nextPtr){
+                    comhand_pcbShowHelper((pcb*)getData(currPtr));
+                }
+            }
+        }
 		puts(
 			"\n$:All PCBs are shown above:"\
 			"\n$:If you see no PCBs, no PCBs currently exist."\
