@@ -39,7 +39,7 @@ int strcmp(const char *s1, const char *s2)
 	return (*(unsigned char *)s1 - *(unsigned char *)s2);
 }
 int strcasecmp(char* s1, char* s2){
-    while ((*s1) && (*toupper(s1) == *toupper(s2))) {
+    while ((*s1) && (toupper(*s1) == toupper(*s2))) {
         ++s1;
         ++s2;
     }

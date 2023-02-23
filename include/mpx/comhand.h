@@ -147,4 +147,6 @@ void comhand_pcbShow(int entry);
 @returns		: N/A
 */
 void comhand_pcbShowHelper(pcb* target);
+
+void comhand_printPcbList(list* li);
 #endif

@@ -14,19 +14,15 @@ int isdigit(int c){
 }
 
 //multi-char input
-char* toupper(char* string) {
-	char* newString = sys_alloc_mem(100);
+int toupper(char c) {
 	//index variable
-	int i = 0;
 	//until hitting null-termination symbol, cycle through the indexes of the string
 	//for each index, if a lowercase char, will make uppercase, then put in new string.
-	while (string[i] != '\0') {
-		if (string[i] >= 97 && string[i] <= 122)
-			newString[i] = (((string[i]) - 32));
+
+		if (c >= 97 && c <= 122)
+			return c-32;
 		else
-			newString[i] = string[i];
-		i++;
-	}
-	return newString;
+			return c;
+
 		
 }

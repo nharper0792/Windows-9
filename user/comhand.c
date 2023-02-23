@@ -161,7 +161,7 @@ void comhand_version(void) {
 		"\n<       +-+-+-+-+-+-+       >"\
 		"\n \\_________________________/"\
 		"\n"
-		"\nVersion R2.0 \e[0m"\
+		"\nVersion R2.0 2/23/2023 \e[0m"\
 		"\n"
 	);
 	comhand_menu();
@@ -838,7 +838,9 @@ void comhand_pcbBlock(void) {
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
 	if (dummy != NULL) {
+        pcb_remove(dummy);
 		dummy->executionState = BLOCKED;
+        pcb_insert(dummy);
 		printf(
 			"\n$:PCB %s has been given the [BLOCKED] execution state"\
 			"\n",
@@ -885,7 +887,9 @@ void comhand_pcbUnblock(void) {
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
 	if (dummy != NULL) {
+        pcb_remove(dummy);
 		dummy->executionState = READY;
+        pcb_insert(dummy);
 		printf(
 			"\n$:PCB %s has been given the [UNBLOCKED] execution state"\
 			"\n",
@@ -932,7 +936,9 @@ void comhand_pcbSuspend(void) {
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
 	if (dummy != NULL) {
+        pcb_remove(dummy);
 		dummy->dispatchingState = SUSPENDED;
+        pcb_insert(dummy);
 		printf(
 			"\n$:PCB %s has been given the [SUSPENDED] dispatching state"\
 			"\n",
@@ -979,7 +985,9 @@ void comhand_pcbResume(void) {
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
 	if (dummy != NULL) {
+        pcb_remove(dummy);
 		dummy->dispatchingState = NOT_SUSPENDED;
+        pcb_insert(dummy);
 		printf(
 			"\n$:PCB %s has been given the [NOT SUSPENDED] dispatching state"\
 			"\n",
@@ -1135,29 +1143,8 @@ void comhand_pcbShow(int entry) {
 			);
 		}
 		else {
-			//ready PCBs
-			list* li = getList(1);
-			if (li != NULL) {
-				for (node* currPtr = getHead(li); currPtr != NULL; currPtr = currPtr->nextPtr) {
-					comhand_pcbShowHelper((pcb*)getData(currPtr));
-				}
-			}
-			int mem_free = sys_free_mem(li);
-			(void)mem_free;
-			//suspended ready PCBs
-			list* li2 = getList(3);
-			if (li2 != NULL) {
-				for (node* currPtr = getHead(li2); currPtr != NULL; currPtr = currPtr->nextPtr) {
-					comhand_pcbShowHelper((pcb*)getData(currPtr));
-				}
-			}
-			puts(
-				"\n$:All ready PCBs are shown above:"\
-				"\n$:If you see no PCBs, no ready PCBs currently exist."\
-				"\n"
-			);
-			mem_free = sys_free_mem(li2);
-			(void)mem_free;
+			comhand_printPcbList(getList(1));
+            comhand_printPcbList(getList(3));
 		}
 	}
 	//show blocked PCBs
@@ -1171,43 +1158,14 @@ void comhand_pcbShow(int entry) {
 			);
 		}
 		else {
-			//blocked PCBs
-			list* li = getList(2);
-			if (li != NULL) {
-				for (node* currPtr = getHead(li); currPtr != NULL; currPtr = currPtr->nextPtr) {
-					comhand_pcbShowHelper((pcb*)getData(currPtr));
-				}
-			}
-			int mem_free = sys_free_mem(li);
-			(void)mem_free;
-			//blocked suspended PCBs
-			list* li2 = getList(4);
-			if (li2 != NULL) {
-				for (node* currPtr = getHead(li2); currPtr != NULL; currPtr = currPtr->nextPtr) {
-					comhand_pcbShowHelper((pcb*)getData(currPtr));
-				}
-			}
-			puts(
-				"\n$:All blocked PCBs are shown above:"\
-				"\n$:If you see no PCBs, no blocked PCBs currently exist:"\
-				"\n"
-			);
-			mem_free = sys_free_mem(li2);
-			(void)mem_free;
+			comhand_printPcbList(getList(2));
+            comhand_printPcbList(getList(4));
 		}
-
 	}
 	//show all PCBs
 	if (entry == 3) {
-        for(int i = 1; i<5; i++){
-            list* li = getList(i);
-            if(li!=NULL){
-                for(node* currPtr = getHead(li);currPtr!=NULL;currPtr = currPtr->nextPtr){
-                    comhand_pcbShowHelper((pcb*)getData(currPtr));
-                }
-            }
-			int mem_free = sys_free_mem(li);
-			(void)mem_free;
+        for( int i = 1; i<5; i++){
+            comhand_printPcbList(getList(i));
         }
 		puts(
 			"\n$:All PCBs are shown above:"\
@@ -1222,6 +1180,13 @@ void comhand_pcbShow(int entry) {
 	//return
 	comhand_menu();
 	return;
+}
+void comhand_printPcbList(list* li){
+    if(li!=NULL){
+        for(node* currPtr = getHead(li);currPtr!=NULL;currPtr = currPtr->nextPtr){
+            comhand_pcbShowHelper((pcb*)getData(currPtr));
+        }
+    }
 }
 /*
 @Name			: comhand_pcbShowHelper
