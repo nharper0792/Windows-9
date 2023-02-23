@@ -935,7 +935,7 @@ void comhand_pcbSuspend(void) {
 	//find specified PCB
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
-	if (dummy != NULL) {
+	if (dummy != NULL&& dummy->class!=1) {
         pcb_remove(dummy);
 		dummy->dispatchingState = SUSPENDED;
         pcb_insert(dummy);
@@ -945,11 +945,16 @@ void comhand_pcbSuspend(void) {
 			pcbName
 		);
 	}
-	else {
+	else if(dummy->class!=1){
+
 		puts(
 			"\n$:PCB not found."\
 			"\n"
 		);
+	}else{
+		puts(
+			"\n$:PCB is a system process suspension cancelled"\
+			"\n");
 	}
 	puts(
 		"\n$:Returning to menu..."\
