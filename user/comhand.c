@@ -93,7 +93,7 @@ void init_comhand(void) {
 		}
 		if ((strcasecmp("PCB RESUME\0", buf) == 0) || atoi(buf) == 11) {
 			curr_process = 105;
-			comhand_pcbUnblock();
+			comhand_pcbResume();
 		}
 		if ((strcasecmp("PCB BLOCK\0", buf) == 0) || atoi(buf) == 12) {
 			curr_process = 102;
