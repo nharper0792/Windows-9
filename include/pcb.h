@@ -72,7 +72,11 @@ void pcb_insert(pcb* newPCB);
 int pcb_remove(pcb* target);
 
 int pcb_createcheck(char* procName);
-
+/**
+*  @brief Returns one of the lists specified by the function parameter.
+*  @param entry the list to return
+*  @return the list specified or NULL if out of bounds
+*/
 list* getList(int entry);
 
 
