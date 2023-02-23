@@ -597,11 +597,8 @@ void comhand_pcbCreate(void) {
 		//read buffer||give user command
 		nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 		sys_req(WRITE, COM1, pcbbuf, nread);
-		//capture pcb class
-		char pcbuserprompt[] = "USER\0";
-		char pcbsystemprompt[] = "SYSTEM\0";
 		//user case
-		if (strcasecmp(pcbuserprompt, pcbbuf) == 0) {
+		if (strcasecmp("USER\0", pcbbuf) == 0) {
 			puts(
 				"\n"\
 				"\n$:Your new PCB has been given the [user] class"\
@@ -611,7 +608,7 @@ void comhand_pcbCreate(void) {
 			break;
 		}
 		//system case
-		else if (strcasecmp(pcbsystemprompt, pcbbuf) == 0) {
+		else if (strcasecmp("SYSTEM\0", pcbbuf) == 0) {
 			puts(
 				"\n$:Your new PCB has been given the [system] class"\
 				"\n"
@@ -759,7 +756,8 @@ void comhand_pcbCreate(void) {
 		"\n$:Returning to menu...:"\
 		"\n"
 	);
-	//free(pcbName);
+	int mem_free = sys_free_mem(pcbName);
+	(void)mem_free;
 	comhand_menu();
 	return;
 }
@@ -810,6 +808,9 @@ void comhand_pcbDelete(void) {
 			"\n$:Returning to menu...:"\
 			"\n"
 		);
+		//return
+		int mem_free = sys_free_mem(pcbName);
+		(void)mem_free;
 		comhand_menu();
 		return;
 	
@@ -831,7 +832,8 @@ void comhand_pcbBlock(void) {
 	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 	sys_req(WRITE, COM1, pcbbuf, nread);
 	//capture input
-	const char* pcbName = pcbbuf;
+	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
+	strcpy(pcbName, pcbbuf);
 	//find specified PCB
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
@@ -854,6 +856,9 @@ void comhand_pcbBlock(void) {
 		"\n"
 	);
 	//return
+	pcb_free(dummy);
+	int mem_free = sys_free_mem(pcbName);
+	(void)mem_free;
 	comhand_menu();
 	return;
 }
@@ -874,7 +879,8 @@ void comhand_pcbUnblock(void) {
 	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 	sys_req(WRITE, COM1, pcbbuf, nread);
 	//capture input
-	const char* pcbName = pcbbuf;
+	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
+	strcpy(pcbName, pcbbuf);
 	//find specified PCB
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
@@ -897,6 +903,9 @@ void comhand_pcbUnblock(void) {
 		"\n"
 	);
 	//return
+	pcb_free(dummy);
+	int mem_free = sys_free_mem(pcbName);
+	(void)mem_free;
 	comhand_menu();
 	return;
 }
@@ -917,7 +926,8 @@ void comhand_pcbSuspend(void) {
 	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 	sys_req(WRITE, COM1, pcbbuf, nread);
 	//capture input
-	const char* pcbName = pcbbuf;
+	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
+	strcpy(pcbName, pcbbuf);
 	//find specified PCB
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
@@ -940,6 +950,9 @@ void comhand_pcbSuspend(void) {
 		"\n"
 	);
 	//return
+	pcb_free(dummy);
+	int mem_free = sys_free_mem(pcbName);
+	(void)mem_free;
 	comhand_menu();
 	return;
 }
@@ -960,7 +973,8 @@ void comhand_pcbResume(void) {
 	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 	sys_req(WRITE, COM1, pcbbuf, nread);
 	//capture input
-	const char* pcbName = pcbbuf;
+	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
+	strcpy(pcbName, pcbbuf);
 	//find specified PCB
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
@@ -983,6 +997,7 @@ void comhand_pcbResume(void) {
 		"\n"
 	);
 	//return
+	pcb_free(dummy);
 	comhand_menu();
 	return;
 }
@@ -1066,6 +1081,8 @@ void comhand_pcbPriority(void) {
 		"\n"
 	);
 	//return
+	int mem_free = sys_free_mem(pcbName);
+	(void)mem_free;
 	comhand_menu();
 	return;
 }
