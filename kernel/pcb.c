@@ -136,3 +136,15 @@ int pcb_createcheck(char* procName)
 
     return 1;
 }
+
+list* getList(int entry) {
+    if (entry == 1)
+        return ready;
+    if (entry == 2)
+        return blocked;
+    if (entry == 3)
+        return suspendedReady;
+    if (entry == 4)
+        return suspendedBlocked;
+    return NULL;
+}

@@ -2,6 +2,7 @@
 #define MPX_COMHAND_H
 
 #include <stddef.h>
+#include <pcb.h>
 /*
 @Name			: init_comhand
 @brief			: Initiates and runs the command handler loop
@@ -138,4 +139,12 @@ void comhand_pcbPriority(void);
 @returns		: N/A
 */
 void comhand_pcbShow(int entry);
+/*
+@Name			: comhand_pcbShowHelper
+@brief			: See comhand.c for more information
+
+@params			: target The PCB to print the data of
+@returns		: N/A
+*/
+void comhand_pcbShowHelper(pcb* target);
 #endif

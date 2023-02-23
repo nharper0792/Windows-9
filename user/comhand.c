@@ -7,7 +7,6 @@
 #include <rtc.h>
 #include <stdio.h>
 #include <ctype.h>
-#include <pcb.h>
 #include <linked-list.h>
 
 /*
@@ -48,138 +47,79 @@ void init_comhand(void) {
 		//	SMALL TEXT GROUPS
 		//		This area contains the command prompts that are simple text.
 		//==================================================================
-
-		char textversion[]				= "VERSION\0";
-		//version
-		//process 010
-		char textshutdown[]				= "SHUTDOWN\0";
-		//shutdown
-		//process 020
-		char texthelp[]					= "HELP\0";
-		//rtc
-		//process 040
-		char textrtc[]					= "RTC\0";
-		//help
-		//process 050
-		char textsettime[]				= "TIMESET\0";
-		//time set
-		//process 060
-		char textsetdate[]				= "DATESET\0";
-		//date set
-		//process 070
-		char textjoeburrow[]			= "JOE BURROW\0";
-		//joe burrow
-		//process 333
-		char textpcbcreate[]			= "PCB CREATE\0";
-		//create PCB
-		//process 100
-		char textpcbdelete[]			= "PCB DELETE\0";
-		//delete PCB
-		//process 101
-		char textpcbblock[]				= "PCB BLOCK\0";
-		//block PCB
-		//process 102
-		char textpcbunblock[]			= "PCB UNBLOCK\0";
-		//unblock PCB
-		//process 103
-		char textpcbsuspend[]			= "PCB SUSPEND\0";
-		//suspend PCB
-		//process 104
-		char textpcbresume[]			= "PCB RESUME\0";
-		//resume PCB
-		//process 105
-		char textpcbpriority[]			= "PCB PRIORITY\0";
-		//priority PCB set
-		//process 106
-		char textpcbshow[]				= "PCB SHOW\0";
-		//show PCB
-		//process 107
-		char textpcbshowready[]			= "PCB SHOW READY\0";
-		//show PCBs in ready state
-		//process 108
-		char textpcbshowblocked[]		= "PCB SHOW BLOCKED\0";
-		//show PCBs in blocked state
-		//process 109
-		char textpcbshowall[]			= "PCB SHOW ALL\0";
-		//show all PCBs
-		//process 1010
-		/*
-		
-		*
-		*/
 		//checks for user input to be equal to command
 		//if command is correct, will run that command and set current process
-		if ((strcasecmp(texthelp, buf) == 0) ||				atoi(buf) == 1) {
+		if ((strcasecmp("HELP\0", buf) == 0) || atoi(buf) == 1) {
 			curr_process = 040;
 			comhand_help();
 		}
-		if ((strcasecmp(textshutdown, buf) == 0) ||			atoi(buf) == 2) {
+		if ((strcasecmp("SHUTDOWN\0", buf) == 0) || atoi(buf) == 2) {
 			curr_process = 020;
 			comhand_shutdown();
 			if (curr_process == 021)
 				return;
 		}
-		if ((strcasecmp(textversion, buf) == 0) ||			atoi(buf) == 3) {
+		if ((strcasecmp("VERSION\0", buf) == 0) || atoi(buf) == 3) {
 			curr_process = 010;
 			comhand_version();
 		}		
-		if ((strcasecmp(textrtc, buf) == 0) ||				atoi(buf) == 4) {
+		if ((strcasecmp("RTC\0", buf) == 0) || atoi(buf) == 4) {
 			curr_process = 050;
 			comhand_rtc();
 		}
-		if ((strcasecmp(textsettime, buf) == 0) ||			atoi(buf) == 5) {
+		if ((strcasecmp("TIMESET\0", buf) == 0) || atoi(buf) == 5) {
 			curr_process = 060;
 			comhand_setTime();
 		}
-		if ((strcasecmp(textsetdate, buf) == 0) ||			atoi(buf) == 6) {
+		if ((strcasecmp("DATESET\0", buf) == 0) || atoi(buf) == 6) {
 			curr_process = 070;
 			comhand_setDate();
 		}
-		if ((strcasecmp(textjoeburrow, buf) == 0) ||		atoi(buf) == 7) {
+		if ((strcasecmp("JOE BURROW\0", buf) == 0) || atoi(buf) == 7) {
 			curr_process = 333;
 			comhand_joeburrow();
 		}
-		if ((strcasecmp(textpcbcreate, buf) == 0) ||		atoi(buf) == 8) {
+		if ((strcasecmp("PCB CREATE\0", buf) == 0) || atoi(buf) == 8) {
 			curr_process = 100;
 			comhand_pcbCreate();
 		}
-		if ((strcasecmp(textpcbdelete, buf) == 0) ||		atoi(buf) == 9) {
+		if ((strcasecmp("PCB DELETE\0", buf) == 0) || atoi(buf) == 9) {
 			curr_process = 101;
 			comhand_pcbDelete();
 		}
-		if ((strcasecmp(textpcbsuspend, buf) == 0) ||		atoi(buf) == 10) {
+		if ((strcasecmp("PCB SUSPEND\0", buf) == 0) || atoi(buf) == 10) {
 			curr_process = 104;
 			comhand_pcbSuspend();
 		}
-		if ((strcasecmp(textpcbresume, buf) == 0) ||		atoi(buf) == 11) {
+		if ((strcasecmp("PCB RESUME\0", buf) == 0) || atoi(buf) == 11) {
 			curr_process = 105;
 			comhand_pcbUnblock();
 		}
-		if ((strcasecmp(textpcbblock, buf) == 0) ||			atoi(buf) == 12) {
+		if ((strcasecmp("PCB BLOCK\0", buf) == 0) || atoi(buf) == 12) {
 			curr_process = 102;
 			comhand_pcbBlock();
 		}
-		if ((strcasecmp(textpcbunblock, buf) == 0) ||		atoi(buf) == 13) {
+		if ((strcasecmp("PCB UNBLOCK\0", buf) == 0) || atoi(buf) == 13) {
 			curr_process = 103;
 			comhand_pcbUnblock();
 		}
-		if ((strcasecmp(textpcbpriority, buf) == 0) ||		atoi(buf) == 14) {
+		if ((strcasecmp("PCB PRIORITY\0", buf) == 0) || atoi(buf) == 14) {
 			curr_process = 106;
 			comhand_pcbPriority();
 		}
-		if ((strcasecmp(textpcbshow, buf) == 0) ||			atoi(buf) == 15) {
+		if ((strcasecmp("PCB SHOW\0", buf) == 0) || atoi(buf) == 15) {
 			curr_process = 107;
 			comhand_pcbShow(0);
 		}
-		if ((strcasecmp(textpcbshowready, buf) == 0) ||		atoi(buf) == 16) {
+		if ((strcasecmp("PCB SHOW READY\0", buf) == 0) || atoi(buf) == 16) {
 			curr_process = 108;
 			comhand_pcbShow(1);
 		}
-		if ((strcasecmp(textpcbshowblocked, buf) == 0) ||	atoi(buf) == 17) {
+		if ((strcasecmp("PCB SHOW BLOCKED\0", buf) == 0) || atoi(buf) == 17) {
 			curr_process = 109;
 			comhand_pcbShow(2);
 		}
-		if ((strcasecmp(textpcbshowall, buf) == 0) ||		atoi(buf) == 18) {
+		if ((strcasecmp("PCB SHOW ALL\0", buf) == 0) || atoi(buf) == 18) {
 			curr_process = 1010;
 			comhand_pcbShow(3);
 		}
@@ -704,9 +644,7 @@ void comhand_pcbCreate(void) {
 		nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 		sys_req(WRITE, COM1, pcbbuf, nread);
 		//capture pcb name
-		if (strlen(pcbbuf) == 1 &&
-			(isdigit(pcbbuf[0]) >= 0) &&
-			(isdigit(pcbbuf[0]) <= 9)) {
+		if (strlen(pcbbuf) == 1) {
 			pcbPriority = atoi(pcbbuf);
 			printf(
 				"\n"\
@@ -1093,9 +1031,7 @@ void comhand_pcbPriority(void) {
 			nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 			sys_req(WRITE, COM1, pcbbuf, nread);
 			//capture pcb name
-			if (strlen(pcbbuf) == 1 &&
-				(isdigit(pcbbuf[0]) >= 0) &&
-				(isdigit(pcbbuf[0]) <= 9)) {
+			if (strlen(pcbbuf) == 1) {
 				pcbPriority = atoi(pcbbuf);
 				printf(
 					"\n$:PCB %s's priority set to %s :",
@@ -1142,17 +1078,7 @@ void comhand_pcbPriority(void) {
 @returns		: N/A
 */
 void comhand_pcbShow(int entry) {
-	const char* STRINGOFENUM_CLASS[] = {
-		"USER",
-		"ADMIN"
-	};
-	const char* STRINGOFENUM_STATE[] = {
-		"READY",
-		"RUNNING",
-		"BLOCKED",
-		"SUSPENDED",
-		"NOT_SUSPENDED"
-	};
+	
 	//show specific PCB, prompt user
 	if (entry == 0) {
 		char pcbbuf[100] = { 0 };
@@ -1168,22 +1094,8 @@ void comhand_pcbShow(int entry) {
 		
 		//display values
 		if (dummy != NULL) {
-			printf(
-				"\n"\
-				"\n$:Your PCB's parameters are shown below:"\
-				"\n$:"\
-				"\n$:Name: %s "\
-				"\n$:Priority: %i "\
-				"\n$:Class Level: %s "\
-				"\n$:Execution State: %s "\
-				"\n$:Dispatching State: %s "\
-				"\n",
-				dummy->name, 
-				dummy->priority, 
-				STRINGOFENUM_CLASS[dummy->class], 
-				STRINGOFENUM_STATE[dummy->executionState], 
-				STRINGOFENUM_STATE[dummy->dispatchingState]
-			);
+			comhand_pcbShowHelper(dummy);
+			pcb_free(dummy);
 		}
 		else {
 			printf(
@@ -1192,38 +1104,92 @@ void comhand_pcbShow(int entry) {
 				"\n",
 				pcbbuf
 			);
+			pcb_free(dummy);
 		}
 	}
 	//show ready PCBs
 	if (entry == 1) {
-		if (1) {
+		//fail case
+		if (getList(1) == NULL) {
 			puts(
 				"\n"\
 				"\n$:No PCBs in [READY] state."\
 				"\n"
 			);
 		}
+		else {
+			int index = 0;
+			pcb* currPtr = (pcb*)getData(get(getList(1), index));
+			while (currPtr != NULL) {
+				comhand_pcbShowHelper(currPtr);
+				index++;
+				currPtr = (pcb*)getData(get(getList(1), index));
+			}
+		}
 	}
-	//TODO: finish show PCB commands
 	//show blocked PCBs
 	if (entry == 2) {
-		if (1) {
+		//fail case
+		if (getList(1) == NULL) {
 			puts(
 				"\n"\
 				"\n$:No PCBs in [BLOCKED] state."\
 				"\n"
 			);
 		}
+		else {
+			int index = 0;
+			pcb* currPtr = (pcb*)getData(get(getList(3), index));
+			while (currPtr != NULL) {
+				comhand_pcbShowHelper(currPtr);
+				index++;
+				currPtr = (pcb*)getData(get(getList(3), index));
+			}
+		}
 	}
 	//show all PCBs
 	if (entry == 3) {
-		if (1) {
-			puts(
-				"\n"\
-				"\n$:No PCBs found."\
-				"\n"
-			);
+		if (getList(1) != NULL) {
+			int index = 0;
+			pcb* currPtr = (pcb*)getData(get(getList(1), index));
+			while (currPtr != NULL) {
+				comhand_pcbShowHelper(currPtr);
+				index++;
+				currPtr = (pcb*)getData(get(getList(1), index));
+			}
 		}
+		if (getList(2) != NULL) {
+			int index = 0;
+			pcb* currPtr = (pcb*)getData(get(getList(2), index));
+			while (currPtr != NULL) {
+				comhand_pcbShowHelper(currPtr);
+				index++;
+				currPtr = (pcb*)getData(get(getList(2), index));
+			}
+		}
+		if (getList(3) != NULL) {
+			int index = 0;
+			pcb* currPtr = (pcb*)getData(get(getList(3), index));
+			while (currPtr != NULL) {
+				comhand_pcbShowHelper(currPtr);
+				index++;
+				currPtr = (pcb*)getData(get(getList(3), index));
+			}
+		}
+		if (getList(4) != NULL) {
+			int index = 0;
+			pcb* currPtr = (pcb*)getData(get(getList(4), index));
+			while (currPtr != NULL) {
+				comhand_pcbShowHelper(currPtr);
+				index++;
+				currPtr = (pcb*)getData(get(getList(4), index));
+			}
+		}
+		puts(
+			"\n$:All PCBs are shown above:"\
+			"\n$:If you see no PCBs, no PCBs currently exist."\
+			"\n"
+		);
 	}
 	puts(
 		"\n$:Returning to menu..."\
@@ -1232,6 +1198,64 @@ void comhand_pcbShow(int entry) {
 	//return
 	comhand_menu();
 	return;
+}
+/*
+@Name			: comhand_pcbShowHelper
+@brief			: Will assist comhand_pcbShow with printing of PCBs
+
+@param			target : specifies which PCB to show
+@returns		: N/A
+*/
+void comhand_pcbShowHelper(pcb* target) {
+	//print name and priority
+	printf(
+		"\n"\
+		"\n$:PCB Name: %s "\
+		"\n$:Priority: %i ",
+		target->name,
+		target->priority
+	);
+	//print class
+	if (target->class == 0) {
+		puts(
+			"\n$:Class Level: USER "\
+		);
+	}
+	else if (target->class == 1) {
+		puts(
+			"\n$:Class Level: ADMIN "\
+		);
+	}
+	//print execution state
+	if (target->executionState == 0) {
+		puts(
+			"\n$:Execution State: READY "\
+		);
+	}
+	else if (target->executionState == 1) {
+		puts(
+			"\n$:Execution State: RUNNING "\
+		);
+	}
+	else if (target->executionState == 2) {
+		puts(
+			"\n$:Execution State: BLOCKED "\
+		);
+	}
+	//print dispatching state
+	if (target->dispatchingState == 0) {
+		puts(
+			"\n$:Execution State: SUSPENDED "\
+		);
+	}
+	else if (target->dispatchingState == 1) {
+		puts(
+			"\n$:Execution State: NOT_SUSPENDED "\
+		);
+	}
+	puts("\n");
+	return;
+
 }
 //========================================================================
 //  COMHAND HELP SECTION
