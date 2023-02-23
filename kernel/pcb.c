@@ -60,6 +60,9 @@ void addToReady(list* listPtr, node* nodePtr){
     if(headPtr == NULL){
         add(listPtr,nodePtr);
     }
+    else if(getPriority(headPtr)>getPriority(nodePtr)){
+        addToHead(listPtr,nodePtr);
+    }
     else{
         node* currPtr;
         for(currPtr = headPtr;currPtr->nextPtr != NULL && getPriority(currPtr)<getPriority(nodePtr);currPtr = currPtr->nextPtr);

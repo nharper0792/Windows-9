@@ -161,7 +161,7 @@ void comhand_version(void) {
 		"\n<       +-+-+-+-+-+-+       >"\
 		"\n \\_________________________/"\
 		"\n"
-		"\nVersion R2.0 \e[0m"\
+		"\nVersion R2.0 2/23/2023 \e[0m"\
 		"\n"
 	);
 	comhand_menu();
@@ -1144,6 +1144,7 @@ void comhand_pcbShow(int entry) {
 		}
 		else {
 			comhand_printPcbList(getList(1));
+            comhand_printPcbList(getList(3));
 		}
 	}
 	//show blocked PCBs
@@ -1158,6 +1159,7 @@ void comhand_pcbShow(int entry) {
 		}
 		else {
 			comhand_printPcbList(getList(2));
+            comhand_printPcbList(getList(4));
 		}
 	}
 	//show all PCBs
