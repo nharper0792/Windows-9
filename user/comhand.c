@@ -1151,6 +1151,11 @@ void comhand_pcbShow(int entry) {
 					comhand_pcbShowHelper((pcb*)getData(currPtr));
 				}
 			}
+			puts(
+				"\n$:All ready PCBs are shown above:"\
+				"\n$:If you see no PCBs, no ready PCBs currently exist."\
+				"\n"
+			);
 			mem_free = sys_free_mem(li2);
 			(void)mem_free;
 		}
@@ -1182,6 +1187,11 @@ void comhand_pcbShow(int entry) {
 					comhand_pcbShowHelper((pcb*)getData(currPtr));
 				}
 			}
+			puts(
+				"\n$:All blocked PCBs are shown above:"\
+				"\n$:If you see no PCBs, no blocked PCBs currently exist:"\
+				"\n"
+			);
 			mem_free = sys_free_mem(li2);
 			(void)mem_free;
 		}
@@ -1257,14 +1267,14 @@ void comhand_pcbShowHelper(pcb* target) {
 		);
 	}
 	//print dispatching state
-	if (target->dispatchingState == 0) {
+	if (target->dispatchingState == 3) {
 		puts(
-			"\n$:Execution State: SUSPENDED "\
+			"\n$:Dispatching State: SUSPENDED "\
 		);
 	}
-	else if (target->dispatchingState == 1) {
+	else if (target->dispatchingState == 4) {
 		puts(
-			"\n$:Execution State: NOT_SUSPENDED "\
+			"\n$:Dispatching State: NOT_SUSPENDED "\
 		);
 	}
 	puts("\n");
