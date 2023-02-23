@@ -1135,6 +1135,7 @@ void comhand_pcbShow(int entry) {
 			);
 		}
 		else {
+			//ready PCBs
 			list* li = getList(1);
 			if (li != NULL) {
 				for (node* currPtr = getHead(li); currPtr != NULL; currPtr = currPtr->nextPtr) {
@@ -1143,12 +1144,21 @@ void comhand_pcbShow(int entry) {
 			}
 			int mem_free = sys_free_mem(li);
 			(void)mem_free;
+			//suspended ready PCBs
+			list* li2 = getList(3);
+			if (li2 != NULL) {
+				for (node* currPtr = getHead(li2); currPtr != NULL; currPtr = currPtr->nextPtr) {
+					comhand_pcbShowHelper((pcb*)getData(currPtr));
+				}
+			}
+			mem_free = sys_free_mem(li2);
+			(void)mem_free;
 		}
 	}
 	//show blocked PCBs
 	if (entry == 2) {
 		//fail case
-		if (getList(3) == NULL) {
+		if (getList(2) == NULL) {
 			puts(
 				"\n"\
 				"\n$:No PCBs in [BLOCKED] state."\
@@ -1156,7 +1166,8 @@ void comhand_pcbShow(int entry) {
 			);
 		}
 		else {
-			list* li = getList(3);
+			//blocked PCBs
+			list* li = getList(2);
 			if (li != NULL) {
 				for (node* currPtr = getHead(li); currPtr != NULL; currPtr = currPtr->nextPtr) {
 					comhand_pcbShowHelper((pcb*)getData(currPtr));
@@ -1164,7 +1175,17 @@ void comhand_pcbShow(int entry) {
 			}
 			int mem_free = sys_free_mem(li);
 			(void)mem_free;
+			//blocked suspended PCBs
+			list* li2 = getList(4);
+			if (li2 != NULL) {
+				for (node* currPtr = getHead(li2); currPtr != NULL; currPtr = currPtr->nextPtr) {
+					comhand_pcbShowHelper((pcb*)getData(currPtr));
+				}
+			}
+			mem_free = sys_free_mem(li2);
+			(void)mem_free;
 		}
+
 	}
 	//show all PCBs
 	if (entry == 3) {
