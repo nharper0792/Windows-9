@@ -785,7 +785,7 @@ void comhand_pcbDelete(void) {
 		//create dummy pcb
 		pcb* dummy = pcb_find(pcbName);
 		//if found, delete
-		if (dummy != NULL) {
+		if (dummy != NULL&& dummy->class!=1) {
 			//remove pcb from pcb lists
 			pcb_remove(dummy);
 			//free pcb
@@ -797,12 +797,19 @@ void comhand_pcbDelete(void) {
 			);
 			return;
 		}
-		else {
+		else if(dummy->class!=1) {
 			printf(
 				"\n$:PCB %s not found in PCB list(s):"\
 				"\n",
 				pcbName
 			);
+		}else{
+			puts(
+				"\n$:PCB is a system process"\
+				"\n$:Deletion cancelled"\
+				"\n"
+			);
+
 		}
 		puts(
 			"\n$:Returning to menu...:"\
