@@ -85,6 +85,7 @@ void pcb_insert(pcb* newPcb){
         if(newPcb->dispatchingState == SUSPENDED){
             if(suspendedReady == NULL){
                 suspendedReady = createList();
+                puts("CREATED LIST");
             }
             add(suspendedReady,newNode);
         }
@@ -113,16 +114,16 @@ void pcb_insert(pcb* newPcb){
 
 int pcb_remove(pcb* target){
     node* wrapper = createNode(target);
-    if(remove(ready,wrapper)!=NULL){
+    if(ready != NULL && remove(ready,wrapper)!=NULL){
         return 0;
     }
-    if(remove(blocked,wrapper)!=NULL){
+    if(blocked != NULL && remove(blocked,wrapper)!=NULL){
         return 0;
     }
-    if(remove(suspendedReady,wrapper)!=NULL){
+    if(suspendedReady != NULL && remove(suspendedReady,wrapper)!=NULL){
         return 0;
     }
-    if(remove(suspendedBlocked,wrapper)!=NULL){
+    if(suspendedBlocked != NULL && remove(suspendedBlocked,wrapper)!=NULL){
         return 0;
     }
     return 1;
