@@ -271,6 +271,10 @@ char *itoa(int i, char* dest, int base) {
     if(dest == NULL){
         dest = (char*)sys_alloc_mem(10);
     }
+    if(i==0){
+        dest = "0\0";
+        return dest;
+    }
     int isNegative = 0;
     if (i < 0) {
         if (base != 2) {
