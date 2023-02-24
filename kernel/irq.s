@@ -22,10 +22,18 @@ rtc_isr:
 extern sys_call			; The C function that sys_call_isr will call
 sys_call_isr:
 	push a 
+	push ds
+	push es
+	push fs
+	push gs
 	push ESP
 	call sys_call
 	mov eax, ESP
 	pop a
+	pop gs 
+	pop fs 
+	pop es
+	pop ds
 	iret
 
 ;;; Serial port ISR. To be implemented in Module R6
