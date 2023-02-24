@@ -26,7 +26,17 @@ Variable: curr_process
 int	curr_process = 000;
 char yesprompt[] = "YES\0";
 char noprompt[] = "NO\0";
-//==
+/*
+@Name			: comhand_yield
+@brief			: Yields the command handler CPU to other processes
+
+@params			: N/A
+@returns		: N/A
+*/
+void comhand_yield(void) {
+	sys_req(IDLE);
+}
+
 void init_comhand(void) {
 	comhand_menu();
 	for (;;)

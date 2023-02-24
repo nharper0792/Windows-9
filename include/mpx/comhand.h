@@ -149,4 +149,12 @@ void comhand_pcbShow(int entry);
 void comhand_pcbShowHelper(pcb* target);
 
 void comhand_printPcbList(list* li);
+/*
+@Name			: comhand_yield()
+@brief			: See comhand.c for more information
+
+@param			: N/A
+@returns		: N/A
+*/
+void comhand_yield(void);
 #endif
