@@ -14,7 +14,14 @@ int getPriority(node* nodePtr);
 
 pcb* pcb_allocate(void){
     pcb* newPCB = (pcb*)sys_alloc_mem(sizeof(pcb));
+    if(newPCB == NULL){
+        return NULL;
+    }
     newPCB->name = (char*)sys_alloc_mem(MAX_NAME_LENGTH+1);
+    if(newPCB->name == NULL){
+        sys_free_mem(newPCB);
+        return NULL;
+    }
     for(int i = 0;i<1024;i++){
         newPCB->stack[i]=0;
     }
@@ -24,17 +31,28 @@ pcb* pcb_allocate(void){
 }
 
 int pcb_free(pcb* target){
-    sys_free_mem(target->stackPtr);
-    sys_free_mem(target->name);
-    return sys_free_mem(target);
+    if(sys_free_mem(target->stackPtr)){
+        return 1;
+    }
+    if(sys_free_mem(target->name)){
+        return 1;
+    }
+    if(sys_free_mem(target)){
+        return 1;
+    }
 }
 
 
 pcb* pcb_setup(const char* name, int class, int priority){
-    pcb* newPcb = pcb_allocate();
-    if(strlen(name)<MAX_NAME_LENGTH){
-        strcpy(newPcb->name,name);
+    if(pcb_find(name) != NULL || strlen(name)>MAX_NAME_LENGTH || (class != USER && class!= SYSTEM) || priority<0 priority>9){
+        return NULL;
     }
+    pcb* newPcb = pcb_allocate();
+    if(newPcb == NULL){
+        return NULL;
+    }
+    strcpy(newPcb->name,name);
+
     newPcb->class = class;
     newPcb->priority = priority;
     newPcb->executionState = READY;
@@ -85,9 +103,8 @@ void pcb_insert(pcb* newPcb){
         if(newPcb->dispatchingState == SUSPENDED){
             if(suspendedReady == NULL){
                 suspendedReady = createList();
-                puts("CREATED LIST");
             }
-            add(suspendedReady,newNode);
+            addToReady(suspendedReady,newNode);
         }
         else{
             if(ready == NULL){

@@ -1077,6 +1077,7 @@ void comhand_pcbPriority(void) {
 			sys_req(WRITE, COM1, pcbbuf, nread);
 			//capture pcb name
 			if (strlen(pcbbuf) == 1) {
+
 				pcbPriority = atoi(pcbbuf);
 				printf(
 					"\n$:PCB %s's priority set to %s :",
