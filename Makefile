@@ -7,7 +7,8 @@ kernel/irq.o\
 kernel/core.o\
 kernel/kmain.o\
 kernel/serial.o\
-kernel/pcb.o
+kernel/pcb.o\
+kernel/sys_call.o
 
 LIB_OBJECTS =\
 lib/ctype.o\

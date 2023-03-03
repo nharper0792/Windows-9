@@ -1,6 +1,8 @@
 #ifndef MPX_STDLIB_H
 #define MPX_STDLIB_H
-
+#ifndef NULL
+#define NULL    0
+#endif
 /**
  @file stdlib.h
  @brief A subset of standard C library functions.

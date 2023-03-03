@@ -4,7 +4,7 @@
 
 #ifndef WINDOWS_9_SYS_CALL_H
 #define WINDOWS_9_SYS_CALL_H
-typedef{
+typedef struct{
     int EAX;
     int EBX;
     int ECX;
