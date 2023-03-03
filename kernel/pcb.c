@@ -4,6 +4,10 @@
 #include <memory.h>
 #include <stdio.h>
 
+list* ready;
+list* blocked;
+list* suspendedReady;
+list* suspendedBlocked;
 
 void addToReady(list* listPtr, node* nodePtr);
 int getPriority(node* nodePtr);

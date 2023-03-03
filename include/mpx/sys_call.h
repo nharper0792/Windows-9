@@ -5,10 +5,18 @@
 #ifndef WINDOWS_9_SYS_CALL_H
 #define WINDOWS_9_SYS_CALL_H
 typedef struct{
-    int EAX;
+    int gs;
+    int fs;
+    int es;
+    int ds;
+    int ss;
+    int EDI;
+    int ESI;
+    int EBP;
     int EBX;
-    int ECX;
     int EDX;
+    int ECX;
+    int EAX;
 }context;
 
 
