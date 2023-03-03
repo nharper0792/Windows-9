@@ -7,26 +7,27 @@ pcb* currentProcess = NULL;
 context* idleing = NULL;
 
 context* sys_call(context* current){
+    pcb* readyHead = (pcb *) removeHead(ready)->data;
     if(idleing == NULL){
         idleing = current;
     }
-   if(current->EAX == IDLE) {
-       pcb *nextProcess = (pcb *) removeHead(ready)->data;
-       if (nextProcess != NULL) {
-           nextProcess->stackPtr = (char *) current;
-           pcb_insert(nextProcess);
-           return current;
-       } else {
-           current->EAX = 0;
-           return current;
-       }
-   }else if(current->EAX == EXIT) {
-       context *res = idleing;
-       idleing = NULL;
-       res->EAX = 0;
-       return res;
-   }else {
-       current->EAX = -1;
-       return current;
-   }
+    else{
+        if(current->EAX == IDLE) {
+            currentProcess = readyHead;
+            currentProcess->executionState = READY;
+            pcb_insert(currerntProcess);
+            current->EAX = 0;
+        }else if(current->EAX == EXIT) {
+            pcb_free(currentProcess);
+            currentProcess = null;
+            current->EAX = 0;
+        }else {
+            current->EAX = -1;
+            return current;
+        }
+        //if null, set EAX as -1,
+        //else set current operation process to ready head,
+        //remove from ready queue and set EAX to 0
+        if()
+    }
 }
