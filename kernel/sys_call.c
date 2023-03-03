@@ -3,7 +3,7 @@
 #include <sys_req.h>
 
 pcb* currentProcess = NULL;
-context* current = NULL;
+context* idleing = NULL;
 
 context* sys_call(context* current){
     if(idleing == NULL){
@@ -13,7 +13,9 @@ context* sys_call(context* current){
         case IDLE:
             if(ready->head!=NULL){
                 currentProcess = ready->headPtr;
-                ready->headPtr = ready->headPtr->nextPtr
+                ready->headPtr = ready->headPtr->nextPtr;
+                currentProcess->stackPtr = (char*)current;
+                pcb_insert(currentProcess);
             }
             else{
                 current->EAX = 0;

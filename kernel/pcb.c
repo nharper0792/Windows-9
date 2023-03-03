@@ -40,11 +40,12 @@ int pcb_free(pcb* target){
     if(sys_free_mem(target)){
         return 1;
     }
+    return 0;
 }
 
 
 pcb* pcb_setup(const char* name, int class, int priority){
-    if(pcb_find(name) != NULL || strlen(name)>MAX_NAME_LENGTH || (class != USER && class!= SYSTEM) || priority<0 priority>9){
+    if(pcb_find(name) != NULL || strlen(name)>MAX_NAME_LENGTH || (class != USER && class!= SYSTEM) || priority<0 || priority>9){
         return NULL;
     }
     pcb* newPcb = pcb_allocate();

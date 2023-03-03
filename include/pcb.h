@@ -28,7 +28,10 @@ typedef struct pcb{
     char stack[1024];
     char* stackPtr;
 }pcb;
-
+list* ready;
+list* blocked;
+list* suspendedReady;
+list* suspendedBlocked;
 /**
  * @brief allocates memory for a new PCB
  * @return a pointer to the created PCB or NULL on error

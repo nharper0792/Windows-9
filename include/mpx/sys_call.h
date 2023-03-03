@@ -11,5 +11,7 @@ typedef{
     int EDX;
 }context;
 
-context* sys_call();
+
+
+context* sys_call(context* currentContext);
 #endif //WINDOWS_9_SYS_CALL_H
