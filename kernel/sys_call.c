@@ -15,11 +15,11 @@ context* sys_call(context* current){
         if(current->EAX == IDLE) {
             currentProcess = readyHead;
             currentProcess->executionState = READY;
-            pcb_insert(currerntProcess);
+            pcb_insert(currentProcess);
             current->EAX = 0;
         }else if(current->EAX == EXIT) {
             pcb_free(currentProcess);
-            currentProcess = null;
+            currentProcess = NULL;
             current->EAX = 0;
         }else {
             current->EAX = -1;
