@@ -17,6 +17,9 @@ typedef struct{
     int EDX;
     int ECX;
     int EAX;
+    int EIP;
+    int CS;
+    int EFLAGS;
 }context;
 
 

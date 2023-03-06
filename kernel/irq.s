@@ -33,11 +33,11 @@ sys_call_isr:
 	push es
 	push fs
 	push gs
-	push ESP
+	push esp
 	call sys_call
-	mov ESP, eax
-	pop gs 
-	pop fs 
+	mov esp, eax
+	pop gs
+	pop fs
 	pop es
 	pop ds
 	pop ss

@@ -77,7 +77,7 @@ pcb* pcb_find(const char* name){
 void addToReady(list* listPtr, node* nodePtr){
     node* headPtr = getHead(listPtr);
     if(headPtr == NULL){
-        add(listPtr,nodePtr);
+        addToHead(listPtr,nodePtr);
     }
     else if(getPriority(headPtr)>getPriority(nodePtr)){
         addToHead(listPtr,nodePtr);

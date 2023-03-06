@@ -34,7 +34,7 @@ char noprompt[] = "NO\0";
 @returns		: N/A
 */
 void comhand_yield(void) {
-	sys_req(IDLE);
+	sys_req(IDLE,NULL,NULL,NULL);
 }
 
 void init_comhand(void) {
@@ -1340,7 +1340,6 @@ void comhand_menu(void) {
 		"\n$:	5) timeset"\
 		"\n$:	6) dateset"\
 		"\n$:	7) joe burrow"\
-		"\n$:	8) pcb create"\
 		"\n$:	9) pcb delete"\
 		"\n$:	10) pcb suspend"\
 		"\n$:	11) pcb resume"\
