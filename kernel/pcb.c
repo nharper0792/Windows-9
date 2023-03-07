@@ -65,26 +65,24 @@ pcb* pcb_find(const char* name){
     list* lists[] = {ready,blocked,suspendedReady,suspendedBlocked};
     size_t listlen = sizeof(lists)/sizeof(lists[0]);
     for(size_t i = 0;i<listlen;i++){
-        while(lists[i]==NULL){i++;}
+        if(lists[i]!=NULL){
         for(node* currPtr = getHead(lists[i]);currPtr !=NULL && i<listlen;currPtr = currPtr->nextPtr){
             if(strcmp(((pcb*)getData(currPtr))->name,name) == 0){
                 return (pcb*)getData(currPtr);
             }
+        }
         }
 }
     return NULL;
 }
 void addToReady(list* listPtr, node* nodePtr){
     node* headPtr = getHead(listPtr);
-    if(headPtr == NULL){
-        addToHead(listPtr,nodePtr);
-    }
-    else if(getPriority(headPtr)>getPriority(nodePtr)){
+    if(headPtr == NULL || getPriority(headPtr)>getPriority(nodePtr)){
         addToHead(listPtr,nodePtr);
     }
     else{
         node* currPtr;
-        for(currPtr = headPtr;currPtr->nextPtr != NULL && getPriority(currPtr)<getPriority(nodePtr);currPtr = currPtr->nextPtr);
+        for(currPtr = headPtr;currPtr->nextPtr != NULL && getPriority(currPtr)>getPriority(nodePtr);currPtr = currPtr->nextPtr);
 
         if(currPtr->nextPtr != NULL){
         currPtr->nextPtr->prevPtr = nodePtr;
