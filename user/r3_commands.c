@@ -6,14 +6,14 @@
 
 
 void yield() {
-    sys_req(IDLE, 0, NULL, NULL);
+    sys_req(IDLE);
      }
 
 
 struct pcb* r3_load(char* name, void* func){
     pcb* new = setup_pcb(name, USER, 0); 
     new->executionState = NOT_SUSPENDED;
-    context* con = (context*)(new->stackptr);
+    context* con = (context*)new->stackptr;
     memset(con, 0, sizeof(context));
     con->fs = 0x10;
     con->gs = 0x10;
