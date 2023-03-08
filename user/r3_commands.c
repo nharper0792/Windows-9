@@ -21,17 +21,17 @@ void yield() {
 // parenthesis, is a pointer to that function)
 // • EFLAGS must be 0x0202
 struct pcb* r3_load(char* name, void* func){
-    pcb* new_pcb = setup_pcb(name, USER, 0); 
-    new_pcb->executionState = NOT_SUSPENDED;
-    context* con = (context*)(new_pcb->stackptr);
+    pcb* new = setup_pcb(name, USER, 0); 
+    new->executionState = NOT_SUSPENDED;
+    context* con = (context*)(new->stackptr);
     memset(con, 0, sizeof(context));
     con->fs = 0x10;
     con->gs = 0x10;
     con->ds = 0x10;
     con->es = 0x10;
     con->cs = 0x08;
-    con->ebp = new_pcb->stack;
-    con->esp = new_pcb->stackptr;
+    con->ebp = new->stack;
+    con->esp = new->stackptr;
     con->eip = func; 
     con->eflags = 0x0202;
     insert_pcb(new_pcb);
