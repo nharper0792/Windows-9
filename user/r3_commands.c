@@ -34,8 +34,8 @@ struct pcb* r3_load(char* name, void* func){
     con->esp = new->stackptr;
     con->eip = func; 
     con->eflags = 0x0202;
-    insert_pcb(new_pcb);
-    return new_pcb;
+    insert_pcb(new);
+    return new;
 
 }
 
