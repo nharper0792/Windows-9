@@ -8,7 +8,7 @@
 void yield() {
     sys_req(IDLE, 0, NULL, NULL);
      }
-     
+
 // Takes a function, gives it a name, and loads it into the queue
 // • Loads the R3 test processes from procsr3.c (on eCampus)
 // • Each process (one per function in procsr3.c) is loaded and queued in a
@@ -21,7 +21,7 @@ void yield() {
 // parenthesis, is a pointer to that function)
 // • EFLAGS must be 0x0202
 struct pcb* r3_load(char* name, void* func){
-    pcb* new_pcb = setup_pcb(name, USER, 0); //priority can be any of our choosing
+    pcb* new_pcb = setup_pcb(name, USER, 0); 
     new_pcb->executionState = NOT_SUSPENDED;
     context* con = (context*)(new_pcb->stackptr);
     memset(con, 0, sizeof(context));
@@ -32,7 +32,7 @@ struct pcb* r3_load(char* name, void* func){
     con->cs = 0x08;
     con->ebp = new_pcb->stack;
     con->esp = new_pcb->stackptr;
-    con->eip = func; //where passing in which proc will go
+    con->eip = func; 
     con->eflags = 0x0202;
     insert_pcb(new_pcb);
     return new_pcb;
