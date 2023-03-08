@@ -9,17 +9,17 @@ void yield() {
     sys_req(IDLE, 0, NULL, NULL);
      }
 
-// Takes a function, gives it a name, and loads it into the queue
-// • Loads the R3 test processes from procsr3.c (on eCampus)
-// • Each process (one per function in procsr3.c) is loaded and queued in a
-// non-suspended ready state, with a name and priority of your choosing
-// • Initialize and save the context for each process at the top of the PCB stack
-// • CS must be 0x08, other segments 0x10
-// • EBP must be the base of the PCB stack
+// Loads the R3 test processes from <processes.h>
+// • Each process (one per function) is loaded and queued in a non-suspended
+// ready state, with a name and priority of your choosing
+// • Initialize and save the context for each process at the top of the PCB stack:
+// • CS must be 0x08, all other segments 0x10
+// • EBP must be the bottom of the PCB stack
 // • ESP must be the top of the PCB stack
 // • EIP must be a pointer to the function (the name of the function, without
 // parenthesis, is a pointer to that function)
 // • EFLAGS must be 0x0202
+// • All other registers should be 0
 struct pcb* r3_load(char* name, void* func){
     pcb* new = setup_pcb(name, USER, 0); 
     new->executionState = NOT_SUSPENDED;
