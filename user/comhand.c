@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <linked-list.h>
+#include <r3_commands.h>
 
 /*
 Variable: curr_process
@@ -34,7 +35,7 @@ char noprompt[] = "NO\0";
 @returns		: N/A
 */
 void comhand_yield(void) {
-	sys_req(IDLE,NULL,NULL,NULL);
+	yield();
 }
 
 void init_comhand(void) {
@@ -156,6 +157,16 @@ void init_comhand(void) {
 //-------------------------------
 
 /*
+@Name			: comhand_load
+@brief			: Will load a specific process inputted by the user
+
+@params			: N/A
+@returns		: N/A
+*/
+void comhand_load() {
+	load();
+}
+/*
 @Name			: comhand_version
 @brief			: Will display the current version of the OS. This needs to be manually updated.
 
@@ -171,7 +182,7 @@ void comhand_version(void) {
 		"\n<       +-+-+-+-+-+-+       >"\
 		"\n \\_________________________/"\
 		"\n"
-		"\nVersion R2.0 2/23/2023 \e[0m"\
+		"\nVersion R3 & R4 2/23/2023 \e[0m"\
 		"\n"
 	);
 	comhand_menu();
