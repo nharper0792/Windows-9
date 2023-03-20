@@ -22,7 +22,7 @@ struct pcb* r3_load(char* name, void* func){
     con->es = 0x10;
     con->CS = 0x08;
     con->EBP = new->stack;
-    con->ESI = new->stackPtr; // might not be esi may be esp
+    con->ESP = new->stackPtr; // might not be esi may be esp
     con->EIP = func; 
     con->EFLAGS = 0x0202;
     insert_pcb(new);
