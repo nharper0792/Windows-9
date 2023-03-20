@@ -157,4 +157,12 @@ void comhand_printPcbList(list* li);
 @returns		: N/A
 */
 void comhand_yield(void);
+/*
+@Name			: comhand_load()
+@brief			: See comhand.c for more information
+
+@param			: N/A
+@returns		: N/A
+*/
+void comhand_load(void);
 #endif
