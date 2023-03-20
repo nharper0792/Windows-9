@@ -31,10 +31,10 @@ struct pcb* r3_load(char* name, void* func){
 }
 
 void load(){
-  load_R3("Proc1", &proc1);
-  load_R3("Proc2", &proc2);
-  load_R3("Proc3", &proc3);
-  load_R3("Proc4", &proc4);
-  load_R3("Proc5", &proc5);
+    r3_load("Proc1", &proc1);
+    r3_load("Proc2", &proc2);
+    r3_load("Proc3", &proc3);
+    r3_load("Proc4", &proc4);
+    r3_load("Proc5", &proc5);
 }
 
