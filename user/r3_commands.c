@@ -1,8 +1,7 @@
-#include "r3_commands.h"
+#include "mpx/r3_commands.h"
 #include <string.h>
-#include <io.h>
-#include "pcb.h"
-#include "sys_call.h"
+#include <pcb.h>
+#include "mpx/sys_call.h"
 #include "processes.h"
 
 
@@ -12,7 +11,7 @@ void yield() {
 
 
 struct pcb* r3_load(char* name, void* func){
-    pcb* new = setup_pcb(name, USER, 0); 
+    pcb* new = pcb_setup(name, USER, 0); 
     new->executionState = NOT_SUSPENDED;
     context* con = (context*)new->stackPtr;
     memset(con, 0, sizeof(context));
@@ -21,11 +20,11 @@ struct pcb* r3_load(char* name, void* func){
     con->ds = 0x10;
     con->es = 0x10;
     con->CS = 0x08;
-    con->EBP = new->stackPtr;
-    con->ESP = new->stack; // might not be esi may be esp
-    con->EIP = func; 
+    con->EBP = (int)new->stackPtr;
+    con->ESP = (int)new->stack; // might not be esi may be esp
+    con->EIP = (int)func; 
     con->EFLAGS = 0x0202;
-    insert_pcb(new);
+    pcb_insert(new);
     return new;
 
 }
