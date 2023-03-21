@@ -8,7 +8,8 @@ kernel/core.o\
 kernel/kmain.o\
 kernel/serial.o\
 kernel/pcb.o\
-kernel/sys_call.o
+kernel/sys_call.o\
+kernel/processes.o
 
 LIB_OBJECTS =\
 lib/ctype.o\
@@ -20,7 +21,8 @@ lib/linked-list.o
 
 USER_OBJECTS =\
 user/system.o\
-user/comhand.o
+user/comhand.o\
+user/r3_commands.o
 
 ########################################################################
 ### Nothing below here needs to be changed
