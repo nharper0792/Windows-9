@@ -8,7 +8,8 @@ kernel/core.o\
 kernel/kmain.o\
 kernel/serial.o\
 kernel/pcb.o\
-kernel/sys_call.o
+kernel/sys_call.o\
+kernel/command_history.o
 
 LIB_OBJECTS =\
 lib/ctype.o\
