@@ -133,6 +133,14 @@ void init_comhand(void) {
 		if ((strcasecmp("PCB SHOW ALL\0", buf) == 0) || atoi(buf) == 18) {
 			curr_process = 1010;
 			comhand_pcbShow(3);
+		}if ((strcasecmp("load\0", buf) == 0) || atoi(buf) == 18) {
+			curr_process = 1011;
+			comhand_load();
+			
+		}if ((strcasecmp("yield\0", buf) == 0) || atoi(buf) == 18) {
+			curr_process = 1012;
+			comhand_yield();
+			
 		}
 		//displays a message to the user stating their prompt wasn't recognized
 		//only displays if the user is in the menu process, updates everytime the [ENTER KEY] is read by serial polling.
