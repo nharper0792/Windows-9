@@ -48,7 +48,9 @@ context* sys_call(context* current){
             currentProcess->dispatchingState = RUNNING;
             return (context*) currentProcess->stackPtr;
             // return stack ptr of current process
-        }}
+        }}else{
+            current-> EAX =-1;
+        }
 
     return current;
 }
