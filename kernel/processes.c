@@ -1,4 +1,5 @@
 #include <processes.h>
+#include <stdio.h>
 
 void proc1(){
     puts("Hello from proc1\n");

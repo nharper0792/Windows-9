@@ -9,7 +9,8 @@ kernel/kmain.o\
 kernel/serial.o\
 kernel/pcb.o\
 kernel/sys_call.o\
-kernel/command_history.o
+kernel/command_history.o\
+kernel/processes.o
 
 LIB_OBJECTS =\
 lib/ctype.o\
