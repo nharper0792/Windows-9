@@ -123,14 +123,16 @@ int serial_poll(device dev, char* buffer, size_t len)
                     if(count>0){
                     addToCycled(buffer);
                     }
-                    for(;ind>=2;ind--,count--){
-                        outb(dev,'\b');
+                    for(;ind>0;ind--,count--){
+                        outb(dev, '\b');
+                        outb(dev, ' ');
+                        outb(dev, '\b');
                     }
                     char* newCommand = getFromHistory();
                     int len = strlen(newCommand);
                     if(newCommand!=NULL) {
                         strcpy(buffer,newCommand);
-                        for(;ind-2<len;ind++,count++){
+                        for(;ind<len;ind++,count++){
                             outb(dev,newCommand[ind]);
                         }
                     }
@@ -139,15 +141,17 @@ int serial_poll(device dev, char* buffer, size_t len)
                     if(count>0){
                     addToHistory(buffer);
                     }
-                    for(;ind>=2;ind--,count--){
-                        outb(dev,'\b');
+                    for(;ind>0;ind--,count--){
+                        outb(dev, '\b');
+                        outb(dev, ' ');
+                        outb(dev, '\b');
                     }
                     char* newCommand = getFromCycled();
                     int len = strlen(newCommand);
 
                     if(newCommand!=NULL) {
                         strcpy(buffer,newCommand);
-                        for(;ind-2<len;ind++,count++){
+                        for(;ind<len;ind++,count++){
                             outb(dev,newCommand[ind]);
                         }
                     }
@@ -172,6 +176,7 @@ int serial_poll(device dev, char* buffer, size_t len)
             {
                 if (count > 0) {
                     addToHistory(buffer);
+                    resetHistory();
                     buffer[ind] = '\0';
                     outb(dev, '\n');
                     outb(dev, '\r');

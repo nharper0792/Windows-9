@@ -33,14 +33,14 @@ char* getFromHistory(){
     if(history==NULL || history->headPtr==NULL){
         return NULL;
     }
-    node* temp = getHead(history);
+    node* temp = removeHead(history);
     return (char*)temp->data;
 }
 char* getFromCycled(){
     if(cycled==NULL || cycled->headPtr==NULL){
         return NULL;
     }
-    node* temp = getHead(cycled);
+    node* temp = removeHead(cycled);
     return (char*)temp->data;
 }
 
@@ -48,7 +48,9 @@ void resetHistory(){
     if(history==NULL){
         return;
     }
-    while(cycled->headPtr != NULL){
-        addToHead(history,getHead(cycled));
+    if(cycled!=NULL) {
+        while (cycled->headPtr != NULL) {
+            addToHead(history, getHead(cycled));
+        }
     }
 }
