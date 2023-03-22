@@ -5,7 +5,6 @@
 #ifndef WINDOWS_9_SYS_CALL_H
 #define WINDOWS_9_SYS_CALL_H
 typedef struct{
-    int ESP;
     int gs;
     int fs;
     int es;

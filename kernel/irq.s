@@ -34,10 +34,8 @@ sys_call_isr:
 	push fs
 	push gs
 	push esp
-	push esp
 	call sys_call
 	mov esp, eax
-	pop esp
 	pop gs
 	pop fs
 	pop es

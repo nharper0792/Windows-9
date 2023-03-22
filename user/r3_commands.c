@@ -19,8 +19,9 @@ void load(){
     con1->gs = 0x10;
     con1->ds = 0x10;
     con1->es = 0x10;
+    con1->ss = 0x10;
     con1->CS = 0x08;
-    con1->ESP = (int)pr1->stackPtr;
+    // con1->ESP = (int)pr1->stackPtr;
     con1->EBP = (int)pr1->stack; // might not be esi may be esp
     con1->EIP = (unsigned int) proc1;
     con1->EFLAGS = 0x0202;
@@ -34,8 +35,8 @@ void load(){
     con2->gs = 0x10;
     con2->ds = 0x10;
     con2->es = 0x10;
+    con2->ss = 0x10;
     con2->CS = 0x08;
-    con2->ESP = (int)pr2->stackPtr;
     con2->EBP = (int)pr2->stack; // might not be esi may be esp
     con2->EIP = (unsigned int) proc2;
     con2->EFLAGS = 0x0202;
@@ -49,8 +50,9 @@ void load(){
     con3->gs = 0x10;
     con3->ds = 0x10;
     con3->es = 0x10;
+    con3->ss = 0x10;
     con3->CS = 0x08;
-    con3->ESP = (int)pr3->stackPtr;
+    // con3->ESP = (int)pr3->stackPtr;
     con3->EBP = (int)pr3->stack; // might not be esi may be esp
     con3->EIP = (unsigned int) proc3;
     con3->EFLAGS = 0x0202;
@@ -64,8 +66,9 @@ void load(){
     con4->gs = 0x10;
     con4->ds = 0x10;
     con4->es = 0x10;
+    con4->ss = 0x10;
     con4->CS = 0x08;
-    con4->ESP = (int)pr4->stackPtr;
+    // con4->ESP = (int)pr4->stackPtr;
     con4->EBP = (int)pr4->stack; // might not be esi may be esp
     con4->EIP = (unsigned int) proc4;
     con4->EFLAGS = 0x0202;
@@ -79,8 +82,9 @@ void load(){
     con5->gs = 0x10;
     con5->ds = 0x10;
     con5->es = 0x10;
+    con5->ss = 0x10;
     con5->CS = 0x08;
-    con5->ESP = (int)pr5->stackPtr;
+    // con5->ESP = (int)pr5->stackPtr;
     con5->EBP = (int)pr5->stack; // might not be esi may be esp
     con5->EIP = (unsigned int) proc5;
     con5->EFLAGS = 0x0202;
