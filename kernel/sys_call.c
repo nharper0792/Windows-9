@@ -7,6 +7,7 @@ pcb* currentProcess = NULL;//running process (NOT comhand)
 context* idleing = NULL;
 
 context* sys_call(context* current){
+    if(current->EAX == IDLE|| current->EAX == EXIT){
     pcb* readyHead = NULL;
     readyHead = (pcb*)removeHead(ready)->data;
     if(idleing == NULL){
@@ -47,7 +48,7 @@ context* sys_call(context* current){
             currentProcess->dispatchingState = RUNNING;
             return (context*) currentProcess->stackPtr;
             // return stack ptr of current process
-        }
+        }}
 
     return current;
 }
