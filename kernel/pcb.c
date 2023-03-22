@@ -83,7 +83,7 @@ void addToReady(list* listPtr, node* nodePtr){
     }
     else{
         node* currPtr;
-        for(currPtr = headPtr;currPtr->nextPtr != NULL && getPriority(currPtr)>getPriority(nodePtr);currPtr = currPtr->nextPtr);
+        for(currPtr = headPtr;currPtr->nextPtr != NULL && getPriority(currPtr)>getPriority(nodePtr);currPtr = currPtr->nextPtr); //issue here
 
         if(currPtr->nextPtr != NULL){
         currPtr->nextPtr->prevPtr = nodePtr;
