@@ -3,6 +3,7 @@
 #include <string.h>
 #include <memory.h>
 #include <stdio.h>
+#include <mpx/sys_call.h>
 
 list* ready;
 list* blocked;
@@ -25,7 +26,7 @@ pcb* pcb_allocate(void){
     for(int i = 0;i<1024;i++){
         newPCB->stack[i]=0;
     }
-    newPCB->stackPtr = &newPCB->stack[1024-sizeof(void*)];
+    newPCB->stackPtr = (char *)(newPCB->stack +1022 - sizeof(context));
 
     return newPCB;
 }

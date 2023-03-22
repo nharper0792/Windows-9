@@ -20,9 +20,9 @@ struct pcb* r3_load(char* name, void* func){
     con->ds = 0x10;
     con->es = 0x10;
     con->CS = 0x08;
-    con->EBP = (int)new->stackPtr;
-    con->ESP = (int)new->stack; // might not be esi may be esp
-    con->EIP = (int)func; 
+    con->ESP = (int)new->stackPtr;
+    con->EBP = (int)new->stack; // might not be esi may be esp
+    con->EIP = (unsigned int) func;
     con->EFLAGS = 0x0202;
     pcb_insert(new);
     return new;

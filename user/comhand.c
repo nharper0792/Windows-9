@@ -9,6 +9,7 @@
 #include <ctype.h>
 #include <linked-list.h>
 #include <mpx/r3_commands.h>
+#include <processes.h>
 
 /*
 Variable: curr_process
