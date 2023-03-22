@@ -12,7 +12,8 @@ void yield() {
 
 void load(){
     pcb* pr1 = pcb_setup("proc1", USER, 0); 
-    pr1->executionState = NOT_SUSPENDED;
+    pr1->dispatchingState = NOT_SUSPENDED;
+    pr1-> executionState = READY;
     context* con1 = (context*)pr1->stackPtr;
     memset(con1, 0, sizeof(context));
     con1->fs = 0x10;
@@ -28,7 +29,8 @@ void load(){
     pcb_insert(pr1);
 
     pcb* pr2 = pcb_setup("proc2", USER, 0); 
-    pr1->executionState = NOT_SUSPENDED;
+    pr2->dispatchingState = NOT_SUSPENDED;
+    pr2-> executionState = READY;
     context* con2 = (context*)pr2->stackPtr;
     memset(con2, 0, sizeof(context));
     con2->fs = 0x10;
@@ -43,7 +45,8 @@ void load(){
     pcb_insert(pr2);
 
     pcb* pr3 = pcb_setup("proc3", USER, 0); 
-    pr3->executionState = NOT_SUSPENDED;
+    pr3->dispatchingState = NOT_SUSPENDED;
+    pr3-> executionState = READY;
     context* con3 = (context*)pr3->stackPtr;
     memset(con3, 0, sizeof(context));
     con3->fs = 0x10;
@@ -59,7 +62,8 @@ void load(){
     pcb_insert(pr3);
 
     pcb* pr4 = pcb_setup("proc4", USER, 0); 
-    pr4->executionState = NOT_SUSPENDED;
+    pr4->dispatchingState = NOT_SUSPENDED;
+    pr4-> executionState = READY;
     context* con4 = (context*)pr4->stackPtr;
     memset(con4, 0, sizeof(context));
     con4->fs = 0x10;
@@ -75,7 +79,8 @@ void load(){
     pcb_insert(pr4);
 
     pcb* pr5 = pcb_setup("proc5", USER, 0); 
-    pr1->executionState = NOT_SUSPENDED;
+    pr5->dispatchingState = NOT_SUSPENDED;
+    pr5-> executionState = READY;
     context* con5 = (context*)pr5->stackPtr;
     memset(con5, 0, sizeof(context));
     con5->fs = 0x10;
