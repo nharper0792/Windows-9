@@ -7,7 +7,7 @@
 
 void yield() {
     sys_req(IDLE);
-  }
+}
 
 
 struct pcb* r3_load(char* name, void* func){

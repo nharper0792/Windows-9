@@ -7,7 +7,7 @@
 @Name			: init_comhand
 @brief			: Initiates and runs the command handler loop
 @params			: N/A
-@returns		: N/A
+@returns		: N/As
 */
 void init_comhand(void);
 

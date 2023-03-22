@@ -1,7 +1,9 @@
 #include <mpx/io.h>
 #include <mpx/serial.h>
 #include <sys_req.h>
-
+#include <stdio.h>
+#include <string.h>
+#include <mpx/command_history.h>
 enum uart_registers {
     RBR = 0,	// Receive Buffer
     THR = 0,	// Transmitter Holding
@@ -113,10 +115,45 @@ int serial_poll(device dev, char* buffer, size_t len)
                     count--;
                 }
             }
+            //Arrow Keys
             else if (c == '\033') {
                 c = inb(dev);
                 c = inb(dev);
-                if (c == 'C') {
+                if(c=='A'){
+                    if(count>0){
+                    addToCycled(buffer);
+                    }
+                    for(;ind>=2;ind--,count--){
+                        outb(dev,'\b');
+                    }
+                    char* newCommand = getFromHistory();
+                    int len = strlen(newCommand);
+                    if(newCommand!=NULL) {
+                        strcpy(buffer,newCommand);
+                        for(;ind-2<len;ind++,count++){
+                            outb(dev,newCommand[ind]);
+                        }
+                    }
+                }
+                else if(c=='B'){
+                    if(count>0){
+                    addToHistory(buffer);
+                    }
+                    for(;ind>=2;ind--,count--){
+                        outb(dev,'\b');
+                    }
+                    char* newCommand = getFromCycled();
+                    int len = strlen(newCommand);
+
+                    if(newCommand!=NULL) {
+                        strcpy(buffer,newCommand);
+                        for(;ind-2<len;ind++,count++){
+                            outb(dev,newCommand[ind]);
+                        }
+                    }
+                }
+
+                else if (c == 'C') {
                     ind++;
                     serial_out(dev, "\033[C", 3);
 
@@ -124,7 +161,6 @@ int serial_poll(device dev, char* buffer, size_t len)
                 else if (c == 'D') {
                     ind--;
                     serial_out(dev, "\033[D", 3);
-
                 }
 
 
@@ -135,10 +171,10 @@ int serial_poll(device dev, char* buffer, size_t len)
             else if (c == 13 || c == 10)
             {
                 if (count > 0) {
+                    addToHistory(buffer);
                     buffer[ind] = '\0';
                     outb(dev, '\n');
                     outb(dev, '\r');
-
                     return count;
                 }  
             }

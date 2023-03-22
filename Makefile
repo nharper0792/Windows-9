@@ -9,8 +9,7 @@ kernel/kmain.o\
 kernel/serial.o\
 kernel/pcb.o\
 kernel/sys_call.o\
-kernel/command_history.o\
-kernel/processes.o
+kernel/command_history.o
 
 LIB_OBJECTS =\
 lib/ctype.o\
@@ -22,7 +21,9 @@ lib/linked-list.o
 
 USER_OBJECTS =\
 user/system.o\
-user/comhand.o
+user/comhand.o\
+user/r3_commands.o
+
 
 ########################################################################
 ### Nothing below here needs to be changed
