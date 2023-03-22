@@ -13,7 +13,7 @@
 
 
 
-struct pcb* r3_load(char *name, void* func);
+
 void load();
 void yield();
 
