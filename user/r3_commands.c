@@ -58,23 +58,23 @@ void load(){
 
     pcb* pr4 = pcb_setup("proc4", USER, 0); 
     pr4->executionState = NOT_SUSPENDED;
-    context* con = (context*)pr4->stackPtr;
-    memset(con, 0, sizeof(context));
-    con->fs = 0x10;
-    con->gs = 0x10;
-    con->ds = 0x10;
-    con->es = 0x10;
-    con->CS = 0x08;
-    con->ESP = (int)pr4->stackPtr;
-    con->EBP = (int)pr4->stack; // might not be esi may be esp
-    con->EIP = (unsigned int) proc4;
-    con->EFLAGS = 0x0202;
+    context* con4 = (context*)pr4->stackPtr;
+    memset(con4, 0, sizeof(context));
+    con4->fs = 0x10;
+    con4->gs = 0x10;
+    con4->ds = 0x10;
+    con4->es = 0x10;
+    con4->CS = 0x08;
+    con4->ESP = (int)pr4->stackPtr;
+    con4->EBP = (int)pr4->stack; // might not be esi may be esp
+    con4->EIP = (unsigned int) proc4;
+    con4->EFLAGS = 0x0202;
     pcb_insert(pr4);
 
     pcb* pr5 = pcb_setup("proc5", USER, 0); 
     pr1->executionState = NOT_SUSPENDED;
     context* con5 = (context*)pr5->stackPtr;
-    memset(con, 0, sizeof(context));
+    memset(con5, 0, sizeof(context));
     con5->fs = 0x10;
     con5->gs = 0x10;
     con5->ds = 0x10;
