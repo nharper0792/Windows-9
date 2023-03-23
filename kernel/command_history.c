@@ -50,7 +50,7 @@ void resetHistory(){
     }
     if(cycled!=NULL) {
         while (cycled->headPtr != NULL) {
-            addToHead(history, getHead(cycled));
+            addToHead(history, removeHead(cycled));
         }
     }
 }
