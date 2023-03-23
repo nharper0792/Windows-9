@@ -47,15 +47,11 @@ void init_comhand(void) {
 		/*
 		Variable: buf
 		Use		: buffers packets of data from input devices
-
-		Variable: nread
-		Use		: takes a byte of input, to be processed
 		*/
 		char buf[100] = { 0 };
-		int nread = sys_req(READ, COM1, buf, sizeof(buf));
+		sys_req(READ, COM1, buf, sizeof(buf));
 		comhand_yield();
-		sys_req(WRITE, COM1, buf, nread);
-		
+
 
 		//==================================================================
 		//	SMALL TEXT GROUPS
@@ -76,7 +72,7 @@ void init_comhand(void) {
 		if ((strcasecmp("VERSION\0", buf) == 0) || atoi(buf) == 3) {
 			curr_process = 010;
 			comhand_version();
-		}		
+		}
 		if ((strcasecmp("RTC\0", buf) == 0) || atoi(buf) == 4) {
 			curr_process = 050;
 			comhand_rtc();
@@ -136,10 +132,10 @@ void init_comhand(void) {
 		if ((strcasecmp("PCB SHOW ALL\0", buf) == 0) || atoi(buf) == 18) {
 			curr_process = 1010;
 			comhand_pcbShow(3);
-		}if ((strcasecmp("LOAD\0", buf) == 0)) {
+		}if ((strcasecmp("LOAD\0", buf) == 0) || atoi(buf) == 19) {
 			curr_process = 110;
 			comhand_load();
-			
+
 		}
 		//displays a message to the user stating their prompt wasn't recognized
 		//only displays if the user is in the menu process, updates everytime the [ENTER KEY] is read by serial polling.
@@ -213,14 +209,13 @@ void comhand_shutdown(void) {
 
 	for (;;) {
 		char shutdownconfirmation[10] = { 0 };
-		int nread = sys_req(READ, COM1, shutdownconfirmation, sizeof(shutdownconfirmation));
-		sys_req(WRITE, COM1, shutdownconfirmation, nread);
+		sys_req(READ, COM1, shutdownconfirmation, sizeof(shutdownconfirmation));
 		comhand_yield();
 
-
-		if (strcasecmp(shutdownconfirmation, yesprompt) == 0 )
+		if (strcasecmp(shutdownconfirmation, yesprompt) == 0)
 		{
-			sys_req(-1);
+			pcb* dummy = pcb_find("IDLE_PROCESS");
+			pcb_remove(dummy);
 			sys_req(EXIT);
 
 			//update process to 021
@@ -282,9 +277,9 @@ void comhand_setTime(void) {
 		);
 
 		char rtcprompt[100] = { 0 };
-		int nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
+		sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
 		comhand_yield();
-		sys_req(WRITE, COM1, rtcprompt, nread2);
+
 		if (
 			(rtcprompt[2] == ':') && (rtcprompt[5] == ':')		//string has separators in indexes 2 and 5
 			&& ((strlen(rtcprompt)) <= (size_t)8)				//string is less than 8 characters long
@@ -303,9 +298,8 @@ void comhand_setTime(void) {
 				);
 
 				char timeconfirmation[10] = { 0 };
-				int nread2 = sys_req(READ, COM1, timeconfirmation, sizeof(timeconfirmation));
+				sys_req(READ, COM1, timeconfirmation, sizeof(timeconfirmation));
 				comhand_yield();
-				sys_req(WRITE, COM1, timeconfirmation, nread2);
 
 				if (strcasecmp(timeconfirmation, yesprompt) == 0) {
 					break;
@@ -361,9 +355,9 @@ void comhand_setDate(void) {
 		);
 
 		char rtcprompt[100] = { 0 };
-		int nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
+		sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
 		comhand_yield();
-		sys_req(WRITE, COM1, rtcprompt, nread2);
+
 		//test for correct formatting
 		if (
 			(rtcprompt[2] == '/') && (rtcprompt[5] == '/')		//string has separators in indexes 2 and 5
@@ -383,9 +377,9 @@ void comhand_setDate(void) {
 				);
 
 				char dateconfirmation[10] = { 0 };
-				int nread2 = sys_req(READ, COM1, dateconfirmation, sizeof(dateconfirmation));
+				sys_req(READ, COM1, dateconfirmation, sizeof(dateconfirmation));
 				comhand_yield();
-				sys_req(WRITE, COM1, dateconfirmation, nread2);
+
 
 				if (strcasecmp(dateconfirmation, yesprompt) == 0) {
 					break;
@@ -442,9 +436,9 @@ void comhand_joeburrow(void) {
 		"\n"\
 		"\n> "
 	);
-	int nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
 	comhand_yield();
-	sys_req(WRITE, COM1, burrowbuf, nread);
+
 	puts(
 		"\n$:Do you really not know who Joe Burrow is?:"\
 		"\n$:I mean the American football player Joseph \"Joe\" Thomas Burrow, Jr.:"
@@ -455,9 +449,9 @@ void comhand_joeburrow(void) {
 		"\n"\
 		"\n> "
 	);
-	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
 	comhand_yield();
-	sys_req(WRITE, COM1, burrowbuf, nread);
+
 	puts(
 		"\n$:He is a quarterback for the Cincinnati Bengals.:"\
 		"\n$:He is one of the best quarterbacks the NFL has ever seen in the past several years.:"\
@@ -468,9 +462,9 @@ void comhand_joeburrow(void) {
 		"\n"\
 		"\n> "
 	);
-	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
 	comhand_yield();
-	sys_req(WRITE, COM1, burrowbuf, nread);
+
 	puts(
 		"\n$:And if my memory holds up correctly,:" \
 		"\n$:he recently won the NFL award as the Most Valuable Player.:" \
@@ -482,9 +476,9 @@ void comhand_joeburrow(void) {
 		"\n"\
 		"\n> "
 	);
-	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
 	comhand_yield();
-	sys_req(WRITE, COM1, burrowbuf, nread);
+
 
 	puts(
 		"\n(%): It's me, Joe Burrow! I'm a real person!"\
@@ -493,9 +487,9 @@ void comhand_joeburrow(void) {
 		"\n"\
 		"\n> "
 	);
-	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
 	comhand_yield();
-	sys_req(WRITE, COM1, burrowbuf, nread);
+
 	if (strcasecmp(burrowbuf, yesprompt) == 0) {
 		puts(
 			"\n(%): Awesome! Glad you could be a help, my little buddy."\
@@ -519,9 +513,9 @@ void comhand_joeburrow(void) {
 		comhand_menu();
 		return;
 	}
-	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
 	comhand_yield();
-	sys_req(WRITE, COM1, burrowbuf, nread);
+
 	if (strcasecmp(burrowbuf, yesprompt) == 0) {
 		puts(
 			"\n(%): Really? No one has ever...played football..."\
@@ -543,9 +537,9 @@ void comhand_joeburrow(void) {
 		comhand_menu();
 		return;
 	}
-	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
 	comhand_yield();
-	sys_req(WRITE, COM1, burrowbuf, nread);
+
 	puts(
 		"\n\e[1;95mJoe Burrow looks at you with deep, tear-filled eyes."\
 		"\n\e[1;95mHe doesn't know how to process what you just said."\
@@ -580,9 +574,9 @@ void comhand_pcbCreate(void) {
 			"\n> "
 		);
 		//read buffer||give user command
-		int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 		comhand_yield();
-		sys_req(WRITE, COM1, pcbbuf, nread);
+
 		//yes case
 		if (strcasecmp(pcbbuf, yesprompt) == 0) {
 			puts(
@@ -615,9 +609,9 @@ void comhand_pcbCreate(void) {
 		"\n> "
 	);
 	//read buffer||give user command
-	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 	comhand_yield();
-	sys_req(WRITE, COM1, pcbbuf, nread);
+
 	//capture pcb name
 	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
 	strcpy(pcbName, pcbbuf);
@@ -637,9 +631,9 @@ void comhand_pcbCreate(void) {
 			"\n> "
 		);
 		//read buffer||give user command
-		nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 		comhand_yield();
-		sys_req(WRITE, COM1, pcbbuf, nread);
+
 		//user case
 		if (strcasecmp("USER\0", pcbbuf) == 0) {
 			puts(
@@ -681,16 +675,16 @@ void comhand_pcbCreate(void) {
 			"\n> "
 		);
 		//read buffer||give user command
-		nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 		comhand_yield();
-		sys_req(WRITE, COM1, pcbbuf, nread);
+
 		//capture pcb name
 		if (strlen(pcbbuf) == 1) {
 			pcbPriority = atoi(pcbbuf);
 			printf(
 				"\n"\
 				"\n$:Your new PCB has been given the priority %d :",
-			pcbPriority
+				pcbPriority
 			);
 			break;
 		}
@@ -708,7 +702,7 @@ void comhand_pcbCreate(void) {
 		"\n$:Name: %s",
 		pcbName
 	);
-	
+
 	//print class
 	puts("\n$:Class: ");
 	if (pcbClass == 0)
@@ -729,18 +723,18 @@ void comhand_pcbCreate(void) {
 			"\n$:	no"\
 			"\n> "
 		);
-		nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 		comhand_yield();
-		sys_req(WRITE, COM1, pcbbuf, nread);
+
 		//yes case
 		if (strcasecmp(yesprompt, pcbbuf) == 0) {
 			//create pcb
 			pcb* dummy = pcb_setup(
-				pcbName, 
-				pcbClass, 
+				pcbName,
+				pcbClass,
 				pcbPriority
 			);
-			
+
 			//confirmation statements
 			//success case
 			if (pcb_createcheck(pcbName) == 1) {
@@ -808,7 +802,7 @@ void comhand_pcbCreate(void) {
 }
 /*
 @Name			: comhand_pcbDelete
-@brief			: This command will prompt the user to input the name of a PCB that they want to delete. 
+@brief			: This command will prompt the user to input the name of a PCB that they want to delete.
 				  If found, will delete that PCB. If not, returns to menu.
 
 @params			: N/A
@@ -816,57 +810,58 @@ void comhand_pcbCreate(void) {
 */
 void comhand_pcbDelete(void) {
 	char pcbbuf[100] = { 0 };
-		//pcb name
-		puts(
-			"\n$:Please enter the name of the PCB you would like to delete:"\
-			"\n> "
-		);
-		//read buffer||give user command
-		int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
-		comhand_yield();
-		sys_req(WRITE, COM1, pcbbuf, nread);
-		//capture pcb name
-		char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
-		strcpy(pcbName, pcbbuf);
-		//create dummy pcb
-		pcb* dummy = pcb_find(pcbName);
-		//if found, delete
-		if (dummy != NULL&& dummy->class!=1) {
-			//remove pcb from pcb lists
-			pcb_remove(dummy);
-			//free pcb
-			pcb_free(dummy);
-			puts(
-				"\n$:PCB deleted:"\
-				"\n$:Returning to menu...:"\
-				"\n"
-			);
-			return;
-		}
-		else if(dummy->class!=1) {
-			printf(
-				"\n$:PCB %s not found in PCB list(s):"\
-				"\n",
-				pcbName
-			);
-		}else{
-			puts(
-				"\n$:PCB is a system process"\
-				"\n$:Deletion cancelled"\
-				"\n"
-			);
+	//pcb name
+	puts(
+		"\n$:Please enter the name of the PCB you would like to delete:"\
+		"\n> "
+	);
+	//read buffer||give user command
+	sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	comhand_yield();
 
-		}
+	//capture pcb name
+	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
+	strcpy(pcbName, pcbbuf);
+	//create dummy pcb
+	pcb* dummy = pcb_find(pcbName);
+	//if found, delete
+	if (dummy != NULL && dummy->class != 1) {
+		//remove pcb from pcb lists
+		pcb_remove(dummy);
+		//free pcb
+		pcb_free(dummy);
 		puts(
+			"\n$:PCB deleted:"\
 			"\n$:Returning to menu...:"\
 			"\n"
 		);
-		//return
-		int mem_free = sys_free_mem(pcbName);
-		(void)mem_free;
-		comhand_menu();
 		return;
-	
+	}
+	else if (dummy->class != 1) {
+		printf(
+			"\n$:PCB %s not found in PCB list(s):"\
+			"\n",
+			pcbName
+		);
+	}
+	else {
+		puts(
+			"\n$:PCB is a system process"\
+			"\n$:Deletion cancelled"\
+			"\n"
+		);
+
+	}
+	puts(
+		"\n$:Returning to menu...:"\
+		"\n"
+	);
+	//return
+	int mem_free = sys_free_mem(pcbName);
+	(void)mem_free;
+	comhand_menu();
+	return;
+
 }
 /*
 @Name			: comhand_pcbBlock
@@ -882,9 +877,9 @@ void comhand_pcbBlock(void) {
 		"\n> "
 	);
 	//read buffer||give user command
-	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 	comhand_yield();
-	sys_req(WRITE, COM1, pcbbuf, nread);
+
 	//capture input
 	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
 	strcpy(pcbName, pcbbuf);
@@ -892,9 +887,9 @@ void comhand_pcbBlock(void) {
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
 	if (dummy != NULL) {
-        pcb_remove(dummy);
+		pcb_remove(dummy);
 		dummy->executionState = BLOCKED;
-        pcb_insert(dummy);
+		pcb_insert(dummy);
 		printf(
 			"\n$:PCB %s has been given the [BLOCKED] execution state"\
 			"\n",
@@ -932,9 +927,9 @@ void comhand_pcbUnblock(void) {
 		"\n> "
 	);
 	//read buffer||give user command
-	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 	comhand_yield();
-	sys_req(WRITE, COM1, pcbbuf, nread);
+
 	//capture input
 	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
 	strcpy(pcbName, pcbbuf);
@@ -942,9 +937,9 @@ void comhand_pcbUnblock(void) {
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
 	if (dummy != NULL) {
-        pcb_remove(dummy);
+		pcb_remove(dummy);
 		dummy->executionState = READY;
-        pcb_insert(dummy);
+		pcb_insert(dummy);
 		printf(
 			"\n$:PCB %s has been given the [UNBLOCKED] execution state"\
 			"\n",
@@ -982,32 +977,33 @@ void comhand_pcbSuspend(void) {
 		"\n> "
 	);
 	//read buffer||give user command
-	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 	comhand_yield();
-	sys_req(WRITE, COM1, pcbbuf, nread);
+
 	//capture input
 	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
 	strcpy(pcbName, pcbbuf);
 	//find specified PCB
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
-	if (dummy != NULL&& dummy->class!=1) {
-        pcb_remove(dummy);
+	if (dummy != NULL && dummy->class != 1) {
+		pcb_remove(dummy);
 		dummy->dispatchingState = SUSPENDED;
-        pcb_insert(dummy);
+		pcb_insert(dummy);
 		printf(
 			"\n$:PCB %s has been given the [SUSPENDED] dispatching state"\
 			"\n",
 			pcbName
 		);
 	}
-	else if(dummy->class!=1){
+	else if (dummy->class != 1) {
 
 		puts(
 			"\n$:PCB not found."\
 			"\n"
 		);
-	}else{
+	}
+	else {
 		puts(
 			"\n$:PCB is a system process suspension cancelled"\
 			"\n");
@@ -1037,9 +1033,9 @@ void comhand_pcbResume(void) {
 		"\n> "
 	);
 	//read buffer||give user command
-	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 	comhand_yield();
-	sys_req(WRITE, COM1, pcbbuf, nread);
+
 	//capture input
 	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
 	strcpy(pcbName, pcbbuf);
@@ -1047,9 +1043,9 @@ void comhand_pcbResume(void) {
 	pcb* dummy = pcb_find(pcbName);
 	//change to blocked
 	if (dummy != NULL) {
-        pcb_remove(dummy);
+		pcb_remove(dummy);
 		dummy->dispatchingState = NOT_SUSPENDED;
-        pcb_insert(dummy);
+		pcb_insert(dummy);
 		printf(
 			"\n$:PCB %s has been given the [NOT SUSPENDED] dispatching state"\
 			"\n",
@@ -1073,7 +1069,7 @@ void comhand_pcbResume(void) {
 }
 /*
 @Name			: comhand_pcbPriority
-@brief			: Prompts the user to enter the name of the PCB they want to change the priority of. 
+@brief			: Prompts the user to enter the name of the PCB they want to change the priority of.
 				  Then changes the priority of that PCB.
 
 @params			: N/A
@@ -1087,9 +1083,9 @@ void comhand_pcbPriority(void) {
 		"\n> "
 	);
 	//read buffer||give user command
-	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 	comhand_yield();
-	sys_req(WRITE, COM1, pcbbuf, nread);
+
 	//capture pcb name
 	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
 	strcpy(pcbName, pcbbuf);
@@ -1100,7 +1096,7 @@ void comhand_pcbPriority(void) {
 		struct pcb* dummyPCB = pcb_find(pcbName);
 		printf(
 			"\n$:PCB %s currently has priority %i:",
-			pcbName, 
+			pcbName,
 			dummyPCB->priority
 		);
 
@@ -1114,16 +1110,16 @@ void comhand_pcbPriority(void) {
 				pcbName
 			);
 			//read buffer||give user command
-			nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+			sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 			comhand_yield();
-			sys_req(WRITE, COM1, pcbbuf, nread);
+
 			//capture pcb name
 			if (strlen(pcbbuf) == 1) {
 
 				pcbPriority = atoi(pcbbuf);
 				printf(
 					"\n$:PCB %s's priority set to %s :",
-					pcbName, 
+					pcbName,
 					pcbbuf
 				);
 				break;
@@ -1161,14 +1157,14 @@ void comhand_pcbPriority(void) {
 }
 /*
 @Name			: comhand_pcbShow
-@brief			: Will show existing PCBs to the user. 
+@brief			: Will show existing PCBs to the user.
 				  What type of show that is done is specified in main command handler by the user.
 
 @param			entry : specifies which 'show' sequence to run
 @returns		: N/A
 */
 void comhand_pcbShow(int entry) {
-	
+
 	//show specific PCB, prompt user
 	if (entry == 0) {
 		char pcbbuf[100] = { 0 };
@@ -1177,12 +1173,12 @@ void comhand_pcbShow(int entry) {
 			"\n> "
 		);
 		//read buffer||give user command
-		int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
 		comhand_yield();
-		sys_req(WRITE, COM1, pcbbuf, nread);
+
 		//create PCB from user input
 		pcb* dummy = pcb_find(pcbbuf);
-		
+
 		//display values
 		if (dummy != NULL) {
 			comhand_pcbShowHelper(dummy);
@@ -1210,7 +1206,7 @@ void comhand_pcbShow(int entry) {
 		}
 		else {
 			comhand_printPcbList(getList(1));
-            comhand_printPcbList(getList(3));
+			comhand_printPcbList(getList(3));
 		}
 	}
 	//show blocked PCBs
@@ -1225,14 +1221,14 @@ void comhand_pcbShow(int entry) {
 		}
 		else {
 			comhand_printPcbList(getList(2));
-            comhand_printPcbList(getList(4));
+			comhand_printPcbList(getList(4));
 		}
 	}
 	//show all PCBs
 	if (entry == 3) {
-        for( int i = 1; i<5; i++){
-            comhand_printPcbList(getList(i));
-        }
+		for (int i = 1; i < 5; i++) {
+			comhand_printPcbList(getList(i));
+		}
 		puts(
 			"\n$:All PCBs are shown above:"\
 			"\n$:If you see no PCBs, no PCBs currently exist."\
@@ -1247,12 +1243,12 @@ void comhand_pcbShow(int entry) {
 	comhand_menu();
 	return;
 }
-void comhand_printPcbList(list* li){
-    if(li!=NULL){
-        for(node* currPtr = getHead(li);currPtr!=NULL;currPtr = currPtr->nextPtr){
-            comhand_pcbShowHelper((pcb*)getData(currPtr));
-        }
-    }
+void comhand_printPcbList(list* li) {
+	if (li != NULL) {
+		for (node* currPtr = getHead(li); currPtr != NULL; currPtr = currPtr->nextPtr) {
+			comhand_pcbShowHelper((pcb*)getData(currPtr));
+		}
+	}
 }
 /*
 @Name			: comhand_pcbShowHelper
@@ -1366,6 +1362,8 @@ void comhand_help(void) {
 		"\n$:		Will show all PCBs that are blocked."\
 		"\n$:	18) pcb show all"\
 		"\n$:		Will show all PCBs that exist."\
+		"\n$:	19) load"\
+		"\n$:		Will load Processes 1-5 [FOR TESTING PURPOSES, USE NOT RECCOMMENDED]"\
 		"\n$:"\
 		"\n$:"\
 		"\n$:  \n \e[0m"
@@ -1393,6 +1391,7 @@ void comhand_menu(void) {
 		"\n$:	16) pcb show ready"\
 		"\n$:	17) pcb show blocked"\
 		"\n$:	18) pcb show all"\
+		"\n$:	19) load"\
 		"\n$:"\
 		"\n$:See help command for more information.: "\
 		"\n"

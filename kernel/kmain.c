@@ -85,6 +85,8 @@ void kmain(void)
 	// R4: create commhand and idle processes
 	
 	//creates command handler process
+	//NAME     : COMMAND_HANDLER
+	//PRIORITY : 9
 	{
 		pcb* comhand_pcb = pcb_setup("COMMAND_HANDLER", SYSTEM, 9);
 		comhand_pcb->dispatchingState = NOT_SUSPENDED;
@@ -103,6 +105,8 @@ void kmain(void)
 		pcb_insert(comhand_pcb);
 	}
 	//creates system idle process
+	//NAME     : IDLE_PROCESS
+	//PRIORITY : 0
 	{
 		pcb* idle_pcb = pcb_setup("IDLE_PROCESS", SYSTEM, 0);
 		idle_pcb->dispatchingState = NOT_SUSPENDED;
