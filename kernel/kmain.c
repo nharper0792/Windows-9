@@ -19,6 +19,7 @@
 #include <string.h>
 #include <memory.h>
 #include <stdio.h>
+#include <mpx/r3_commands.h>
 
 static void klogv(device dev, const char *msg)
 {
@@ -82,12 +83,48 @@ void kmain(void)
 	klogv(COM1, "Initializing MPX modules...");
 	// R5: sys_set_heap_functions(...);
 	// R4: create commhand and idle processes
+	
+	//creates command handler process
+	{
+		pcb* comhand_pcb = pcb_setup("COMMAND_HANDLER", SYSTEM, 9);
+		comhand_pcb->dispatchingState = NOT_SUSPENDED;
+		comhand_pcb->executionState = READY;
+		context* comhand_con = (context*)comhand_pcb->stackPtr;
+		memset(comhand_con, 0, sizeof(context));
+		comhand_con->fs = 0x10;
+		comhand_con->gs = 0x10;
+		comhand_con->ds = 0x10;
+		comhand_con->es = 0x10;
+		comhand_con->ss = 0x10;
+		comhand_con->CS = 0x08;
+		comhand_con->EBP = (int)comhand_pcb->stack; // might not be esi may be esp
+		comhand_con->EIP = (unsigned int)init_comhand;
+		comhand_con->EFLAGS = 0x0202;
+		pcb_insert(comhand_pcb);
+	}
+	//creates system idle process
+	{
+		pcb* idle_pcb = pcb_setup("IDLE_PROCESS", SYSTEM, 0);
+		idle_pcb->dispatchingState = NOT_SUSPENDED;
+		idle_pcb->executionState = READY;
+		context* idle_con = (context*)idle_pcb->stackPtr;
+		memset(idle_con, 0, sizeof(context));
+		idle_con->fs = 0x10;
+		idle_con->gs = 0x10;
+		idle_con->ds = 0x10;
+		idle_con->es = 0x10;
+		idle_con->ss = 0x10;
+		idle_con->CS = 0x08;
+		idle_con->EBP = (int)idle_pcb->stack; // might not be esi may be esp
+		idle_con->EIP = (unsigned int)sys_idle_process;
+		idle_con->EFLAGS = 0x0202;
+		pcb_insert(idle_pcb);
+	}
 
 	// 9) YOUR command handler -- *create and #include an appropriate .h file*
 	// Pass execution to your command handler so the user can interact with the system.
 	klogv(COM1, "Transferring control to commhand...");
-	init_comhand();
-	// R4: __asm__ volatile ("int $0x60" :: "a"(IDLE));
+	__asm__ volatile ("int $0x60" :: "a"(IDLE));
 
 	// 10) System Shutdown -- *headers to be determined by your design*
 	// After your command handler returns, take care of any clean up that is necessary.
