@@ -7,9 +7,9 @@ pcb* currentProcess = NULL;//running process (NOT comhand)
 context* idleing = NULL;
 
 context* sys_call(context* current){
+    node* readyHead = NULL;
     if(current->EAX == IDLE|| current->EAX == EXIT){
-    pcb* readyHead = NULL;
-    readyHead = (pcb*)removeHead(ready)->data;
+        readyHead = removeHead(ready);
     if(idleing == NULL){
         idleing = current;
     }
@@ -24,7 +24,7 @@ context* sys_call(context* current){
                 pcb_insert(currentProcess);
                 current->EAX = 0;
             }
-            currentProcess = readyHead;
+            currentProcess = (pcb*)readyHead->data;
         }else if(current->EAX == EXIT) {
             pcb_free(currentProcess);
             currentProcess = NULL;
@@ -42,7 +42,7 @@ context* sys_call(context* current){
             return idleing;
         }
         else {
-            currentProcess = readyHead;
+            currentProcess = (pcb*)readyHead->data;
             current->EAX = 0;
             //set current state to running
             currentProcess->dispatchingState = RUNNING;
