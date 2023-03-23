@@ -7,7 +7,6 @@
 #include <memory.h>
 #include <stdlib.h>
 #include <pcb.h>
-#include <sys_call.h>
 
 //creating alarm linked-list
 list* alarmList;
