@@ -187,7 +187,7 @@ void comhand_version(void) {
 		"\n<       +-+-+-+-+-+-+       >"\
 		"\n \\_________________________/"\
 		"\n"
-		"\nVersion R3 & R4 2/23/2023 \e[0m"\
+		"\nVersion R3 & R4 3/23/2023 \e[0m"\
 		"\n"
 	);
 	comhand_menu();
