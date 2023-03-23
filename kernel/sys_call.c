@@ -15,11 +15,17 @@ context* sys_call(context* current){
     }
 
         if(current->EAX == IDLE) {
+            if(readyHead == NULL){
+                current->EAX = NULL;
+                return current;
+            }
             if(currentProcess!=NULL){
                 //something was running
+
                 //set it's state to ready and put in the ready queue
                 currentProcess->executionState = READY;
                 // save the current context as the stack top of currentProcess
+
                 currentProcess->stackPtr = (char*)current;
                 pcb_insert(currentProcess);
                 current->EAX = 0;
