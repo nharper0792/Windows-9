@@ -33,7 +33,7 @@ struct alarm* create_alarm(char* alarmName, char* time) {
     }
 
     //validating alarm name
-    if (name == NULL || strlen(alarmName) > MAX_ALARMNAME_LENGTH) {
+    if (alarmName == NULL || strlen(alarmName) > MAX_ALARMNAME_LENGTH) {
         puts("\nInvalid alarm name!");
     }
 
@@ -57,14 +57,11 @@ struct alarm* create_alarm(char* alarmName, char* time) {
     puts("\nAlarm has been created!");
 }
 
-struct pcb* load_alarm(void* function) {
+//struct pcb* load_alarm(void* function) {}
 
-}
+//void run_alarm() {}
 
-void run_alarm() {
-
-}
-
+/*
 struct alarm* remove_alarm(alarm* alarm) {
     //checking is alarm list exists
     if (alarmList == NULL) {
@@ -77,13 +74,11 @@ struct alarm* remove_alarm(alarm* alarm) {
     
 
 }
+*/
 
-int time_comparison(char* alarmTime) {
-    char* currentTime = getTime();
+//int time_comparison(char* alarmTime) {}
 
-}
-
-char[] seperating_time(char* time) {
+char seperating_time(char* time) {
     char* newTime[3] = {(char*)sys_alloc_mem(3), (char*)sys_alloc_mem(3), (char*)sys_alloc_mem(3)};
     for (int i = 0, seek = 0; time[seek] != '\0'; i++, seek++) {
         for (int p = 0 ;; p++, seek++) {

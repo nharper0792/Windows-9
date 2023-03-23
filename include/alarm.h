@@ -23,6 +23,6 @@ struct alarm* remove_alarm(alarm* alarm);
 
 int time_comparison(char* alarmTime);
 
-char[] seperating_time(char* time);
+char seperating_time(char* time);
 
 #endif //WINDOWS_9_ALARM_H

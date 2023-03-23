@@ -22,7 +22,8 @@ lib/linked-list.o
 USER_OBJECTS =\
 user/system.o\
 user/comhand.o\
-user/r3_commands.o
+user/r3_commands.o\
+user/alarm.o
 
 
 ########################################################################
