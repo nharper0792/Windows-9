@@ -36,7 +36,7 @@ char noprompt[] = "NO\0";
 @returns		: N/A
 */
 void comhand_yield(void) {
-	yield();
+	sys_req(IDLE);
 }
 
 void init_comhand(void) {
@@ -53,7 +53,9 @@ void init_comhand(void) {
 		*/
 		char buf[100] = { 0 };
 		int nread = sys_req(READ, COM1, buf, sizeof(buf));
+		comhand_yield();
 		sys_req(WRITE, COM1, buf, nread);
+		
 
 		//==================================================================
 		//	SMALL TEXT GROUPS
@@ -134,13 +136,9 @@ void init_comhand(void) {
 		if ((strcasecmp("PCB SHOW ALL\0", buf) == 0) || atoi(buf) == 18) {
 			curr_process = 1010;
 			comhand_pcbShow(3);
-		}if ((strcasecmp("load\0", buf) == 0) || atoi(buf) == 18) {
-			curr_process = 1011;
+		}if ((strcasecmp("LOAD\0", buf) == 0)) {
+			curr_process = 110;
 			comhand_load();
-			
-		}if ((strcasecmp("yield\0", buf) == 0) || atoi(buf) == 18) {
-			curr_process = 1012;
-			comhand_yield();
 			
 		}
 		//displays a message to the user stating their prompt wasn't recognized
@@ -217,6 +215,7 @@ void comhand_shutdown(void) {
 		char shutdownconfirmation[10] = { 0 };
 		int nread = sys_req(READ, COM1, shutdownconfirmation, sizeof(shutdownconfirmation));
 		sys_req(WRITE, COM1, shutdownconfirmation, nread);
+		comhand_yield();
 
 
 		if (strcasecmp(shutdownconfirmation, yesprompt) == 0 )
@@ -284,6 +283,7 @@ void comhand_setTime(void) {
 
 		char rtcprompt[100] = { 0 };
 		int nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
+		comhand_yield();
 		sys_req(WRITE, COM1, rtcprompt, nread2);
 		if (
 			(rtcprompt[2] == ':') && (rtcprompt[5] == ':')		//string has separators in indexes 2 and 5
@@ -304,6 +304,7 @@ void comhand_setTime(void) {
 
 				char timeconfirmation[10] = { 0 };
 				int nread2 = sys_req(READ, COM1, timeconfirmation, sizeof(timeconfirmation));
+				comhand_yield();
 				sys_req(WRITE, COM1, timeconfirmation, nread2);
 
 				if (strcasecmp(timeconfirmation, yesprompt) == 0) {
@@ -361,6 +362,7 @@ void comhand_setDate(void) {
 
 		char rtcprompt[100] = { 0 };
 		int nread2 = sys_req(READ, COM1, rtcprompt, sizeof(rtcprompt));
+		comhand_yield();
 		sys_req(WRITE, COM1, rtcprompt, nread2);
 		//test for correct formatting
 		if (
@@ -382,6 +384,7 @@ void comhand_setDate(void) {
 
 				char dateconfirmation[10] = { 0 };
 				int nread2 = sys_req(READ, COM1, dateconfirmation, sizeof(dateconfirmation));
+				comhand_yield();
 				sys_req(WRITE, COM1, dateconfirmation, nread2);
 
 				if (strcasecmp(dateconfirmation, yesprompt) == 0) {
@@ -440,6 +443,7 @@ void comhand_joeburrow(void) {
 		"\n> "
 	);
 	int nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	comhand_yield();
 	sys_req(WRITE, COM1, burrowbuf, nread);
 	puts(
 		"\n$:Do you really not know who Joe Burrow is?:"\
@@ -452,6 +456,7 @@ void comhand_joeburrow(void) {
 		"\n> "
 	);
 	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	comhand_yield();
 	sys_req(WRITE, COM1, burrowbuf, nread);
 	puts(
 		"\n$:He is a quarterback for the Cincinnati Bengals.:"\
@@ -464,6 +469,7 @@ void comhand_joeburrow(void) {
 		"\n> "
 	);
 	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	comhand_yield();
 	sys_req(WRITE, COM1, burrowbuf, nread);
 	puts(
 		"\n$:And if my memory holds up correctly,:" \
@@ -477,6 +483,7 @@ void comhand_joeburrow(void) {
 		"\n> "
 	);
 	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	comhand_yield();
 	sys_req(WRITE, COM1, burrowbuf, nread);
 
 	puts(
@@ -487,6 +494,7 @@ void comhand_joeburrow(void) {
 		"\n> "
 	);
 	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	comhand_yield();
 	sys_req(WRITE, COM1, burrowbuf, nread);
 	if (strcasecmp(burrowbuf, yesprompt) == 0) {
 		puts(
@@ -512,6 +520,7 @@ void comhand_joeburrow(void) {
 		return;
 	}
 	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	comhand_yield();
 	sys_req(WRITE, COM1, burrowbuf, nread);
 	if (strcasecmp(burrowbuf, yesprompt) == 0) {
 		puts(
@@ -535,6 +544,7 @@ void comhand_joeburrow(void) {
 		return;
 	}
 	nread = sys_req(READ, COM1, burrowbuf, sizeof(burrowbuf));
+	comhand_yield();
 	sys_req(WRITE, COM1, burrowbuf, nread);
 	puts(
 		"\n\e[1;95mJoe Burrow looks at you with deep, tear-filled eyes."\
@@ -571,6 +581,7 @@ void comhand_pcbCreate(void) {
 		);
 		//read buffer||give user command
 		int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		comhand_yield();
 		sys_req(WRITE, COM1, pcbbuf, nread);
 		//yes case
 		if (strcasecmp(pcbbuf, yesprompt) == 0) {
@@ -605,6 +616,7 @@ void comhand_pcbCreate(void) {
 	);
 	//read buffer||give user command
 	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	comhand_yield();
 	sys_req(WRITE, COM1, pcbbuf, nread);
 	//capture pcb name
 	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
@@ -626,6 +638,7 @@ void comhand_pcbCreate(void) {
 		);
 		//read buffer||give user command
 		nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		comhand_yield();
 		sys_req(WRITE, COM1, pcbbuf, nread);
 		//user case
 		if (strcasecmp("USER\0", pcbbuf) == 0) {
@@ -669,6 +682,7 @@ void comhand_pcbCreate(void) {
 		);
 		//read buffer||give user command
 		nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		comhand_yield();
 		sys_req(WRITE, COM1, pcbbuf, nread);
 		//capture pcb name
 		if (strlen(pcbbuf) == 1) {
@@ -716,6 +730,7 @@ void comhand_pcbCreate(void) {
 			"\n> "
 		);
 		nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		comhand_yield();
 		sys_req(WRITE, COM1, pcbbuf, nread);
 		//yes case
 		if (strcasecmp(yesprompt, pcbbuf) == 0) {
@@ -808,6 +823,7 @@ void comhand_pcbDelete(void) {
 		);
 		//read buffer||give user command
 		int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		comhand_yield();
 		sys_req(WRITE, COM1, pcbbuf, nread);
 		//capture pcb name
 		char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
@@ -867,6 +883,7 @@ void comhand_pcbBlock(void) {
 	);
 	//read buffer||give user command
 	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	comhand_yield();
 	sys_req(WRITE, COM1, pcbbuf, nread);
 	//capture input
 	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
@@ -916,6 +933,7 @@ void comhand_pcbUnblock(void) {
 	);
 	//read buffer||give user command
 	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	comhand_yield();
 	sys_req(WRITE, COM1, pcbbuf, nread);
 	//capture input
 	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
@@ -965,6 +983,7 @@ void comhand_pcbSuspend(void) {
 	);
 	//read buffer||give user command
 	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	comhand_yield();
 	sys_req(WRITE, COM1, pcbbuf, nread);
 	//capture input
 	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
@@ -1019,6 +1038,7 @@ void comhand_pcbResume(void) {
 	);
 	//read buffer||give user command
 	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	comhand_yield();
 	sys_req(WRITE, COM1, pcbbuf, nread);
 	//capture input
 	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
@@ -1068,6 +1088,7 @@ void comhand_pcbPriority(void) {
 	);
 	//read buffer||give user command
 	int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+	comhand_yield();
 	sys_req(WRITE, COM1, pcbbuf, nread);
 	//capture pcb name
 	char* pcbName = sys_alloc_mem(sizeof(pcbbuf));
@@ -1094,6 +1115,7 @@ void comhand_pcbPriority(void) {
 			);
 			//read buffer||give user command
 			nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+			comhand_yield();
 			sys_req(WRITE, COM1, pcbbuf, nread);
 			//capture pcb name
 			if (strlen(pcbbuf) == 1) {
@@ -1156,6 +1178,7 @@ void comhand_pcbShow(int entry) {
 		);
 		//read buffer||give user command
 		int nread = sys_req(READ, COM1, pcbbuf, sizeof(pcbbuf));
+		comhand_yield();
 		sys_req(WRITE, COM1, pcbbuf, nread);
 		//create PCB from user input
 		pcb* dummy = pcb_find(pcbbuf);
