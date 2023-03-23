@@ -89,9 +89,9 @@ void init_comhand(void) {
 			curr_process = 333;
 			comhand_joeburrow();
 		}
-		if ((strcasecmp("PCB CREATE\0", buf) == 0) || atoi(buf) == 8) {
-			curr_process = 100;
-			comhand_pcbCreate();
+		if ((strcasecmp("ALARM\0", buf) == 0) || atoi(buf) == 8) {
+			curr_process = 120;
+			comhand_alarm();
 		}
 		if ((strcasecmp("PCB DELETE\0", buf) == 0) || atoi(buf) == 9) {
 			curr_process = 101;
@@ -132,7 +132,8 @@ void init_comhand(void) {
 		if ((strcasecmp("PCB SHOW ALL\0", buf) == 0) || atoi(buf) == 18) {
 			curr_process = 1010;
 			comhand_pcbShow(3);
-		}if ((strcasecmp("LOAD\0", buf) == 0) || atoi(buf) == 19) {
+		}
+		if ((strcasecmp("LOAD\0", buf) == 0) || atoi(buf) == 19) {
 			curr_process = 110;
 			comhand_load();
 
@@ -416,6 +417,11 @@ void comhand_setDate(void) {
 		}
 	}
 }
+
+//-------------------------------
+//EXTRA COMMAND HANDLER FUNCTIONS
+//-------------------------------
+
 /*
 @Name			: comhand_joeburrow
 @brief			: Joe Burrow!
@@ -548,6 +554,124 @@ void comhand_joeburrow(void) {
 		"\n\e[1;00m$:Returning to menu...:"
 	);
 	comhand_menu();
+	return;
+}
+/*
+@Name			: comhand_alarm
+@brief			: Sets an alarm with a certain message at a certain time. Specified by the user input.
+
+@params			: N/A
+@return			: N/A
+*/
+void comhand_alarm(void) {
+	char alarmbuf[100] = { 0 };
+
+	//prompt for user, yes or no question
+	puts(
+		"\n$:Would you like to set an alarm?:"\
+		"\n$:	yes"\
+		"\n$:	no"\
+		"\n> "
+	);
+	//read buffer||give user command
+	sys_req(READ, COM1, alarmbuf, sizeof(alarmbuf));
+	comhand_yield();
+
+	if (strcasecmp("yes", alarmbuf) == 0) {
+		puts(
+			"\n$:Entering alarm creation mode...:"\
+			"\n"
+		);
+	}
+	else {
+		puts(
+			"\n$:Alarm creation cancelled:"\
+			"\n$:Returning to menu...:"\
+			"\n"
+		);
+		comhand_menu();
+		return;
+	}
+	//time input
+	puts(
+		"\n$:Enter the time you would like to set your alarm:"\
+		"\n$:Required format - HH:MM:SS"\
+		"\n"\
+		"\n> "
+	);
+	sys_req(READ, COM1, alarmbuf, sizeof(alarmbuf));
+	comhand_yield();
+	char* alarmTime = sys_alloc_mem(sizeof(alarmbuf));
+	if (
+		(alarmbuf[2] == ':') && (alarmbuf[5] == ':')	//string has separator in index 2 & index 5
+		&& (strlen(alarmbuf) <= (size_t)8)				//string is less than 5 characters
+		)
+	{
+		strcpy(alarmTime, alarmbuf);
+	}
+	else {
+		puts(
+			"\n$:Alarm time does not meet format requirements:"\
+			"\n$:Returning to menu...:"\
+			"\n"
+		);
+		comhand_menu();
+		return;
+	}
+	//message input
+	puts(
+		"\n$:Enter the message you would like to give your alarm:"\
+		"\n$:Required format - This message must be less than 100 characters long:"\
+		"\n"\
+		"\n> "
+	);
+	sys_req(READ, COM1, alarmbuf, sizeof(alarmbuf));
+	comhand_yield();
+	char* alarmMessage = sys_alloc_mem(sizeof(alarmbuf));
+	if (strlen(alarmbuf) >= (size_t)100) {
+		puts(
+			"\n$:Alarm message does not meet format requirements:"\
+			"\n$:Returning to menu...:"\
+			"\n"
+		);
+		comhand_menu();
+		return;
+	}
+	else {
+		strcpy(alarmMessage, alarmbuf);
+	}
+		
+	printf(
+		"\n$:Create new alarm with these parameters?:"\
+		"\n$:	Alarm Time	= %s "\
+		"\n$:	Alarm Message	= %s "\
+		"\n$:"\
+		"\n$:	yes"\
+		"\n$:	no"\
+		"\n"\
+		"\n> ",
+		alarmTime,
+		alarmMessage
+	);
+	sys_req(READ, COM1, alarmbuf, sizeof(alarmbuf));
+	comhand_yield();
+
+	if (strcasecmp("yes", alarmbuf) == 0) {
+		puts(
+			"\n$:Alarm created:"\
+			"\n"
+		);
+	}
+	else
+		puts("\n$:Alarm creation cancelled:");
+	puts(
+		"\n$:Returning to menu...:"\
+		"\n"
+	);
+	comhand_menu();
+	int mem_free = sys_free_mem(alarmTime);
+	mem_free = sys_free_mem(alarmMessage);
+	(void)mem_free;
 	return;
 }
 
@@ -1340,8 +1464,8 @@ void comhand_help(void) {
 		"\n$:		Prompts the user to change the date of the real-time clock."\
 		"\n$:	7) joe burrow"\
 		"\n$:		Gives you a real-life chat with superstar Joe Burrow!"\
-		"\n$:	8) pcb create"\
-		"\n$:		Enters PCB creation mode, where parameters are inputted to create a new PCB."\
+		"\n$:	8) alarm"\
+		"\n$:		Enters alarm creation mode, where parameters are inputted to create a message at a specified time."\
 		"\n$:	9) pcb delete"\
 		"\n$:		Enters PCB deletion mode, where parameters are inputted to delete an existing PCB."\
 		"\n$:	10) pcb suspend"\
@@ -1381,6 +1505,7 @@ void comhand_menu(void) {
 		"\n$:	5) timeset"\
 		"\n$:	6) dateset"\
 		"\n$:	7) joe burrow"\
+		"\n$:	8) alarm"\
 		"\n$:	9) pcb delete"\
 		"\n$:	10) pcb suspend"\
 		"\n$:	11) pcb resume"\

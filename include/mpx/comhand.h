@@ -165,4 +165,12 @@ void comhand_yield(void);
 @returns		: N/A
 */
 void comhand_load(void);
+/*
+@Name			: comhand_alarm()
+@brief			: See comhand.c for more information
+
+@param			: N/A
+@returns		: N/A
+*/
+void comhand_alarm(void);
 #endif
