@@ -162,12 +162,12 @@ void init_comhand(void) {
 
 /*
 @Name			: comhand_load
-@brief			: Will load a specific process inputted by the user
+@brief			: Will load the test processes. [FOR TESTING PURPOSES]
 
 @params			: N/A
 @returns		: N/A
 */
-void comhand_load() {
+void comhand_load(void) {
 	load();
 }
 /*
@@ -657,6 +657,7 @@ void comhand_alarm(void) {
 	comhand_yield();
 
 	if (strcasecmp("yes", alarmbuf) == 0) {
+		//TODO : add alarm creation
 		puts(
 			"\n$:Alarm created:"\
 			"\n"
