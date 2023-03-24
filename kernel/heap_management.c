@@ -1,10 +1,21 @@
 #include <heap_management.h>
+#include <memory.h>
 #include <mpx/vm.h>
-size_t startMem;
+
+mcbList mcb_freeList;
+mcbList mcb_allocList;
 
 void initialize_heap(size_t size) {
-	startMem = kmalloc(size + sizeof(mcb),0, NULL);
-	mcb *memb = (mcb*) startMem;
+	mcb* newMemb = (mcb*)sys_alloc_mem(sizeof(mcb));
+	size_t startMem = (size_t)(kmalloc(size + sizeof(mcb), 0, NULL));
+
+	newMemb->start_address = startMem;
+	newMemb->size = size;
+	newMemb->nextPtr = NULL;
+	newMemb->prevPtr = NULL;
+
+	mcb_freeList.headPtr = newMemb;
+	mcb_allocList.headPtr = NULL;
 
 	return;
 }

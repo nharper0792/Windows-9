@@ -15,6 +15,11 @@ typedef struct mcb {
 	struct mcb* prevPtr;
 }mcb;
 
+typedef struct mcbList {
+	struct mcb* headPtr;
+}mcbList;
+
+
 void initialize_heap(size_t size);
 
 int free_memory(void* data);
