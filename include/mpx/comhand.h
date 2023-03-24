@@ -173,4 +173,28 @@ void comhand_load(void);
 @returns		: N/A
 */
 void comhand_alarm(void);
+/*
+@Name		: comhand_allocateMem
+@breif		: will allocate memory
+
+@param		: N/A
+@returns	: N/A
+*/
+void comhand_allocateMem();
+/*
+@Name		: comhand_freeMem
+@breif		: will free memory
+
+@param		: N/A
+@returns	: N/A
+*/
+void comhand_freeMem();
+/*
+@Name		: comhand_showMem
+@brief		: will display a list of allocated or free memory blockes based on user's entry
+
+@param		entry : specifies which 'show' sequence to run
+@returns	: N/A
+*/
+void comhand_showMemory(int entry);
 #endif
