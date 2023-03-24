@@ -20,6 +20,7 @@
 #include <memory.h>
 #include <stdio.h>
 #include <mpx/r3_commands.h>
+#include <heap_management.h>
 
 static void klogv(device dev, const char *msg)
 {

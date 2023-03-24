@@ -27,8 +27,7 @@ int MonthDays[] = {0,
                   30,//November
                   31,//December
                   };
-int bcdToDec(int src);
-int decToBcd(int src);
+
 int read();
 void formatTime(int timeToFormat, char* stringPtr);
 

@@ -28,4 +28,14 @@ char* getTime();
  * @param newDate (char*) - a string containing the new date in the format HH:MM:SS format
  */
 void setTime(char* newDate);
+/**
+ * @brief converts a binary number to decimal
+ * @param int src - the integer to convert
+ */
+int bcdToDec(int src);
+/**
+ * @brief converts a decimal number to binary
+ * @param int src - the integer to convert
+ */
+int decToBcd(int src);
 #endif //WINDOWS_9_RTC_H
