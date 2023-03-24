@@ -1,8 +1,9 @@
 #include <heap_management.h>
 #include <mpx/vm.h>
+size_t startMem;
 
-void initialize_heap(size_t data) {
-	(void)data;
+void initialize_heap(size_t size) {
+	startMem =kmalloc(size + sizeof(memb),0, NULL);
 	return;
 }
 
