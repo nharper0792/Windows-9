@@ -2,7 +2,7 @@
 #define MPX_HEAP_H
 
 #include <linked-list.h>
-
+#include <stddef.h>
 enum mem_flag {
 	FREE = 0,
 	ALLOCATED = 1
@@ -15,11 +15,10 @@ typedef struct memb {
 	struct memb* prevPtr;
 }memb;
 
-extern list* memb_freeList;
-extern list* memb_allocList;
-
 void initialize_heap(size_t data);
 
 int free_memory(void* data);
 
 void* allocate_memory(size_t data);
+
+#endif
