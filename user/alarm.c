@@ -110,6 +110,7 @@ void runAlarm() {
             if (check == 0) {
                 printf("\n\n%s\n\n", alarmPtr->alarmName);
                 removeAlarm(alarmPtr);
+                sys_req(EXIT);
             }
 
             nodePtr = nodePtr->nextPtr;            
