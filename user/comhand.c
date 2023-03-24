@@ -10,6 +10,7 @@
 #include <linked-list.h>
 #include <mpx/r3_commands.h>
 #include <processes.h>
+#include <alarm.h>
 
 /*
 Variable: curr_process
@@ -658,6 +659,10 @@ void comhand_alarm(void) {
 
 	if (strcasecmp("yes", alarmbuf) == 0) {
 		//TODO : add alarm creation
+		
+		createAlarm(alarmMessage, alarmTime);
+		loadAlarm(&runAlarm);
+
 		puts(
 			"\n$:Alarm created:"\
 			"\n"

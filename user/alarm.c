@@ -7,7 +7,7 @@
 #include <memory.h>
 #include <stdlib.h>
 #include <pcb.h>
-#include <sys_call.h>
+#include <mpx/sys_call.h>
 
 //creating alarm linked-list
 list* alarmList;
@@ -81,24 +81,41 @@ struct pcb* loadAlarm(void* function) {
     alarm->dispatchingState = NOT_SUSPENDED;
     alarm->executionState = READY;
 
-    context* con1 = (*context)alarm->stackPtr;
+    pcb_insert(alarm);
+
+    context* con1 = (context*)alarm->stackPtr;
     memset(con1, 0, sizeof(context));
     con1->fs = 0x10;
-    con1->qs = 0x10;
+    con1->gs = 0x10;
     con1->ds = 0x10;
     con1->es = 0x10;
     con1->ss = 0x10;
     con1->CS = 0x08;
-    // con1->ESP = (int)pr1->stackPtr;
-    con1->EBP = (int)alarm->stack; // might not be esi may be esp
+    con1->EBP = (int)alarm->stack;
     con1->EIP = (unsigned int) function;
-    con1->EFLAGS - 0x0202;
-    pcb_insert(alarm);
+    con1->EFLAGS = 0x0202;
 
     return alarm;
 }
 
-//void runAlarm() {}
+void runAlarm() {
+    while(1) {
+        node* nodePtr = getHead(alarmList);
+
+        while (nodePtr != NULL) {
+            alarm* alarmPtr = nodePtr->data;
+
+            int check = compareTime(alarmPtr->alarmTime);
+
+            if (check == 0) {
+                printf("\n\n%s\n\n", alarmPtr->alarmName);
+                removeAlarm(alarmPtr);
+            }
+
+            nodePtr = nodePtr->nextPtr;            
+        }
+    }
+}
 
 
 void removeAlarm(alarm* alarm) {
@@ -135,5 +152,12 @@ void removeAlarm(alarm* alarm) {
     sys_free_mem(currentPtr);
 }
 
-//int compareTime(char* alarmTime) {}
+int compareTime(char* alarmTime) {
+    char* lol = "lol";
+    if (alarmTime == lol) {
+        puts("fuck you");
+    }
+
+    return 1;
+}
 

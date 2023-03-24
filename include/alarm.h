@@ -13,14 +13,14 @@ typedef struct alarm {
 
 extern list* alarmList;
 
-struct alarm* create_alarm(char* alarmName, char* time);
+struct alarm* createAlarm(char* alarmName, char* time);
 
-struct pcb* load_alarm(void* function);
+struct pcb* loadAlarm(void* function);
 
-void run_alarm();
+void runAlarm();
 
-void remove_alarm(alarm* alarm);
+void removeAlarm(alarm* alarm);
 
-int time_comparison(char* alarmTime);
+int compareTime(char* alarmTime);
 
 #endif //WINDOWS_9_ALARM_H
