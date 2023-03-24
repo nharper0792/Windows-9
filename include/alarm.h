@@ -7,8 +7,8 @@
 #include <linked-list.h>
 
 typedef struct alarm {
-    char* alarmName[MAX_ALARMNAME_LENGTH + 1];
-    char* alarmTime[MAX_ALARMTIME_LENGTH + 1];
+    char* alarmName;
+    char* alarmTime;
 }alarm;
 
 extern list* alarmList;
@@ -22,7 +22,5 @@ void run_alarm();
 struct alarm* remove_alarm(alarm* alarm);
 
 int time_comparison(char* alarmTime);
-
-char seperating_time(char* time);
 
 #endif //WINDOWS_9_ALARM_H
