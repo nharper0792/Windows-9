@@ -7,12 +7,13 @@
 #include <memory.h>
 #include <stdlib.h>
 #include <pcb.h>
+#include <sys_call.h>
 
 //creating alarm linked-list
 list* alarmList;
 int alarmListSize = 0;
 
-struct alarm* create_alarm(char* alarmName, char* time) {
+struct alarm* createAlarm(char* alarmName, char* time) {
     //splits up time into array
     char *alarmTime[3] = {(char*)sys_alloc_mem(3), (char*)sys_alloc_mem(3), (char*)sys_alloc_mem(3)};
     for (int i = 0, seek = 0; time[seek] != '\0'; i++, seek++) {
@@ -59,29 +60,48 @@ struct alarm* create_alarm(char* alarmName, char* time) {
         alarmList = createList();
     }
 
-    /*
-                    Check to make sure alarm name does not already exist
-    */
+    
 
     //creating alarm and setting data to 
     alarm* newAlarm = (alarm*)sys_alloc_mem(sizeof(alarm*));
     newAlarm->alarmName = alarmName;
     newAlarm->alarmTime = time;
 
-    //adding new alarm to list
+    //adding new alarm to list and incrementing size
     add(alarmList, createNode(newAlarm));
+    alarmListSize++;
 
     puts("\nAlarm has been created!");
 
     return newAlarm;
 }
 
-//struct pcb* load_alarm(void* function) {}
+struct pcb* loadAlarm(void* function) {
+    pcb* alarm = pcb_setup("alarm", USER, 0);
+    alarm->dispatchingState = NOT_SUSPENDED;
+    alarm->executionState = READY;
 
-//void run_alarm() {}
+    context* con1 = (*context)alarm->stackPtr;
+    memset(con1, 0, sizeof(context));
+    con1->fs = 0x10;
+    con1->qs = 0x10;
+    con1->ds = 0x10;
+    con1->es = 0x10;
+    con1->ss = 0x10;
+    con1->CS = 0x08;
+    // con1->ESP = (int)pr1->stackPtr;
+    con1->EBP = (int)alarm->stack; // might not be esi may be esp
+    con1->EIP = (unsigned int) function;
+    con1->EFLAGS - 0x0202;
+    pcb_insert(alarm);
 
-/*
-struct alarm* remove_alarm(alarm* alarm) {
+    return alarm;
+}
+
+//void runAlarm() {}
+
+
+void removeAlarm(alarm* alarm) {
     //checking is alarm list exists
     if (alarmList == NULL) {
         puts("Alarm does not exist!");
@@ -89,11 +109,31 @@ struct alarm* remove_alarm(alarm* alarm) {
     }
 
     //traversing list to find alarm to remove
+    node* currentPtr;
+    for (currentPtr = getHead(alarmList); currentPtr->data != alarm || currentPtr == NULL; currentPtr = currentPtr->nextPtr);
     
-    
+    //checks to see if currentPtr made it to the end of the list
+    if (currentPtr == NULL) {
+        puts("Alarm does not exist!");
+        return;
+    } 
 
+    //removes alarm and frees allocated memory
+    if (currentPtr->nextPtr == NULL) {
+        //currentPtr is at end of list
+        currentPtr->prevPtr = NULL;
+    } else if (currentPtr->prevPtr == NULL) {
+        //currentPtr is at beginning of list
+        removeHead(alarmList);
+    } else {
+        //currentPtr is within list
+        currentPtr->prevPtr->nextPtr = currentPtr->nextPtr;
+        currentPtr->nextPtr->prevPtr = currentPtr->prevPtr;
+    }
+
+    //frees memory allocated for alarm
+    sys_free_mem(currentPtr);
 }
-*/
 
-//int time_comparison(char* alarmTime) {}
+//int compareTime(char* alarmTime) {}
 

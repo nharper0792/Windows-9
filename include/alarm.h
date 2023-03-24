@@ -19,7 +19,7 @@ struct pcb* load_alarm(void* function);
 
 void run_alarm();
 
-struct alarm* remove_alarm(alarm* alarm);
+void remove_alarm(alarm* alarm);
 
 int time_comparison(char* alarmTime);
 
