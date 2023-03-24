@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <pcb.h>
 #include <mpx/sys_call.h>
+#include <sys_req.h>
 
 //creating alarm linked-list
 list* alarmList;
@@ -81,7 +82,6 @@ struct pcb* loadAlarm(void* function) {
     alarm->dispatchingState = NOT_SUSPENDED;
     alarm->executionState = READY;
 
-    pcb_insert(alarm);
 
     context* con1 = (context*)alarm->stackPtr;
     memset(con1, 0, sizeof(context));
@@ -95,15 +95,15 @@ struct pcb* loadAlarm(void* function) {
     con1->EIP = (unsigned int) function;
     con1->EFLAGS = 0x0202;
 
+    pcb_insert(alarm);
     return alarm;
 }
 
 void runAlarm() {
-    while(1) {
         node* nodePtr = getHead(alarmList);
 
         while (nodePtr != NULL) {
-            alarm* alarmPtr = nodePtr->data;
+            alarm* alarmPtr = (alarm*)nodePtr->data;
 
             int check = compareTime(alarmPtr->alarmTime);
 
@@ -114,7 +114,7 @@ void runAlarm() {
 
             nodePtr = nodePtr->nextPtr;            
         }
-    }
+        sys_req(IDLE);
 }
 
 
@@ -127,7 +127,7 @@ void removeAlarm(alarm* alarm) {
 
     //traversing list to find alarm to remove
     node* currentPtr;
-    for (currentPtr = getHead(alarmList); currentPtr->data != alarm || currentPtr == NULL; currentPtr = currentPtr->nextPtr);
+    for (currentPtr = getHead(alarmList); currentPtr != NULL && currentPtr->data != alarm ; currentPtr = currentPtr->nextPtr);
     
     //checks to see if currentPtr made it to the end of the list
     if (currentPtr == NULL) {
@@ -153,11 +153,57 @@ void removeAlarm(alarm* alarm) {
 }
 
 int compareTime(char* alarmTime) {
-    char* lol = "lol";
-    if (alarmTime == lol) {
-        puts("fuck you");
+    char* currentTime = getTime();
+
+    //seperating get time and changing them to ints
+    char *currentTimeArray[3] = {(char*)sys_alloc_mem(3), (char*)sys_alloc_mem(3), (char*)sys_alloc_mem(3)};
+    extractingTime(currentTimeArray, currentTime);
+    int currentHours = atoi(currentTimeArray[0]);
+    int currrentMinutes = atoi(currentTimeArray[1]);
+    int currentSeconds = atoi(currentTimeArray[2]);
+    sys_free_mem(currentTimeArray);
+
+    //seperating alarm time
+    char *alarmTimeArray[3] = {(char*)sys_alloc_mem(3), (char*)sys_alloc_mem(3), (char*)sys_alloc_mem(3)};
+    extractingTime(alarmTimeArray, alarmTime);
+    int alarmHours = atoi(alarmTimeArray[0]);
+    int alarmMinutes = atoi(alarmTimeArray[1]);
+    int alarmSeconds = atoi(alarmTimeArray[2]);
+    sys_free_mem(alarmTimeArray);
+
+    //checking to see if alarm should go off or not
+    if (currentHours > alarmHours) {
+        return 0;
+    } else if (currentHours == alarmHours) {
+        if (currrentMinutes > alarmMinutes) {
+            return 0;
+        } else if (currrentMinutes == alarmMinutes) {
+            if (currentSeconds > alarmSeconds) {
+                return 0;
+            } else if (currentSeconds == alarmSeconds) {
+                return 0;
+            }
+        }
     }
 
+    //fallthrough
     return 1;
+}
+
+void extractingTime(char* array[], char* time) {
+    for (int i = 0, seek = 0; time[seek] != '\0'; i++, seek++) {
+        for (int p = 0 ;; p++, seek++) {
+            //Seeing if char looked at is ':' (section divider) of '/0' (end of char)
+            if (time[seek] == ':' || time[seek] == '\0') {
+                //Adding ending char for time section
+                array[i][p] = '\0';
+                break;
+            } else {
+                //Adding char to time section
+                array[i][p] = time[seek];
+            }
+        }
+    }
+
 }
 

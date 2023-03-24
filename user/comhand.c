@@ -661,12 +661,13 @@ void comhand_alarm(void) {
 		//TODO : add alarm creation
 		
 		createAlarm(alarmMessage, alarmTime);
+        puts(
+                "\n$:Alarm created:"\
+			"\n"
+        );
 		loadAlarm(&runAlarm);
 
-		puts(
-			"\n$:Alarm created:"\
-			"\n"
-		);
+
 	}
 	else
 		puts("\n$:Alarm creation cancelled:");

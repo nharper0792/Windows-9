@@ -22,5 +22,5 @@ void runAlarm();
 void removeAlarm(alarm* alarm);
 
 int compareTime(char* alarmTime);
-
+void extractingTime(char* array[], char* time);
 #endif //WINDOWS_9_ALARM_H
