@@ -3,7 +3,9 @@
 size_t startMem;
 
 void initialize_heap(size_t size) {
-	startMem =kmalloc(size + sizeof(memb),0, NULL);
+	startMem = kmalloc(size + sizeof(mcb),0, NULL);
+	mcb *memb = (mcb*) startMem;
+
 	return;
 }
 

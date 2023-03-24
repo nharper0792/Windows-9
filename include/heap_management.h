@@ -8,14 +8,14 @@ enum mem_flag {
 	ALLOCATED = 1
 };
 
-typedef struct memb {
+typedef struct mcb {
 	size_t start_address;
 	size_t size;
-	struct memb* nextPtr;
-	struct memb* prevPtr;
-}memb;
+	struct mcb* nextPtr;
+	struct mcb* prevPtr;
+}mcb;
 
-void initialize_heap(size_t data);
+void initialize_heap(size_t size);
 
 int free_memory(void* data);
 
