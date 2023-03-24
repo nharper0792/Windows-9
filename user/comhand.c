@@ -139,6 +139,22 @@ void init_comhand(void) {
 			comhand_load();
 
 		}
+		if ((strcasecmp("ALLOCATE MEMORY\0", buf) == 0) || atoi(buf) == 20) {
+			curr_process =  111;
+			comhand_allocateMem();
+		}
+		if ((strcasecmp("FREE MEMORY\0", buf) == 0) || atoi(buf) == 21) {
+			curr_process = 112;
+			comhand_freeMem();
+		}
+		if ((strcasecmp("SHOW ALLOCATED MEMORY\0", buf) == 0) || atoi(buf) == 22) {
+			curr_process = 113;
+			comhand_showMemory(0);
+		}
+		if ((strcasecmp("SHOW FREE MEMORY\0", buf) == 0) || atoi(buf) == 23) {
+			curr_process = 114;
+			comhand_showMemory(1);
+		}
 		//displays a message to the user stating their prompt wasn't recognized
 		//only displays if the user is in the menu process, updates everytime the [ENTER KEY] is read by serial polling.
 		else if (curr_process == 000) {
@@ -1436,8 +1452,47 @@ void comhand_pcbShowHelper(pcb* target) {
 	}
 	puts("\n");
 	return;
-
 }
+
+/*
+@Name		: comhand_allocateMem
+@breif		: will allocate memory
+
+@param		: N/A
+@returns	: N/A
+*/
+void comhand_allocateMem() {
+	//TODO alloc memory functions n stuff
+	return;
+}
+
+/*
+@Name		: comhand_freeMem
+@breif		: will free memory
+
+@param		: N/A
+@returns	: N/A
+*/
+void comhand_freeMem() {
+	//TODO free memory functions n stuff
+	return;
+}
+
+/*
+@Name		: comhand_showMem
+@brief		: will display a list of allocated or free memory blockes based on user's entry
+
+@param		entry : specifies which 'show' sequence to run
+@returns	: N/A
+*/
+void comhand_showMemory(int entry) {
+	if (entry == 0) {
+		//TODO show allocated mem functions n stuff
+	} else if (entry == 1) {
+		//TODO show free memory functions n stuff
+	}
+}
+
 //========================================================================
 //  COMHAND HELP SECTION
 // 
@@ -1494,6 +1549,14 @@ void comhand_help(void) {
 		"\n$:		Will show all PCBs that exist."\
 		"\n$:	19) load"\
 		"\n$:		Will load Processes 1-5 [FOR TESTING PURPOSES, USE NOT RECCOMMENDED]"\
+		"\n$:   20) allocate memory"\
+		"\n$:   	Will allocate memory."\
+		"\n$:	21) free memory"\
+		"\n$:		Will free memory"\
+		"\n$:	22) show allocated memory"\
+		"\n$:		Will show all allocated memory that exists"\
+		"\n$:	23) show free memory"\
+		"\n$:		Will show all free memory that exists"\
 		"\n$:"\
 		"\n$:"\
 		"\n$:  \n \e[0m"
@@ -1523,6 +1586,10 @@ void comhand_menu(void) {
 		"\n$:	17) pcb show blocked"\
 		"\n$:	18) pcb show all"\
 		"\n$:	19) load"\
+		"\n$:	20) allocate memory"\
+		"\n$:	21) free memory"\
+		"\n$:	22) show allocated memory"\
+		"\n$:	23) show free memory"\
 		"\n$:"\
 		"\n$:See help command for more information.: "\
 		"\n"
