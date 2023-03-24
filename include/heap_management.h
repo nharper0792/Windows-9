@@ -13,6 +13,7 @@ typedef struct mcb {
 	size_t size;
 	struct mcb* nextPtr;
 	struct mcb* prevPtr;
+	enum mem_flag flag;
 }mcb;
 
 typedef struct mcbList {

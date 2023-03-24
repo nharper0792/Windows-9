@@ -2,8 +2,7 @@
 #include <memory.h>
 #include <mpx/vm.h>
 
-mcbList mcb_freeList;
-mcbList mcb_allocList;
+mcbList mcb_List;
 
 void initialize_heap(size_t size) {
 	//make memory control block for free List
@@ -15,9 +14,9 @@ void initialize_heap(size_t size) {
 	newMemb->size = size;
 	newMemb->nextPtr = NULL;
 	newMemb->prevPtr = NULL;
+	newMemb->flag = FREE;
 	//initialize lists
-	mcb_freeList.headPtr = newMemb;
-	mcb_allocList.headPtr = NULL;
+	mcb_List.headPtr = newMemb;
 
 	return;
 }
