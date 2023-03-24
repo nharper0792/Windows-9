@@ -658,7 +658,6 @@ void comhand_alarm(void) {
 	comhand_yield();
 
 	if (strcasecmp("yes", alarmbuf) == 0) {
-		//TODO : add alarm creation
 		if (createAlarm(alarmMessage, alarmTime) != NULL) {
 			puts(
 				"\n$:Alarm created:"\

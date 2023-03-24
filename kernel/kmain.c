@@ -81,8 +81,10 @@ void kmain(void)
 	// 8) MPX Modules -- *headers vary*
 	// Module specific initialization -- not all modules require this
 	klogv(COM1, "Initializing MPX modules...");
-	// R5: sys_set_heap_functions(...);
-	// R4: create commhand and idle processes
+
+	// TODO : uncomment after initialize and set are done
+	//initialize_heap(50000);
+	//sys_set_heap_functions(allocate_memory, free_memory);
 	
 	//creates command handler process
 	//NAME     : COMMAND_HANDLER
