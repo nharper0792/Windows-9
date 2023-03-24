@@ -108,7 +108,13 @@ void runAlarm() {
             int check = compareTime(alarmPtr->alarmTime);
 
             if (check == 0) {
-                printf("\n\n%s\n\n", alarmPtr->alarmName);
+                printf("\n"\
+                    "\n [ALARM SET FOR: %s]"\
+                    "\n [ALARM MESSAGE: %s]"\
+                    "\n"\
+                    "\n",
+                    alarmPtr->alarmTime,
+                    alarmPtr->alarmName);
                 removeAlarm(alarmPtr);
                 sys_req(EXIT);
             }
@@ -122,7 +128,7 @@ void runAlarm() {
 void removeAlarm(alarm* alarm) {
     //checking is alarm list exists
     if (alarmList == NULL) {
-        puts("Alarm does not exist!");
+        puts("\n$:Alarm does not exist!");
         return;
     }
 
@@ -132,7 +138,7 @@ void removeAlarm(alarm* alarm) {
     
     //checks to see if currentPtr made it to the end of the list
     if (currentPtr == NULL) {
-        puts("Alarm does not exist!");
+        puts("\n$:Alarm does not exist!");
         return;
     } 
 

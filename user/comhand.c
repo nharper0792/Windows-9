@@ -659,12 +659,12 @@ void comhand_alarm(void) {
 
 	if (strcasecmp("yes", alarmbuf) == 0) {
 		//TODO : add alarm creation
-		
-		createAlarm(alarmMessage, alarmTime);
-        puts(
-                "\n$:Alarm created:"\
-			"\n"
-        );
+		if (createAlarm(alarmMessage, alarmTime) != NULL) {
+			puts(
+				"\n$:Alarm created:"\
+				"\n"
+			);
+		}
 		loadAlarm(&runAlarm);
 
 
