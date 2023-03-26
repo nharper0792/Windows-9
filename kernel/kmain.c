@@ -89,9 +89,9 @@ void kmain(void)
 	
 	//creates command handler process
 	//NAME     : COMMAND_HANDLER
-	//PRIORITY : 9
+	//PRIORITY : 0
 	{
-		pcb* comhand_pcb = pcb_setup("COMMAND_HANDLER", SYSTEM, 9);
+		pcb* comhand_pcb = pcb_setup("COMMAND_HANDLER", SYSTEM, 0);
 		comhand_pcb->dispatchingState = NOT_SUSPENDED;
 		comhand_pcb->executionState = READY;
 		context* comhand_con = (context*)comhand_pcb->stackPtr;
@@ -109,9 +109,9 @@ void kmain(void)
 	}
 	//creates system idle process
 	//NAME     : IDLE_PROCESS
-	//PRIORITY : 0
+	//PRIORITY : 9
 	{
-		pcb* idle_pcb = pcb_setup("IDLE_PROCESS", SYSTEM, 0);
+		pcb* idle_pcb = pcb_setup("IDLE_PROCESS", SYSTEM, 9);
 		idle_pcb->dispatchingState = NOT_SUSPENDED;
 		idle_pcb->executionState = READY;
 		context* idle_con = (context*)idle_pcb->stackPtr;
