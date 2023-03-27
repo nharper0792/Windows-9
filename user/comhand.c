@@ -1549,8 +1549,8 @@ void comhand_help(void) {
 		"\n$:		Will show all PCBs that exist."\
 		"\n$:	19) load"\
 		"\n$:		Will load Processes 1-5 [FOR TESTING PURPOSES, USE NOT RECCOMMENDED]"\
-		"\n$:   20) allocate memory"\
-		"\n$:   	Will allocate memory."\
+		"\n$:	20) allocate memory"\
+		"\n$:		Will allocate memory."\
 		"\n$:	21) free memory"\
 		"\n$:		Will free memory"\
 		"\n$:	22) show allocated memory"\
