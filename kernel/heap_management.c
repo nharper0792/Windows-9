@@ -7,7 +7,7 @@ mcbList mcb_List;
 void initialize_heap(size_t size) {
 	//make memory control block for free List
 	//create starting memory location
-	size_t startMem = (size_t)(kmalloc(size + sizeof(mcb), 0, NULL));
+	size_t startMem = (size_t)(kmalloc(size, 0, NULL));
     mcb* newMemb = (mcb*)startMem;
 	//set parameters of free memory
 	newMemb->start_address = startMem+sizeof(mcb);
@@ -23,13 +23,13 @@ void initialize_heap(size_t size) {
 
 int free_memory(void* data) {
 	(void)data;
-	return 0;
+	return 1;
 }
 
 void* allocate_memory(size_t data) {
 	//traversing list to find location free mcb with enough space
 	mcb* currentPtr;
-	for (currentPtr = mcb_List.headPtr; currentPtr != NULL  || currentPtr->size <= data || currentPtr->flag == ALLOCATED; currentPtr = currentPtr->nextPtr){
+	for (currentPtr = mcb_List.headPtr; currentPtr != NULL  && (currentPtr->size < data || currentPtr->flag == ALLOCATED); currentPtr = currentPtr->nextPtr){
 
     }
     if(currentPtr == NULL){
