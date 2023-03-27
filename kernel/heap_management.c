@@ -6,11 +6,11 @@ mcbList mcb_List;
 
 void initialize_heap(size_t size) {
 	//make memory control block for free List
-	mcb* newMemb = (mcb*)sys_alloc_mem(sizeof(mcb));
 	//create starting memory location
 	size_t startMem = (size_t)(kmalloc(size + sizeof(mcb), 0, NULL));
+    mcb* newMemb = (mcb*)startMem;
 	//set parameters of free memory
-	newMemb->start_address = startMem;
+	newMemb->start_address = startMem+sizeof(mcb);
 	newMemb->size = size;
 	newMemb->nextPtr = NULL;
 	newMemb->prevPtr = NULL;
@@ -29,10 +29,14 @@ int free_memory(void* data) {
 void* allocate_memory(size_t data) {
 	//traversing list to find location free mcb with enough space
 	mcb* currentPtr;
-	for (currentPtr = mcb_List.headPtr; (currentPtr->size >= data && currentPtr->flag == FREE) || currentPtr == NULL; currentPtr = currentPtr->nextPtr);
+	for (currentPtr = mcb_List.headPtr; currentPtr != NULL  || currentPtr->size <= data || currentPtr->flag == ALLOCATED; currentPtr = currentPtr->nextPtr){
 
+    }
+    if(currentPtr == NULL){
+        return NULL;
+    }
 	//checking to see if location was found
-	if (currentPtr->size >= data && currentPtr->flag == FREE) {
+	else if (currentPtr->size >= data && currentPtr->flag == FREE) {
 		size_t newBlockSize = currentPtr->size - data;
 		
 		//changes free block to allocated block
@@ -40,10 +44,19 @@ void* allocate_memory(size_t data) {
 		currentPtr->size = data;
 
 		//creates new block and adds to list after new alloc block
-		mcb* newBlock = sys_alloc_mem(sizeof(mcb));
+		mcb* newBlock = (mcb*)(currentPtr->start_address+data);
 		newBlock->flag = FREE;
 		newBlock->size = newBlockSize;
 		//get start address for new memory block
+        newBlock->start_address = (size_t)newBlock+1;
+
+        newBlock->nextPtr = currentPtr->nextPtr;
+        newBlock->prevPtr = currentPtr;
+        currentPtr->nextPtr = newBlock;
+        if(newBlock->nextPtr != NULL){
+            newBlock->nextPtr->prevPtr = newBlock;
+        }
+        return (void*)newBlock->start_address;
 
 		//allocates memory in system
 		//returns pointer for new allocated memory
