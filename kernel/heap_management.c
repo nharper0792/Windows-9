@@ -45,8 +45,24 @@ void* allocate_memory(size_t data) {
 		newBlock->size = newBlockSize;
 		//get start address for new memory block
 
+		//checks to see where block is within list and adds new free block to list
+		//it will not need to replace headPtr so nothing is added for that
+		if (currentPtr->prevPtr != NULL && currentPtr->nextPtr == NULL) {
+			//end of list
+			newBlock->nextPtr = NULL;
+			newBlock->prevPtr = currentPtr;
+			currentPtr->nextPtr = newBlock;
+		} else {
+			//somewhere within list
+			newBlock->prevPtr = currentPtr;
+			newBlock->nextPtr = currentPtr->nextPtr;
+			currentPtr->nextPtr->prevPtr = newBlock;
+			currentPtr->nextPtr = newBlock;
+		}
+
 		//allocates memory in system
 		//returns pointer for new allocated memory
+		
 	}
 
 	//fallthrough (could not find free mcb block in list that will fit)
