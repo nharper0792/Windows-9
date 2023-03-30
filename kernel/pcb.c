@@ -19,6 +19,7 @@ pcb* pcb_allocate(void){
         return NULL;
     }
     newPCB->name = (char*)sys_alloc_mem(MAX_NAME_LENGTH+1);
+    newPCB->name[MAX_NAME_LENGTH] = '\0';
     if(newPCB->name == NULL){
         sys_free_mem(newPCB);
         return NULL;
@@ -26,7 +27,7 @@ pcb* pcb_allocate(void){
     for(int i = 0;i<1024;i++){
         newPCB->stack[i]=0;
     }
-    newPCB->stackPtr = (char *)(newPCB->stack +1022 - sizeof(context));
+    newPCB->stackPtr = (char *)(newPCB->stack +1022) - sizeof(context);
 
     return newPCB;
 }

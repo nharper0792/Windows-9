@@ -3,7 +3,7 @@
 #include <mpx/vm.h>
 
 mcbList mcb_List;
-
+mcb* mcbHead;
 void initialize_heap(size_t size) {
 	//make memory control block for free List
 	//create starting memory location
@@ -16,7 +16,7 @@ void initialize_heap(size_t size) {
 	newMemb->prevPtr = NULL;
 	newMemb->flag = FREE;
 	//initialize lists
-	mcb_List.headPtr = newMemb;
+	mcbHead = newMemb;
 
 	return;
 }
@@ -29,14 +29,14 @@ int free_memory(void* data) {
 void* allocate_memory(size_t data) {
 	//traversing list to find location free mcb with enough space
 	mcb* currentPtr;
-	for (currentPtr = mcb_List.headPtr; currentPtr != NULL  && (currentPtr->size < data || currentPtr->flag == ALLOCATED); currentPtr = currentPtr->nextPtr){
+	for (currentPtr = mcbHead; currentPtr->nextPtr != NULL  && (currentPtr->size < data || currentPtr->flag == ALLOCATED); currentPtr = currentPtr->nextPtr){
 
     }
     if(currentPtr == NULL){
         return NULL;
     }
 	//checking to see if location was found
-	else if (currentPtr->size >= data && currentPtr->flag == FREE) {
+	else if (currentPtr->size >= data && currentPtr->flag != ALLOCATED) {
 		size_t newBlockSize = currentPtr->size - data;
 		
 		//changes free block to allocated block
@@ -48,7 +48,7 @@ void* allocate_memory(size_t data) {
 		newBlock->flag = FREE;
 		newBlock->size = newBlockSize;
 		//get start address for new memory block
-        newBlock->start_address = (size_t)newBlock+1;
+        newBlock->start_address = (size_t)(newBlock+1);
 
         newBlock->nextPtr = currentPtr->nextPtr;
         newBlock->prevPtr = currentPtr;
@@ -56,26 +56,11 @@ void* allocate_memory(size_t data) {
         if(newBlock->nextPtr != NULL){
             newBlock->nextPtr->prevPtr = newBlock;
         }
-        return (void*)newBlock->start_address;
-
-		//checks to see where block is within list and adds new free block to list
-		//it will not need to replace headPtr so nothing is added for that
-		if (currentPtr->prevPtr != NULL && currentPtr->nextPtr == NULL) {
-			//end of list
-			newBlock->nextPtr = NULL;
-			newBlock->prevPtr = currentPtr;
-			currentPtr->nextPtr = newBlock;
-		} else {
-			//somewhere within list
-			newBlock->prevPtr = currentPtr;
-			newBlock->nextPtr = currentPtr->nextPtr;
-			currentPtr->nextPtr->prevPtr = newBlock;
-			currentPtr->nextPtr = newBlock;
-		}
 
 		//allocates memory in system
 		//returns pointer for new allocated memory
-		
+
+        return (void*)newBlock->start_address;
 	}
 
 	//fallthrough (could not find free mcb block in list that will fit)

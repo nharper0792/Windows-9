@@ -84,8 +84,8 @@ void kmain(void)
 	klogv(COM1, "Initializing MPX modules...");
 
 	// TODO : uncomment after initialize and set are done
-	//initialize_heap(50000);
-	//sys_set_heap_functions(allocate_memory, free_memory);
+	initialize_heap(50000);
+	sys_set_heap_functions(allocate_memory, free_memory);
 	
 	//creates command handler process
 	//NAME     : COMMAND_HANDLER
