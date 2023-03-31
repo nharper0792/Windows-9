@@ -26,7 +26,7 @@ int free_memory(void* data) {
 	//size_t mcbStartAddr = (size_t)data;
 	size_t newSize = 0;
 	//create mcb to traverse list
-	mcb* currPtr = mcb_List.headPtr;
+	mcb* currPtr = mcbHead;
 	//edge case
 	//if the current pointer (at the head) does not have a pointer in front or behind it, free and return
 	if (currPtr->nextPtr == NULL
@@ -39,6 +39,7 @@ int free_memory(void* data) {
 		//if start address of current pointer is equal to data and also an allocated block
 		if (currPtr->start_address == (size_t)data
 			&& currPtr->flag == ALLOCATED) {
+
 			break;
 		}
 		else {
@@ -48,7 +49,7 @@ int free_memory(void* data) {
 	}
 	//fail case, currPtr should have non-NULL value
 	if (currPtr == NULL)
-		return -1;
+		return 0;
 
 
 	//add size to newsize total
@@ -76,7 +77,7 @@ int free_memory(void* data) {
 	currPtr->size = newSize;
 	currPtr->flag = FREE;
 	//success return by default or if this point is reached (should only be in case of success)
-	return 0;
+	return 1;
 }
 
 
