@@ -55,7 +55,7 @@ Function Desc   : reads date from ports, converts from BCD to decimal, and retur
 */
 char* getDate(){
     char* buf = (char*)sys_alloc_mem(10);
-    sprintf(buf, "%.2i/%.2i/%.2i",read(Month),read(DayOfMonth),read(Year));
+    sprintf(buf, "%.2d/%.2d/%.2d",read(Month),read(DayOfMonth),read(Year));
     return buf;
 }
 

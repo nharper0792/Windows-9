@@ -10,7 +10,7 @@ void initialize_heap(size_t size) {
 	size_t startMem = (size_t)(kmalloc(size, 0, NULL));
     mcb* newMemb = (mcb*)startMem;
 	//set parameters of free memory
-	newMemb->start_address = startMem+sizeof(mcb);
+	newMemb->start_address = (size_t)(newMemb+1);
 	newMemb->size = size;
 	newMemb->nextPtr = NULL;
 	newMemb->prevPtr = NULL;
@@ -36,7 +36,7 @@ void* allocate_memory(size_t data) {
         return NULL;
     }
 	//checking to see if location was found
-	else if (currentPtr->size >= data && currentPtr->flag != ALLOCATED) {
+	else if (currentPtr->size >= data && currentPtr->flag == FREE) {
 		size_t newBlockSize = currentPtr->size - data;
 		
 		//changes free block to allocated block
@@ -60,7 +60,7 @@ void* allocate_memory(size_t data) {
 		//allocates memory in system
 		//returns pointer for new allocated memory
 
-        return (void*)newBlock->start_address;
+        return (void*)currentPtr->start_address;
 	}
 
 	//fallthrough (could not find free mcb block in list that will fit)

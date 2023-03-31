@@ -18,8 +18,7 @@ pcb* pcb_allocate(void){
     if(newPCB == NULL){
         return NULL;
     }
-    newPCB->name = (char*)sys_alloc_mem(MAX_NAME_LENGTH+1);
-    newPCB->name[MAX_NAME_LENGTH] = '\0';
+    newPCB->name = (char*)sys_alloc_mem(MAX_NAME_LENGTH);
     if(newPCB->name == NULL){
         sys_free_mem(newPCB);
         return NULL;
