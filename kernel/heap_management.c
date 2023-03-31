@@ -22,9 +22,63 @@ void initialize_heap(size_t size) {
 }
 
 int free_memory(void* data) {
-	(void)data;
-	return 1;
+	//capture start address of memory to free
+	//size_t mcbStartAddr = (size_t)data;
+	size_t newSize = 0;
+	//create mcb to traverse list
+	mcb* currPtr = mcb_List.headPtr;
+	//edge case
+	//if the current pointer (at the head) does not have a pointer in front or behind it, free and return
+	if (currPtr->nextPtr == NULL
+		&& currPtr->prevPtr == NULL) {
+		currPtr->flag = FREE;
+		return 0;
+	}
+	//setup freeing memory, set currPtr to the mcb with matching start address
+	while (currPtr != NULL) {
+		//if start address of current pointer is equal to data and also an allocated block
+		if (currPtr->start_address == (size_t)data
+			&& currPtr->flag == ALLOCATED) {
+			break;
+		}
+		else {
+			//update pointer to next
+			currPtr = currPtr->nextPtr;
+		}
+	}
+	//fail case, currPtr should have non-NULL value
+	if (currPtr == NULL)
+		return -1;
+
+
+	//add size to newsize total
+	newSize += currPtr->size;
+
+	//if next mcb is not null and also a free memory block
+	if (currPtr->nextPtr != NULL
+		&& currPtr->nextPtr->flag == FREE) {
+		//add size to total
+		newSize += currPtr->nextPtr->size;
+		//update next pointer
+		currPtr->nextPtr = currPtr->nextPtr->nextPtr;
+	}
+	//if prev mcb is not null and also a free memory block
+	if (currPtr->prevPtr != NULL
+		&& currPtr->prevPtr->flag == FREE) {
+		//add size to total
+		newSize += currPtr->prevPtr->size;
+		//update previous pointer
+		currPtr->prevPtr->nextPtr = currPtr->nextPtr;
+		//set current pointer to new previous pointer
+		currPtr = currPtr->prevPtr;
+	}
+	//update parameters of new (possibly bigger) mcb
+	currPtr->size = newSize;
+	currPtr->flag = FREE;
+	//success return by default or if this point is reached (should only be in case of success)
+	return 0;
 }
+
 
 void* allocate_memory(size_t data) {
 	//traversing list to find location free mcb with enough space
