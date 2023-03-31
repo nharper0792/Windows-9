@@ -109,13 +109,14 @@ char *pad(char *s, int padding, char type) {
     if (len > padding) {
         return s;
     } else {
-        char *ret = (char *)sys_alloc_mem(padding);
+        char *ret = (char *)sys_alloc_mem(padding+1);
         for (int i = 0; i < padding - len; i++) {
             ret[i] = type;
         }
         for (int i = padding - len, j = 0; i < padding; j++, i++) {
             ret[i] = s[j];
         }
+        ret[padding]='\0';
         return ret;
     }
 
@@ -149,6 +150,7 @@ char *formatCore(const char *format, va_list valist) {
                         for (int i = 0; temp_str[i]; i++) {
                             buffer[index++] = temp_str[i];
                         }
+                        clearstr(temp_str);
 			sys_free_mem(temp_str);
                         break;
                     case 'c'://char
@@ -169,6 +171,7 @@ char *formatCore(const char *format, va_list valist) {
                         for (int i = 0; temp_str[i]; i++) {
                             buffer[index++] = temp_str[i];
                         }
+                        clearstr(temp_str);
 			sys_free_mem(temp_str);
                         break;
                     case 'f':
@@ -327,4 +330,9 @@ char* ftoa(float f, char* dest, int afterpoint){
     itoa((int)fpart/1,dest+strlen(dest),10);
     dest[strlen(dest)] = '\0';
     return dest;
+}
+void clearstr(char* str){
+    for(size_t i = 0;i<strlen(str);i++){
+        str[i]=0;
+    }
 }
