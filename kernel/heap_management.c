@@ -4,6 +4,7 @@
 
 mcbList mcb_List;
 mcb* mcbHead;
+mcb* mcbTail;
 void initialize_heap(size_t size) {
 	//make memory control block for free List
 	//create starting memory location
@@ -17,6 +18,7 @@ void initialize_heap(size_t size) {
 	newMemb->flag = FREE;
 	//initialize lists
 	mcbHead = newMemb;
+    mcbTail = newMemb;
 
 	return;
 }
@@ -39,7 +41,6 @@ int free_memory(void* data) {
 		//if start address of current pointer is equal to data and also an allocated block
 		if (currPtr->start_address == (size_t)data
 			&& currPtr->flag == ALLOCATED) {
-
 			break;
 		}
 		else {
@@ -49,35 +50,43 @@ int free_memory(void* data) {
 	}
 	//fail case, currPtr should have non-NULL value
 	if (currPtr == NULL)
-		return 0;
+		return 1;
 
 
 	//add size to newsize total
 	newSize += currPtr->size;
 
 	//if next mcb is not null and also a free memory block
-	if (currPtr->nextPtr != NULL
+	while (currPtr->nextPtr != NULL
 		&& currPtr->nextPtr->flag == FREE) {
 		//add size to total
-		newSize += currPtr->nextPtr->size;
+		newSize += currPtr->nextPtr->size+sizeof(mcb);
 		//update next pointer
 		currPtr->nextPtr = currPtr->nextPtr->nextPtr;
+        if(currPtr->nextPtr!=NULL){
+            currPtr->nextPtr->prevPtr=currPtr;
+        }
 	}
 	//if prev mcb is not null and also a free memory block
-	if (currPtr->prevPtr != NULL
+	while (currPtr->prevPtr != NULL
 		&& currPtr->prevPtr->flag == FREE) {
 		//add size to total
-		newSize += currPtr->prevPtr->size;
+		newSize += currPtr->prevPtr->size+sizeof(mcb);
 		//update previous pointer
 		currPtr->prevPtr->nextPtr = currPtr->nextPtr;
+        if(currPtr->nextPtr!=NULL){
+            currPtr->nextPtr->prevPtr = currPtr->prevPtr;
+        }
 		//set current pointer to new previous pointer
 		currPtr = currPtr->prevPtr;
 	}
 	//update parameters of new (possibly bigger) mcb
-	currPtr->size = newSize;
+
+    currPtr->size = newSize;
+    currPtr->start_address = (size_t)(currPtr+1);
 	currPtr->flag = FREE;
 	//success return by default or if this point is reached (should only be in case of success)
-	return 1;
+	return 0;
 }
 
 
@@ -117,7 +126,6 @@ void* allocate_memory(size_t data) {
 
         return (void*)currentPtr->start_address;
 	}
-
 	//fallthrough (could not find free mcb block in list that will fit)
 	return NULL;
 }
