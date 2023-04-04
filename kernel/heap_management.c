@@ -2,7 +2,7 @@
 #include <memory.h>
 #include <mpx/vm.h>
 
-mcbList mcb_List;
+
 mcb* mcbHead;
 mcb* mcbTail;
 void initialize_heap(size_t size) {
@@ -55,6 +55,8 @@ int free_memory(void* data) {
 
 	//add size to newsize total
 	newSize += currPtr->size;
+	//update flag before changing current pointer parameters
+	currPtr->flag = FREE;
 
 	//if next mcb is not null and also a free memory block
 	while (currPtr->nextPtr != NULL
@@ -84,7 +86,7 @@ int free_memory(void* data) {
 
     currPtr->size = newSize;
     currPtr->start_address = (size_t)(currPtr+1);
-	currPtr->flag = FREE;
+	
 	//success return by default or if this point is reached (should only be in case of success)
 	return 0;
 }
