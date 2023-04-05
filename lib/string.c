@@ -117,6 +117,7 @@ char *pad(char *s, int padding, char type) {
             ret[i] = s[j];
         }
         ret[padding]='\0';
+        sys_free_mem(s);
         return ret;
     }
 
@@ -130,6 +131,7 @@ char *formatCore(const char *format, va_list valist) {
     int decimal_point = 0;
     int padding_after_decimal = 0;
     char *temp_str;
+//    char* padded_str;
     int temp_int;
     double temp_float;
     //loop through each character in the string
@@ -151,7 +153,8 @@ char *formatCore(const char *format, va_list valist) {
                             buffer[index++] = temp_str[i];
                         }
                         clearstr(temp_str);
-			sys_free_mem(temp_str);
+//			sys_free_mem(temp_str);
+//            sys_free_mem(padded_str);
                         break;
                     case 'c'://char
                         buffer[index++] = va_arg(valist,
@@ -172,7 +175,7 @@ char *formatCore(const char *format, va_list valist) {
                             buffer[index++] = temp_str[i];
                         }
                         clearstr(temp_str);
-			sys_free_mem(temp_str);
+//			sys_free_mem(temp_str);
                         break;
                     case 'f':
                         temp_float = va_arg(valist, double);
@@ -244,8 +247,10 @@ char *formatCore(const char *format, va_list valist) {
         else {//if current char is a regular
             buffer[index++] = ch;
         }
+        if(temp_str != NULL){
+            sys_free_mem(temp_str);
+        }
     }
-
     buffer[index] = '\0';
     return buffer;
 }
@@ -257,6 +262,7 @@ int sprintf(char* dest, const char* format, ...) {
     for (int i = 0; buffer[i]; i++) {
         dest[i] = buffer[i];
     }
+    sys_free_mem(buffer);
     return strlen(dest);
 }
 

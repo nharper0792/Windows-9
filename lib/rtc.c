@@ -118,26 +118,16 @@ Function Desc   : will get time from ports, convert frm BCD to decimal, and retu
 */
 char* getTime() {
     //Creating buffer char*
-    char* buf = (char*)sys_alloc_mem(200);
+    char* buf = (char*)sys_alloc_mem(9);
 
     //Reading from ports
     int hours = read(Hours);
     int minutes = read(Minutes);
     int seconds = read(Seconds);
 
-    //Creating char* variables for output
-    char* hoursOutput = (char*)sys_alloc_mem(50);
-    char* minutesOutput = (char*)sys_alloc_mem(50);
-    char* secondsOutput = (char*)sys_alloc_mem(50);
-
-    //Formatting time using formatTime
-    formatTime(hours, hoursOutput);
-    formatTime(minutes, minutesOutput);
-    formatTime(seconds, secondsOutput);
-
     //Using sprintf to form
-    sprintf(buf, "%s:%s:%s", hoursOutput, minutesOutput, secondsOutput);
-
+    sprintf(buf, "%.2d:%.2d:%.2d", hours, minutes, seconds);
+    buf[8] = '\0';
     //Returning buffer
     return buf;
 }

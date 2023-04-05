@@ -1,6 +1,7 @@
 #include <heap_management.h>
 #include <memory.h>
 #include <mpx/vm.h>
+#include <stdio.h>
 
 mcbList mcb_List;
 mcb* mcbHead;
@@ -39,7 +40,7 @@ int free_memory(void* data) {
 	//setup freeing memory, set currPtr to the mcb with matching start address
 	while (currPtr != NULL) {
 		//if start address of current pointer is equal to data and also an allocated block
-		if (currPtr->start_address == (size_t)data
+		if ((currPtr->start_address == (size_t)data || (currPtr->nextPtr!=NULL && (size_t)data < (size_t)currPtr->nextPtr))
 			&& currPtr->flag == ALLOCATED) {
 			break;
 		}
@@ -49,8 +50,9 @@ int free_memory(void* data) {
 		}
 	}
 	//fail case, currPtr should have non-NULL value
-	if (currPtr == NULL)
-		return 1;
+	if (currPtr == NULL){
+        return 1;
+    }
 
 
 	//add size to newsize total
@@ -85,6 +87,7 @@ int free_memory(void* data) {
     currPtr->size = newSize;
     currPtr->start_address = (size_t)(currPtr+1);
 	currPtr->flag = FREE;
+    data = NULL;
 	//success return by default or if this point is reached (should only be in case of success)
 	return 0;
 }
@@ -93,7 +96,7 @@ int free_memory(void* data) {
 void* allocate_memory(size_t data) {
 	//traversing list to find location free mcb with enough space
 	mcb* currentPtr;
-	for (currentPtr = mcbHead; currentPtr->nextPtr != NULL  || (currentPtr->size < data || currentPtr->flag == ALLOCATED); currentPtr = currentPtr->nextPtr){
+	for (currentPtr = mcbHead; currentPtr != NULL && (currentPtr->nextPtr != NULL || (currentPtr->size < data || currentPtr->flag == ALLOCATED)); currentPtr = currentPtr->nextPtr){
 
     }
     if(currentPtr == NULL){

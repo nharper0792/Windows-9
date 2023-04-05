@@ -203,7 +203,7 @@ void comhand_version(void) {
 		"\n<       +-+-+-+-+-+-+       >"\
 		"\n \\_________________________/"\
 		"\n"
-		"\nVersion R3 & R4 3/23/2023 \e[0m"\
+		"\nVersion R5 04/06/2023 \e[0m"\
 		"\n"
 	);
 	comhand_menu();
@@ -266,13 +266,11 @@ void comhand_rtc(void) {
 		"\e[1;34m \n$:Real-Time Clock:"
 		"\n$:Current Time: "
 	);
-	char* textrtc_landingclock = getTime();
-	sys_req(WRITE, COM1, textrtc_landingclock, sizeof(textrtc_landingclock) + 8);
+	puts(getTime());
 	puts(
 		"\n$:Current Date: "
 	);
-	char* textrtc_landingtime = getDate();
-	sys_req(WRITE, COM1, textrtc_landingtime, sizeof(textrtc_landingtime) + 4);
+	puts(getDate());
 	puts("\e[0m \n");
 	return;
 }
