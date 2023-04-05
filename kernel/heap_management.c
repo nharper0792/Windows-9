@@ -1,9 +1,8 @@
 #include <heap_management.h>
 #include <memory.h>
 #include <mpx/vm.h>
-#include <stdio.h>
 
-mcbList mcb_List;
+
 mcb* mcbHead;
 mcb* mcbTail;
 void initialize_heap(size_t size) {
@@ -96,7 +95,7 @@ int free_memory(void* data) {
 void* allocate_memory(size_t data) {
 	//traversing list to find location free mcb with enough space
 	mcb* currentPtr;
-	for (currentPtr = mcbHead; currentPtr != NULL && (currentPtr->nextPtr != NULL || (currentPtr->size < data || currentPtr->flag == ALLOCATED)); currentPtr = currentPtr->nextPtr){
+	for (currentPtr = mcbHead; currentPtr->nextPtr != NULL  || (currentPtr->size < data || currentPtr->flag == ALLOCATED); currentPtr = currentPtr->nextPtr){
 
     }
     if(currentPtr == NULL){
