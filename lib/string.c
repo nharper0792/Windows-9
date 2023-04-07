@@ -247,9 +247,6 @@ char *formatCore(const char *format, va_list valist) {
         else {//if current char is a regular
             buffer[index++] = ch;
         }
-        if(temp_str != NULL){
-            sys_free_mem(temp_str);
-        }
     }
     buffer[index] = '\0';
     return buffer;

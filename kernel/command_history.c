@@ -15,6 +15,8 @@ void addToHistory(const char* command){
     int len = strlen(command);
     char* temp = (char*)sys_alloc_mem(len+1);
     strcpy(temp,command);
+
+//    sys_free_mem(command);
     temp[len]='\0';
     node* newNode = createNode((void*)temp);
     addToHead(history,newNode);
@@ -25,7 +27,7 @@ void addToCycled(const char* command){
     }
     char* temp = (char*)sys_alloc_mem(strlen(command)+1);
     strcpy(temp,command);
-    node* newNode = createNode((void*)temp);
+    node* newNode = createNode((void*)command);
     addToHead(cycled,newNode);
 }
 
