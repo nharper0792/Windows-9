@@ -132,11 +132,8 @@ int serial_poll(device dev, char* buffer, size_t len)
                         outb(dev, '\b');
                     }
                     char* newCommand = getFromHistory();
-                    //initialize length of string with initial length of 0
-                    int len = 0;
-                    //if command input within buffer is non-NULL
+                    int len = strlen(newCommand);
                     if(newCommand!=NULL) {
-                        len = strlen(newCommand);
                         strcpy(buffer,newCommand);
                         sys_free_mem(newCommand);
                         for(;ind<len;ind++,count++){
@@ -157,11 +154,9 @@ int serial_poll(device dev, char* buffer, size_t len)
                         outb(dev, '\b');
                     }
                     char* newCommand = getFromCycled();
-                    //initialize length of string with initial length of 0
-                    int len = 0;
-                    //if command input within buffer is non-NULL
+                    int len = strlen(newCommand);
+
                     if(newCommand!=NULL) {
-                        len = strlen(newCommand);
                         strcpy(buffer,newCommand);
                         sys_free_mem(newCommand);
                         for(;ind<len;ind++,count++){
