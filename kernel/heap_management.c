@@ -1,7 +1,7 @@
 #include <heap_management.h>
 #include <memory.h>
 #include <mpx/vm.h>
-
+#include <stdio.h>
 
 mcb* mcbHead;
 mcb* mcbTail;
@@ -95,8 +95,13 @@ int free_memory(void* data) {
 void* allocate_memory(size_t data) {
 	//traversing list to find location free mcb with enough space
 	mcb* currentPtr;
-	for (currentPtr = mcbHead; currentPtr->nextPtr != NULL  || (currentPtr->size < data || currentPtr->flag == ALLOCATED); currentPtr = currentPtr->nextPtr){
-
+	for (currentPtr = mcbHead; currentPtr != NULL ; currentPtr = currentPtr->nextPtr){
+        if(currentPtr->size >= data && currentPtr->flag == FREE){
+            break;
+        }
+        else{
+            continue;
+        }
     }
     if(currentPtr == NULL){
         return NULL;

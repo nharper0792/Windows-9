@@ -7,7 +7,7 @@
 //
 list* history;
 list* cycled;
-
+char* current;
 void addToHistory(const char* command){
     if(history==NULL){
         history = createList();

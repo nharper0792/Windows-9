@@ -104,7 +104,7 @@ char *strtok(char * restrict s1, const char * restrict s2)
 	return s1;
 }
 
-char *pad(char *s, int padding, char type) {
+char *pad(char *s, int padding, char type,int free) {
     int len = strlen(s);
     if (len > padding) {
         return s;
@@ -117,7 +117,8 @@ char *pad(char *s, int padding, char type) {
             ret[i] = s[j];
         }
         ret[padding]='\0';
-        sys_free_mem(s);
+        if(free)
+            sys_free_mem(s);
         return ret;
     }
 
@@ -146,14 +147,16 @@ char *formatCore(const char *format, va_list valist) {
                     case 's': //string
                         temp_str = va_arg(valist,
                         char *);
+                        int free=0;
                         if (padding) {//check for current padding value
-                            temp_str = pad(temp_str, padding, ' ');
+                            temp_str = pad(temp_str, padding, ' ',0);
+                            free=1;
                         }
                         for (int i = 0; temp_str[i]; i++) {
                             buffer[index++] = temp_str[i];
                         }
-                        clearstr(temp_str);
-//			sys_free_mem(temp_str);
+                        if(free)
+			                sys_free_mem(temp_str);
 //            sys_free_mem(padded_str);
                         break;
                     case 'c'://char
@@ -166,16 +169,15 @@ char *formatCore(const char *format, va_list valist) {
                         int);
                         temp_str = itoa(temp_int, NULL,10);
                         if(padding_after_decimal){
-                            temp_str = pad(temp_str, padding_after_decimal, '0');
+                            temp_str = pad(temp_str, padding_after_decimal, '0',1);
                         }
                         if (padding) {//check for padding
-                            temp_str = pad(temp_str, padding, ' ');
+                            temp_str = pad(temp_str, padding, ' ',1);
                         }
                         for (int i = 0; temp_str[i]; i++) {
                             buffer[index++] = temp_str[i];
                         }
-                        clearstr(temp_str);
-//			sys_free_mem(temp_str);
+			            sys_free_mem(temp_str);
                         break;
                     case 'f':
                         temp_float = va_arg(valist, double);
@@ -184,34 +186,37 @@ char *formatCore(const char *format, va_list valist) {
                         }
                         temp_str = ftoa(temp_float,NULL,padding_after_decimal);
                         if(padding){
-                            temp_str = pad(temp_str,padding,' ');
+                            temp_str = pad(temp_str,padding,' ',1);
                         }
                         strcpy(buffer+index,temp_str);
                         index+=strlen(temp_str);
+                        sys_free_mem(temp_str);
                         break;
                     case 'o':
                         temp_int = va_arg(valist,int);
                         temp_str = itoa(temp_int,NULL,8);
                         if(padding_after_decimal){
-                            temp_str = pad(temp_str, padding_after_decimal, '0');
+                            temp_str = pad(temp_str, padding_after_decimal, '0',1);
                         }
                         if (padding) {//check for padding
-                            temp_str = pad(temp_str, padding, ' ');
+                            temp_str = pad(temp_str, padding, ' ',1);
                         }
                         strcpy(buffer+index,temp_str);
                         index += strlen(temp_str);
+                        sys_free_mem(temp_str);
                         break;
                     case 'x':
                         temp_int = va_arg(valist,int);
                         temp_str = itoa(temp_int,NULL,16);
                         if(padding_after_decimal){
-                            temp_str = pad(temp_str, padding_after_decimal, '0');
+                            temp_str = pad(temp_str, padding_after_decimal, '0',1);
                         }
                         if (padding) {//check for padding
-                            temp_str = pad(temp_str, padding, ' ');
+                            temp_str = pad(temp_str, padding, ' ',1);
                         }
                         strcpy(buffer+index,temp_str);
                         index += strlen(temp_str);
+                        sys_free_mem(temp_str);
                         break;
                     default:
                         if (ch == '.') {//check for padding with 0s
@@ -333,9 +338,4 @@ char* ftoa(float f, char* dest, int afterpoint){
     itoa((int)fpart/1,dest+strlen(dest),10);
     dest[strlen(dest)] = '\0';
     return dest;
-}
-void clearstr(char* str){
-    for(size_t i = 0;i<strlen(str);i++){
-        str[i]=0;
-    }
 }

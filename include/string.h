@@ -62,5 +62,4 @@ char* itoa(int i,char* dest,int base);
 
 char* ftoa(float f,char* dest, int afterpoint);
 
-void clearstr(char*);
 #endif
