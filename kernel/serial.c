@@ -117,20 +117,22 @@ int serial_poll(device dev, char* buffer, size_t len)
                 }
             }
             //Arrow Keys
+            //up arrow
             else if (c == '\033') {
                 c = inb(dev);
                 c = inb(dev);
                 if(c=='A'){
-                    if(count>0) {
-                        addToCycled(buffer);
+                    if(count>0){
+                    //add current buffer to command cycle
+                    addToCycled(buffer);
 
-                        for (; ind > 0; ind--, count--) {
-                            outb(dev, '\b');
-                            outb(dev, ' ');
-                            outb(dev, '\b');
-                        }
+                    for(;ind>0;ind--,count--){
+                        outb(dev, '\b');
+                        outb(dev, ' ');
+                        outb(dev, '\b');
                     }
                     char* newCommand = getFromHistory();
+                    int len = strlen(newCommand);
                     if(newCommand!=NULL) {
                         int len = strlen(newCommand);
                         strcpy(buffer,newCommand);
@@ -139,34 +141,38 @@ int serial_poll(device dev, char* buffer, size_t len)
                             outb(dev,newCommand[ind]);
                         }
                     }
+                    }
                 }
+                //down arrow
                 else if(c=='B'){
-                    if(count>0) {
-                        addToHistory(buffer);
+                    if(count>0){
+                    //add current buffer to command history
+                    addToHistory(buffer);
 
-                        for (; ind > 0; ind--, count--) {
-                            outb(dev, '\b');
-                            outb(dev, ' ');
-                            outb(dev, '\b');
-                        }
+                    for(;ind>0;ind--,count--){
+                        outb(dev, '\b');
+                        outb(dev, ' ');
+                        outb(dev, '\b');
                     }
                     char* newCommand = getFromCycled();
+                    int len = strlen(newCommand);
 
                     if(newCommand!=NULL) {
-                        int len = strlen(newCommand);
                         strcpy(buffer,newCommand);
                         sys_free_mem(newCommand);
                         for(;ind<len;ind++,count++){
                             outb(dev,newCommand[ind]);
                         }
                     }
+                    }
                 }
-
+                //right arrow
                 else if (c == 'C') {
                     ind++;
                     serial_out(dev, "\033[C", 3);
 
                 }
+                //left arrow
                 else if (c == 'D') {
                     ind--;
                     serial_out(dev, "\033[D", 3);
