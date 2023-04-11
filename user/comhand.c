@@ -1485,17 +1485,18 @@ void comhand_freeMem() {
 @returns	: N/A
 */
 void comhand_showMemory(int entry) {
+	//initialize mcb at head of list
 	mcb* currPtr = getHeadMcb();
 	//initialize temp variables
 	int startAddr = 0;
 	int size = 0;
-
+	//for allocated memory blocks
 	if (entry == 0) {
-		
 		puts(
 			"\n$:Allocated Memory Blocks:"\
 			"\n=========================="
 		);
+		//for every non-null mcb, if it is allocated, print data
 		while (currPtr != NULL) {
 			if (currPtr->flag == ALLOCATED) {
 				startAddr = (int)currPtr->start_address;
@@ -1511,11 +1512,13 @@ void comhand_showMemory(int entry) {
 			currPtr = currPtr->nextPtr;
 		}
 	}
+	//for free memory blocks
 	if (entry == 1) {
 		puts(
 			"\n$:Free Memory Blocks:"\
 			"\n=========================="
 		);
+		//for every non-null mcb, if it is free, print data
 		while (currPtr != NULL) {
 			if (currPtr->flag == FREE) {
 				startAddr = (int)currPtr->start_address;
@@ -1531,14 +1534,14 @@ void comhand_showMemory(int entry) {
 			currPtr = currPtr->nextPtr;
 		}
 	}
-
+	//end & return statement
 	puts(
 		"\n=========================="\
 		"\n$:Memory Blocks shown above:"\
 		"\n"\
 		"\n$:If you see no Memory Blocks, none currently exist:"
 	);
-
+	//return & free memory
 	sys_free_mem(currPtr);
 	return;
 }
