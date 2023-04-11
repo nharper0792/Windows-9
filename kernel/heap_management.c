@@ -131,3 +131,8 @@ void* allocate_memory(size_t data) {
 	//fallthrough (could not find free mcb block in list that will fit)
 	return NULL;
 }
+
+mcb* getHeadMcb(void) {
+
+	return mcbHead;
+}

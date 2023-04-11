@@ -11,6 +11,7 @@
 #include <mpx/r3_commands.h>
 #include <processes.h>
 #include <alarm.h>
+#include <heap_management.h>
 
 /*
 Variable: curr_process
@@ -1484,11 +1485,62 @@ void comhand_freeMem() {
 @returns	: N/A
 */
 void comhand_showMemory(int entry) {
+	mcb* currPtr = getHeadMcb();
+	//initialize temp variables
+	int startAddr = 0;
+	int size = 0;
+
 	if (entry == 0) {
-		//TODO show allocated mem functions n stuff
-	} else if (entry == 1) {
-		//TODO show free memory functions n stuff
+		
+		puts(
+			"\n$:Allocated Memory Blocks:"\
+			"\n=========================="
+		);
+		while (currPtr != NULL) {
+			if (currPtr->flag == ALLOCATED) {
+				startAddr = (int)currPtr->start_address;
+				size = (int)currPtr->size;
+				printf(
+					"\n	Block at Start Address: %i "\
+					"\n	Size: %i"\
+					"\n",
+					startAddr,
+					size
+				);
+			}
+			currPtr = currPtr->nextPtr;
+		}
 	}
+	if (entry == 1) {
+		puts(
+			"\n$:Free Memory Blocks:"\
+			"\n=========================="
+		);
+		while (currPtr != NULL) {
+			if (currPtr->flag == FREE) {
+				startAddr = (int)currPtr->start_address;
+				size = (int)currPtr->size;
+				printf(
+					"\n	Block at Start Address: %i "\
+					"\n	Size: %i"\
+					"\n",
+					startAddr,
+					size
+				);
+			}
+			currPtr = currPtr->nextPtr;
+		}
+	}
+
+	puts(
+		"\n=========================="\
+		"\n$:Memory Blocks shown above:"\
+		"\n"\
+		"\n$:If you see no Memory Blocks, none currently exist:"
+	);
+
+	sys_free_mem(currPtr);
+	return;
 }
 
 //========================================================================
