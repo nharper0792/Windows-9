@@ -266,12 +266,16 @@ void comhand_rtc(void) {
 	puts(
 		"\e[1;34m \n$:Real-Time Clock:"
 		"\n$:Current Time: "
-	);
-	getTime();
+	);char* temp = getTime();
+	puts(temp);
+    sys_free_mem(temp);
 	puts(
 		"\n$:Current Date: "
 	);
-    getDate();
+    temp = getDate();
+    puts(temp);
+    sys_free_mem(temp);
+    temp = NULL;
 	puts("\e[0m \n");
 	return;
 }

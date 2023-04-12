@@ -21,6 +21,8 @@ Function Desc   : creates pointer to node and allocates the memory and sets void
 node* createNode(void* data){
     node* newNode =  (node*)sys_alloc_mem(sizeof(node));
     newNode->data = data;
+    newNode->prevPtr = NULL;
+    newNode->nextPtr = NULL;
     return newNode;
 }
 

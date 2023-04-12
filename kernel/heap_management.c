@@ -106,7 +106,7 @@ void* allocate_memory(size_t data) {
     }
 	//checking to see if location was found
 	else if (currentPtr->size >= data && currentPtr->flag == FREE) {
-		size_t newBlockSize = currentPtr->size - data;
+		size_t newBlockSize = currentPtr->size - data-sizeof(mcb);
 		
 		//changes free block to allocated block
 		currentPtr->flag = ALLOCATED;
