@@ -1465,8 +1465,25 @@ void comhand_pcbShowHelper(pcb* target) {
 @returns	: N/A
 */
 void comhand_allocateMem() {
-	//TODO alloc memory functions n stuff
+	char* membuf[10] = { 0 };
+	puts("\n\nHow much memory would you like to allocate?\n> ");
+	sys_req(READ, COM1, membuf, sizeof(membuf));
+
+	//printf("\n%i\n", atoi((const char*)membuf));
+
+	printf("\nMemory allocated to: %i", allocate_memory((size_t)atoi((const char*)membuf)));
+
 	return;
+}
+
+mcb* freeMem_helper(size_t address) {
+	mcb* currentPtr;
+	for (currentPtr = getHeadMcb(); currentPtr != NULL && address != currentPtr->start_address; currentPtr = currentPtr -> nextPtr);
+	if (currentPtr->flag == FREE) {
+		return currentPtr;
+	}
+
+	return NULL;
 }
 
 /*
@@ -1477,7 +1494,18 @@ void comhand_allocateMem() {
 @returns	: N/A
 */
 void comhand_freeMem() {
-	//TODO free memory functions n stuff
+	char* membuf[10] = { 0 };
+	puts("\n\nWhats the address of the memory you would like to free?\n> ");
+	sys_req(READ, COM1, membuf, sizeof(membuf));
+
+	void* address = (size_t*)atoi((const char*)membuf);
+
+	if (free_memory(address) == 0) {
+		puts("\nMemory block has been successfully freed!\n");
+	} else {
+		puts("\nError in freeing memory block at address!\n");
+	}
+
 	return;
 }
 
@@ -1490,10 +1518,9 @@ void comhand_freeMem() {
 */
 void comhand_showMemory(int entry) {
 	//initialize mcb at head of list
-	mcb* currPtr = getHeadMcb();
+	mcb* currPtr;
 	//initialize temp variables
-	int startAddr = 0;
-	int size = 0;
+	int blockNumber = 0;
 	//for allocated memory blocks
 	if (entry == 0) {
 		puts(
@@ -1501,19 +1528,17 @@ void comhand_showMemory(int entry) {
 			"\n=========================="
 		);
 		//for every non-null mcb, if it is allocated, print data
-		while (currPtr != NULL) {
+		for (currPtr = getHeadMcb(); currPtr != NULL; currPtr = currPtr->nextPtr){
 			if (currPtr->flag == ALLOCATED) {
-				startAddr = (int)currPtr->start_address;
-				size = (int)currPtr->size;
+				blockNumber = blockNumber + 1;
 				printf(
-					"\n	Block at Start Address: %i "\
-					"\n	Size: %i"\
+					"\n %i"\
+					"\n Block at Start Address: lol"\
+					"\n Size: lol"\
 					"\n",
-					startAddr,
-					size
+					blockNumber
 				);
 			}
-			currPtr = currPtr->nextPtr;
 		}
 	}
 	//for free memory blocks
@@ -1523,19 +1548,18 @@ void comhand_showMemory(int entry) {
 			"\n=========================="
 		);
 		//for every non-null mcb, if it is free, print data
-		while (currPtr != NULL) {
+		//for every non-null mcb, if it is allocated, print data
+		for (currPtr = getHeadMcb(); currPtr != NULL; currPtr = currPtr->nextPtr){
 			if (currPtr->flag == FREE) {
-				startAddr = (int)currPtr->start_address;
-				size = (int)currPtr->size;
+				blockNumber = blockNumber + 1;
 				printf(
-					"\n	Block at Start Address: %i "\
-					"\n	Size: %i"\
+					"\n %i"\
+					"\n Block at Start Address: lol"\
+					"\n Size: lol"\
 					"\n",
-					startAddr,
-					size
+					blockNumber
 				);
 			}
-			currPtr = currPtr->nextPtr;
 		}
 	}
 	//end & return statement
