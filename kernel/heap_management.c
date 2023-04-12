@@ -5,6 +5,8 @@
 
 mcb* mcbHead;
 mcb* mcbTail;
+
+
 void initialize_heap(size_t size) {
 	//make memory control block for free List
 	//create starting memory location
@@ -39,7 +41,7 @@ int free_memory(void* data) {
 	//setup freeing memory, set currPtr to the mcb with matching start address
 	while (currPtr != NULL) {
 		//if start address of current pointer is equal to data and also an allocated block
-		if ((currPtr->start_address == (size_t)data || (currPtr->nextPtr!=NULL && (size_t)data < (size_t)currPtr->nextPtr))
+		if ((currPtr->start_address == (size_t)data)
 			&& currPtr->flag == ALLOCATED) {
 			break;
 		}
@@ -61,14 +63,14 @@ int free_memory(void* data) {
 	while (currPtr->nextPtr != NULL
 		&& currPtr->nextPtr->flag == FREE) {
 		//add size to total
-		newSize += currPtr->nextPtr->size+sizeof(mcb);
+		newSize += (currPtr->nextPtr->size) + sizeof(mcb);
 		//update next pointer
 		currPtr->nextPtr = currPtr->nextPtr->nextPtr;
         if(currPtr->nextPtr!=NULL){
             currPtr->nextPtr->prevPtr=currPtr;
         }
 	}
-	//if prev mcb is not null and also a free memory block
+//	if prev mcb is not null and also a free memory block
 	while (currPtr->prevPtr != NULL
 		&& currPtr->prevPtr->flag == FREE) {
 		//add size to total
@@ -80,13 +82,15 @@ int free_memory(void* data) {
         }
 		//set current pointer to new previous pointer
 		currPtr = currPtr->prevPtr;
+//        if(currPtr->prevPtr!=NULL)
+//            currPtr->prevPtr->nextPtr = currPtr;
 	}
 	//update parameters of new (possibly bigger) mcb
 
     currPtr->size = newSize;
     currPtr->start_address = (size_t)(currPtr+1);
 	currPtr->flag = FREE;
-    data = NULL;
+//    data = 0x00000000;
 	//success return by default or if this point is reached (should only be in case of success)
 	return 0;
 }
@@ -95,13 +99,7 @@ int free_memory(void* data) {
 void* allocate_memory(size_t data) {
 	//traversing list to find location free mcb with enough space
 	mcb* currentPtr;
-	for (currentPtr = mcbHead; currentPtr != NULL ; currentPtr = currentPtr->nextPtr){
-        if(currentPtr->size >= data && currentPtr->flag == FREE){
-            break;
-        }
-        else{
-            continue;
-        }
+	for (currentPtr = mcbHead; currentPtr!= NULL && !(currentPtr->size >= data && currentPtr->flag == FREE) ; currentPtr = currentPtr->nextPtr){
     }
     if(currentPtr == NULL){
         return NULL;
@@ -136,3 +134,5 @@ void* allocate_memory(size_t data) {
 	//fallthrough (could not find free mcb block in list that will fit)
 	return NULL;
 }
+
+

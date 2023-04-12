@@ -54,9 +54,10 @@ Function Desc   : reads date from ports, converts from BCD to decimal, and retur
 @return char* : formatted char* of the received date
 */
 char* getDate(){
-    char* buf = (char*)sys_alloc_mem(10);
-    sprintf(buf, "%.2d/%.2d/%.2d",read(Month),read(DayOfMonth),read(Year));
-    return buf;
+    puts("allocating time string\n");
+//    char* buf = (char*)sys_alloc_mem(15);
+    printf( "%.2d/%.2d/%.2d",read(Month),read(DayOfMonth),read(Year));
+    return NULL;
 }
 
 /**
@@ -118,18 +119,12 @@ Function Desc   : will get time from ports, convert frm BCD to decimal, and retu
 */
 char* getTime() {
     //Creating buffer char*
-    char* buf = (char*)sys_alloc_mem(9);
-
-    //Reading from ports
-    int hours = read(Hours);
-    int minutes = read(Minutes);
-    int seconds = read(Seconds);
-
+//    char* buf = (char*)sys_alloc_mem(100);
     //Using sprintf to form
-    sprintf(buf, "%.2d:%.2d:%.2d", hours, minutes, seconds);
-    buf[8] = '\0';
+    printf( "%.2d:%.2d:%.2d", read(Hours), read(Minutes), read(Seconds));
+//    buf[9] = '\0';
     //Returning buffer
-    return buf;
+    return NULL;
 }
 
 /*

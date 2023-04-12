@@ -131,16 +131,25 @@ void pcb_insert(pcb* newPcb){
 
 int pcb_remove(pcb* target){
     node* wrapper = createNode(target);
-    if(ready != NULL && remove(ready,wrapper)!=NULL){
+    node* temp;
+    if(ready != NULL && (temp=remove(ready,wrapper))!=NULL){
+        sys_free_mem(temp);
+        sys_free_mem(wrapper);
         return 0;
     }
-    if(blocked != NULL && remove(blocked,wrapper)!=NULL){
+    if(blocked != NULL && (temp=remove(blocked,wrapper))!=NULL){
+        sys_free_mem(temp);
+        sys_free_mem(wrapper);
         return 0;
     }
-    if(suspendedReady != NULL && remove(suspendedReady,wrapper)!=NULL){
+    if(suspendedReady != NULL && (temp=remove(suspendedReady,wrapper))!=NULL){
+        sys_free_mem(temp);
+        sys_free_mem(wrapper);
         return 0;
     }
-    if(suspendedBlocked != NULL && remove(suspendedBlocked,wrapper)!=NULL){
+    if(suspendedBlocked != NULL && (temp=remove(suspendedBlocked,wrapper))!=NULL){
+        sys_free_mem(temp);
+        sys_free_mem(wrapper);
         return 0;
     }
     return 1;

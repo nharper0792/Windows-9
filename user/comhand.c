@@ -266,11 +266,11 @@ void comhand_rtc(void) {
 		"\e[1;34m \n$:Real-Time Clock:"
 		"\n$:Current Time: "
 	);
-	puts(getTime());
+	getTime();
 	puts(
 		"\n$:Current Date: "
 	);
-	puts(getDate());
+    getDate();
 	puts("\e[0m \n");
 	return;
 }

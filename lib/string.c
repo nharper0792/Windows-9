@@ -109,7 +109,8 @@ char *pad(char *s, int padding, char type,int free) {
     if (len > padding) {
         return s;
     } else {
-        char *ret = (char *)sys_alloc_mem(padding+1);
+        puts("allocating padding buffer");
+        char* ret  = (char*)sys_alloc_mem(padding+1);
         for (int i = 0; i < padding - len; i++) {
             ret[i] = type;
         }
@@ -117,8 +118,7 @@ char *pad(char *s, int padding, char type,int free) {
             ret[i] = s[j];
         }
         ret[padding]='\0';
-        if(free)
-            sys_free_mem(s);
+        free++;
         return ret;
     }
 
@@ -131,8 +131,7 @@ char *formatCore(const char *format, va_list valist) {
     int padding = 0;
     int decimal_point = 0;
     int padding_after_decimal = 0;
-    char *temp_str;
-//    char* padded_str;
+    char* temp_str;
     int temp_int;
     double temp_float;
     //loop through each character in the string
@@ -140,6 +139,7 @@ char *formatCore(const char *format, va_list valist) {
         //checks for a %
         if (ch == '%') {
             do {
+                temp_str = NULL;
                 switch (ch = *format++) {
                     case '%':
                         buffer[index++] = '%';
@@ -155,9 +155,10 @@ char *formatCore(const char *format, va_list valist) {
                         for (int i = 0; temp_str[i]; i++) {
                             buffer[index++] = temp_str[i];
                         }
-                        if(free)
+                        if(free){
 			                sys_free_mem(temp_str);
-//            sys_free_mem(padded_str);
+                            temp_str = NULL;
+                        }
                         break;
                     case 'c'://char
                         buffer[index++] = va_arg(valist,
@@ -167,12 +168,18 @@ char *formatCore(const char *format, va_list valist) {
                     case 'i'://int
                         temp_int = va_arg(valist,
                         int);
-                        temp_str = itoa(temp_int, NULL,10);
+                        temp_str = (char*)sys_alloc_mem(15);
+                        itoa(temp_int, temp_str,10);
+                        int len = strlen(temp_str);
                         if(padding_after_decimal){
-                            temp_str = pad(temp_str, padding_after_decimal, '0',1);
+                            for (int i = 0; i < padding_after_decimal - len; i++) {
+                                buffer[index++] = '0';
+                            }
                         }
                         if (padding) {//check for padding
-                            temp_str = pad(temp_str, padding, ' ',1);
+                            for (int i = 0; i < padding - len; i++) {
+                                buffer[index++] = ' ';
+                            }
                         }
                         for (int i = 0; temp_str[i]; i++) {
                             buffer[index++] = temp_str[i];
@@ -261,9 +268,7 @@ int sprintf(char* dest, const char* format, ...) {
     va_start(valist, format);
     char* buffer = formatCore(format,valist);
     va_end(valist);
-    for (int i = 0; buffer[i]; i++) {
-        dest[i] = buffer[i];
-    }
+    strcpy(dest,buffer);
     sys_free_mem(buffer);
     return strlen(dest);
 }
@@ -279,9 +284,9 @@ char* strcpy(char* dest, const char* src){
 char *itoa(int i, char* dest, int base) {
     char hex[] = {"0123456789abcdef"};
     int p = 0;
-    if(dest == NULL){
-        dest = (char*)sys_alloc_mem(10);
-    }
+//    if(dest == NULL){
+//        dest = (char*)sys_alloc_mem(10);
+//    }
     if(i==0){
         dest = "0\0";
         return dest;

@@ -7,7 +7,7 @@
 //
 list* history;
 list* cycled;
-char* current;
+node* current;
 void addToHistory(const char* command){
     if(history==NULL){
         history = createList();
@@ -15,11 +15,16 @@ void addToHistory(const char* command){
     int len = strlen(command);
     char* temp = (char*)sys_alloc_mem(len+1);
     strcpy(temp,command);
-
 //    sys_free_mem(command);
     temp[len]='\0';
-    node* newNode = createNode((void*)temp);
-    addToHead(history,newNode);
+    if(current){
+        sys_free_mem(current->data);
+        current->data = (void*) temp;
+    }
+    else {
+        node *newNode = createNode((void *) temp);
+        addToHead(history,newNode);
+    }
 }
 void addToCycled(const char* command){
     if(cycled==NULL){
@@ -27,23 +32,35 @@ void addToCycled(const char* command){
     }
     char* temp = (char*)sys_alloc_mem(strlen(command)+1);
     strcpy(temp,command);
-    node* newNode = createNode((void*)command);
-    addToHead(cycled,newNode);
+    if(current){
+        sys_free_mem(current->data);
+        current->data = (void*) temp;
+    }
+    else {
+        node *newNode = createNode((void *) temp);
+        addToHead(cycled,newNode);
+    }
 }
 
 char* getFromHistory(){
     if(history==NULL || history->headPtr==NULL){
         return NULL;
     }
-    node* temp = removeHead(history);
-    return (char*)temp->data;
+    if(current){
+        addToHead(cycled,current);
+    }
+    current = removeHead(history);
+    return (char*)current->data;
 }
 char* getFromCycled(){
     if(cycled==NULL || cycled->headPtr==NULL){
         return NULL;
     }
-    node* temp = removeHead(cycled);
-    return (char*)temp->data;
+    if(current){
+        addToHead(history,current);
+    }
+    current = removeHead(cycled);
+    return (char*)current->data;
 }
 
 void resetHistory(){
@@ -54,5 +71,6 @@ void resetHistory(){
         while (cycled->headPtr != NULL) {
             addToHead(history, removeHead(cycled));
         }
+        current = NULL;
     }
 }
