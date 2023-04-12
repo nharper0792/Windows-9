@@ -170,9 +170,12 @@ int hexToInt(char* hexNumber) {
                 digit = 14;
             } else if (hexNumber[i] == 'f' || hexNumber[i] == 'F') {
                 digit = 15;
-            } else {
+            } else if ((hexNumber[i]-48) >= 0 && (hexNumber[i]-48) <=9) {
                 digit = hexNumber[i] - 48;
-            }
+            } else {
+				integer = 0;
+				break;
+			}
 
             integer = integer + (digit)*power(16, count);
             count++;

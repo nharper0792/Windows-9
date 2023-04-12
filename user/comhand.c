@@ -1509,7 +1509,7 @@ void comhand_freeMem() {
 	char membuf[15] = { 0 };
 	puts(
 		"\n$:Whats the address of the memory you would like to free?:"\
-		"\n$:Format: NUMERICAL VALUE WITH MAX LENGTH OF 15"\
+		"\n$:Format: HEXIDECIMAL VALUE WITH MAX LENGTH OF 15"\
 		"\n"\
 		"\n> "
 	);
@@ -1518,7 +1518,7 @@ void comhand_freeMem() {
 	//format error check
 	if (hexToInt(membuf) == 0) {
 		puts(
-			"\n$:ERROR:Must be a numerical value with max length of 15:"
+			"\n$:ERROR:Must be a hexidecimal value with max length of 15:"
 		);
 		puts(
 			"\n$:Returning to menu..."\
@@ -1529,7 +1529,6 @@ void comhand_freeMem() {
 		return;
 	}
 	//capture address, store in address
-	printf("\n%i\n", hexToInt(membuf));
 	void* address = (void*)((size_t)hexToInt(membuf));
 
 	//mcb not found case
