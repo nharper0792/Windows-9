@@ -1470,8 +1470,15 @@ void comhand_allocateMem() {
 	sys_req(READ, COM1, membuf, sizeof(membuf));
 	if (atoi(membuf) == 0) {
 		puts(
-			"\n$:Must be a numerical value with max length of 15:"
+			"\n$:ERROR:Must be a numerical value with max length of 15:"
 		);
+		puts(
+			"\n$:Returning to menu..."\
+			"\n"
+		);
+		//return
+		comhand_menu();
+		return;
 	}
 	//allocate memory
 	if (allocate_memory((size_t)atoi(membuf)) != NULL) {
@@ -1502,11 +1509,26 @@ void comhand_freeMem() {
 	char membuf[15] = { 0 };
 	puts(
 		"\n$:Whats the address of the memory you would like to free?:"\
+		"\n$:Format: NUMERICAL VALUE WITH MAX LENGTH OF 15"\
+		"\n"\
 		"\n> "
 	);
 	//capture input, store in membuf
 	sys_req(READ, COM1, membuf, sizeof(membuf));
-	//capture address, store in membuf
+	//format error check
+	if (atoi(membuf) == 0) {
+		puts(
+			"\n$:ERROR:Must be a numerical value with max length of 15:"
+		);
+		puts(
+			"\n$:Returning to menu..."\
+			"\n"
+		);
+		//return
+		comhand_menu();
+		return;
+	}
+	//capture address, store in address
 	void* address = (void*)((size_t)(atoi(membuf)));
 
 	//mcb not found case
