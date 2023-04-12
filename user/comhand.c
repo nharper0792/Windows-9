@@ -1581,15 +1581,12 @@ void comhand_showMemory(int entry) {
 				}
 				printf(
 					"\nBlock:%i"\
-					"\n	Size: %i",
+					"\n	Size: %i"\
+					"\n Start Address: 0x%x",
 					blockNumber,
-					(currPtr->size)
+					(currPtr->size),
+					currPtr->start_address
 				);
-				//TODO : FINISH START ADDRESSING
-				printf(
-					"\n	Start Address: 0x%x",currPtr->start_address
-				);
-				
 				blockNumber++;
 			}
 			
@@ -1610,15 +1607,12 @@ void comhand_showMemory(int entry) {
 				}
 				printf(
 					"\nBlock:%i"\
-					"\n	Size: %i",
+					"\n	Size: %i"\
+					"\n Start Address: 0x%x",
 					blockNumber,
-					(currPtr->size)
+					(currPtr->size),
+					currPtr->start_address
 				);
-				//TODO : FINISH START ADDRESSING
-				puts(
-					"\n	Start Address: %s"
-				);
-				
 				blockNumber++;
 			}
 			
