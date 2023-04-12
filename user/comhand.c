@@ -1511,7 +1511,7 @@ void comhand_freeMem() {
 		"\n$:Whats the address of the memory you would like to free?:"\
 		"\n$:Format: HEXIDECIMAL VALUE WITH MAX LENGTH OF 15"\
 		"\n"\
-		"\n> "
+		"\n> 0x"
 	);
 	//capture input, store in membuf
 	sys_req(READ, COM1, membuf, sizeof(membuf));
