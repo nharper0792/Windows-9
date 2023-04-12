@@ -1516,7 +1516,7 @@ void comhand_freeMem() {
 	//capture input, store in membuf
 	sys_req(READ, COM1, membuf, sizeof(membuf));
 	//format error check
-	if (atoi(membuf) == 0) {
+	if (hexToInt(membuf) == 0) {
 		puts(
 			"\n$:ERROR:Must be a numerical value with max length of 15:"
 		);
@@ -1529,7 +1529,8 @@ void comhand_freeMem() {
 		return;
 	}
 	//capture address, store in address
-	void* address = (void*)((size_t)(atoi(membuf)));
+	printf("\n%i\n", hexToInt(membuf));
+	void* address = (void*)((size_t)hexToInt(membuf));
 
 	//mcb not found case
 	if (free_memory(address) != 0) {

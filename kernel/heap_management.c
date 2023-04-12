@@ -158,17 +158,17 @@ int hexToInt(char* hexNumber) {
 
     for (int i = strlen(hexNumber); i >= 0; i--) {
         if (hexNumber[i] != '\0') {
-            if (hexNumber[i] == 'a') {
+            if (hexNumber[i] == 'a' || hexNumber[i] == 'a') {
                 digit = 10;
-            } else if (hexNumber[i] == 'b') {
+            } else if (hexNumber[i] == 'b' || hexNumber[i] == 'B') {
                 digit = 11;
-            } else if (hexNumber[i] == 'c') {
+            } else if (hexNumber[i] == 'c' || hexNumber[i] == 'C') {
                 digit = 12;
-            } else if (hexNumber[i] == 'd') {
+            } else if (hexNumber[i] == 'd' || hexNumber[i] == 'D') {
                 digit = 13;
-            } else if (hexNumber[i] == 'e') {
+            } else if (hexNumber[i] == 'e' || hexNumber[i] == 'E') {
                 digit = 14;
-            } else if (hexNumber[i] == 'f') {
+            } else if (hexNumber[i] == 'f' || hexNumber[i] == 'F') {
                 digit = 15;
             } else {
                 digit = hexNumber[i] - 48;
