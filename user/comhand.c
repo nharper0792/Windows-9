@@ -1494,18 +1494,9 @@ void comhand_freeMem() {
 	puts("\n\nWhats the address of the memory you would like to free?\n> ");
 	sys_req(READ, COM1, membuf, sizeof(membuf));
 
-	size_t address = (size_t)atoi((const char*)membuf);
-	printf("\n%i\n", address);
+	void* address = (size_t*)atoi((const char*)membuf);
 
-	mcb* blockAtAddress = freeMem_helper(address);
-
-	//mcb not found
-	if (blockAtAddress == NULL) {
-		puts("\nMemory block at address could not be found!\n");
-		return;
-	}
-
-	if (free_memory(blockAtAddress) == 0) {
+	if (free_memory(address) == 0) {
 		puts("\nMemory block has been successfully freed!\n");
 	} else {
 		puts("\nError in freeing memory block at address!\n");
