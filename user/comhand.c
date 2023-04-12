@@ -1463,6 +1463,7 @@ void comhand_allocateMem() {
 	puts(
 		"\n$:How much memory would you like to allocate?"\
 		"\n$:Format: NUMERICAL VALUE WITH MAX LENGTH OF 15"\
+		"\n"\
 		"\n> "
 	);
 	//read buffer input, capture in membuf
