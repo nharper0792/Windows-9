@@ -1586,8 +1586,8 @@ void comhand_showMemory(int entry) {
 					(currPtr->size)
 				);
 				//TODO : FINISH START ADDRESSING
-				puts(
-					"\n	Start Address: %s"
+				printf(
+					"\n	Start Address: 0x%x",currPtr->start_address
 				);
 				
 				blockNumber++;
