@@ -1,7 +1,7 @@
 #include <heap_management.h>
 #include <memory.h>
 #include <mpx/vm.h>
-#include <stdio.h>
+
 
 mcb* mcbHead;
 mcb* mcbTail;
@@ -70,7 +70,7 @@ int free_memory(void* data) {
             currPtr->nextPtr->prevPtr=currPtr;
         }
 	}
-//	if prev mcb is not null and also a free memory block
+	//if prev mcb is not null and also a free memory block
 	while (currPtr->prevPtr != NULL
 		&& currPtr->prevPtr->flag == FREE) {
 		//add size to total
@@ -90,7 +90,7 @@ int free_memory(void* data) {
     currPtr->size = newSize;
     currPtr->start_address = (size_t)(currPtr+1);
 	currPtr->flag = FREE;
-//    data = 0x00000000;
+    data = NULL;
 	//success return by default or if this point is reached (should only be in case of success)
 	return 0;
 }
@@ -135,4 +135,7 @@ void* allocate_memory(size_t data) {
 	return NULL;
 }
 
+mcb* getHeadMcb(void) {
 
+	return mcbHead;
+}
