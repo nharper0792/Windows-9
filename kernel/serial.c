@@ -121,52 +121,52 @@ int serial_poll(device dev, char* buffer, size_t len)
             else if (c == '\033') {
                 c = inb(dev);
                 c = inb(dev);
-                if(c=='A'){
-                    char* newCommand = getFromHistory();
-                    if(newCommand!=NULL) {
-                    if(count>0) {
-                        //add current buffer to command cycle
-                        addToCycled(buffer);
-
-                        for (; ind > 0; ind--, count--) {
-                            outb(dev, '\b');
-                            outb(dev, ' ');
-                            outb(dev, '\b');
-                        }
-                    }
-                        int len = strlen(newCommand);
-                        strcpy(buffer,newCommand);
-                        sys_free_mem(newCommand);
-                        for(;ind<len;ind++,count++){
-                            outb(dev,newCommand[ind]);
-                        }
-                    }
-                }
+//                if(c=='A'){
+//                    char* newCommand = getFromHistory();
+//                    if(newCommand!=NULL) {
+//                    if(count>0) {
+//                        //add current buffer to command cycle
+//                        addToCycled(buffer);
+//
+//                        for (; ind > 0; ind--, count--) {
+//                            outb(dev, '\b');
+//                            outb(dev, ' ');
+//                            outb(dev, '\b');
+//                        }
+//                    }
+//                        int len = strlen(newCommand);
+//                        strcpy(buffer,newCommand);
+//                        sys_free_mem(newCommand);
+//                        for(;ind<len;ind++,count++){
+//                            outb(dev,newCommand[ind]);
+//                        }
+//                    }
+//                }
                 //down arrow
-                else if(c=='B'){
-                    char* newCommand = getFromCycled();if(count>0) {
-                        //add current buffer to command history
-                        addToHistory(buffer);
-
-                        for (; ind > 0; ind--, count--) {
-                            outb(dev, '\b');
-                            outb(dev, ' ');
-                            outb(dev, '\b');
-                        }
-                    }
-                    if(newCommand!=NULL) {
-
-
-                        int len = strlen(newCommand);
-                        strcpy(buffer,newCommand);
-                        sys_free_mem(newCommand);
-                        for(;ind<len;ind++,count++){
-                            outb(dev,newCommand[ind]);
-                        }
-                    }
-                }
+//                else if(c=='B'){
+//                    char* newCommand = getFromCycled();if(count>0) {
+//                        //add current buffer to command history
+//                        addToHistory(buffer);
+//
+//                        for (; ind > 0; ind--, count--) {
+//                            outb(dev, '\b');
+//                            outb(dev, ' ');
+//                            outb(dev, '\b');
+//                        }
+//                    }
+//                    if(newCommand!=NULL) {
+//
+//
+//                        int len = strlen(newCommand);
+//                        strcpy(buffer,newCommand);
+//                        sys_free_mem(newCommand);
+//                        for(;ind<len;ind++,count++){
+//                            outb(dev,newCommand[ind]);
+//                        }
+//                    }
+//                }
                 //right arrow
-                else if (c == 'C') {
+                if (c == 'C') {
                     ind++;
                     serial_out(dev, "\033[C", 3);
 
