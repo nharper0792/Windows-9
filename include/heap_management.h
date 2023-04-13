@@ -28,4 +28,9 @@ int free_memory(void* data);
 void* allocate_memory(size_t data);
 
 mcb* getHeadMcb(void);
+
+int power(int x, int y);
+
+int hexToInt(char* hexNumber);
+
 #endif

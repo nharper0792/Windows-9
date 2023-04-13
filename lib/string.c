@@ -214,7 +214,8 @@ char *formatCore(const char *format, va_list valist) {
                         break;
                     case 'x':
                         temp_int = va_arg(valist,int);
-                        temp_str = itoa(temp_int,NULL,16);
+                        temp_str = (char*)sys_alloc_mem(15);
+                        temp_str = itoa(temp_int,temp_str,16);
                         if(padding_after_decimal){
                             temp_str = pad(temp_str, padding_after_decimal, '0',1);
                         }
@@ -280,52 +281,107 @@ char* strcpy(char* dest, const char* src){
     dest[strlen(src)] = '\0';
     return dest;
 }
-
-char *itoa(int i, char* dest, int base) {
-    char hex[] = {"0123456789abcdef"};
-    int p = 0;
-//    if(dest == NULL){
-//        dest = (char*)sys_alloc_mem(10);
-//    }
-    if(i==0){
-        dest = "0\0";
-        return dest;
-    }
-    int isNegative = 0;
-    if (i < 0) {
-        if (base != 2) {
-            dest[p++] = '-';
-        } else {
-            dest[p++] = '1';
-        }
-        isNegative = 1;
-        i = -i;
-    } else {
-        if (base == 2) {
-            dest[p++] = '0';
-        }
-    }
-    for (int j = base;; j *= base) {
-        if (i < j / base) {
-            dest[p] = '\0';
-            break;
-        } else {
-            int remainder = (i % j) / (j / base);
-            if (remainder == 0) {
-                dest[p++] = '0';
-            } else {
-                dest[p++] = hex[remainder];
-            }
-        }
-    }
-    p--;
-    for (int j = isNegative || base == 2; j < p; j++, p--) {
-        char temp = dest[j];
-        dest[j] = dest[p];
-        dest[p] = temp;
-    }
-    return dest;
+void swap(char *a, char *b)
+{ char temp = *a;
+  *a = *b;
+  *b = temp;
 }
+
+void reverse(char *str, int size)
+{ int start = 0;
+  while (start < size)
+  { swap(&str[start], &str[size]);
+    start++;
+    size--;
+  }
+}
+
+char *itoa(int num, char *buff, int base)
+{ int index = 0;
+  if (num == 0)
+  { buff[index] = '0';
+    index++;
+    buff[index] = '\0';
+    return buff;
+  }
+  char nFlag = '0';
+  if (num < 0)
+  {
+    nFlag = '1';
+    num = -num;
+  }
+
+  while (num != 0)
+  {
+    int remainder = num % base;
+    if (base == 16 && remainder > 9) {
+      buff[index] = remainder + 55;
+      index++;
+      num = num / base;
+    }
+    else{
+      buff[index] = remainder + '0';
+      index++;
+      num = num/base;
+    }
+  }
+  if (nFlag == '1')
+  {
+    buff[index] = '-';
+    index++;
+  }
+  buff[index] = '\0';
+
+  reverse(buff, index - 1);
+
+  return buff;
+}
+
+// char *itoa(int i, char* dest, int base) {
+//     char hex[] = {"0123456789abcdef"};
+//     int p = 0;
+// //    if(dest == NULL){
+// //        dest = (char*)sys_alloc_mem(10);
+// //    }
+//     if(i==0){
+//         dest = "0\0";
+//         return dest;
+//     }
+//     int isNegative = 0;
+//     if (i < 0) {
+//         if (base != 2) {
+//             dest[p++] = '-';
+//         } else {
+//             dest[p++] = '1';
+//         }
+//         isNegative = 1;
+//         i = -i;
+//     } else {
+//         if (base == 2) {
+//             dest[p++] = '0';
+//         }
+//     }
+//     for (int j = base;; j *= base) {
+//         if (i < j / base) {
+//             dest[p] = '\0';
+//             break;
+//         } else {
+//             int remainder = (i % j) / (j / base);
+//             if (remainder == 0) {
+//                 dest[p++] = '0';
+//             } else {
+//                 dest[p++] = hex[remainder];
+//             }
+//         }
+//     }
+//     p--;
+//     for (int j = isNegative || base == 2; j < p; j++, p--) {
+//         char temp = dest[j];
+//         dest[j] = dest[p];
+//         dest[p] = temp;
+//     }
+//     return dest;
+// }
 
 char* ftoa(float f, char* dest, int afterpoint){
     if(dest==NULL){

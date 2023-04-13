@@ -1,7 +1,7 @@
 #include <heap_management.h>
 #include <memory.h>
 #include <mpx/vm.h>
-
+#include <string.h>
 
 mcb* mcbHead;
 mcb* mcbTail;
@@ -136,6 +136,51 @@ void* allocate_memory(size_t data) {
 }
 
 mcb* getHeadMcb(void) {
-
 	return mcbHead;
+}
+
+int power(int x, int y) {
+	if (y == 0) {
+        return 1;
+    }
+
+    int answer = 1;
+    for (int i = 0; i < y; i++) {
+        answer *= x;
+    }
+    return answer;
+}
+
+int hexToInt(char* hexNumber) {
+	int integer = 0;
+    int digit = 0;
+    int count = 0;
+
+    for (int i = strlen(hexNumber); i >= 0; i--) {
+        if (hexNumber[i] != '\0') {
+            if (hexNumber[i] == 'a' || hexNumber[i] == 'a') {
+                digit = 10;
+            } else if (hexNumber[i] == 'b' || hexNumber[i] == 'B') {
+                digit = 11;
+            } else if (hexNumber[i] == 'c' || hexNumber[i] == 'C') {
+                digit = 12;
+            } else if (hexNumber[i] == 'd' || hexNumber[i] == 'D') {
+                digit = 13;
+            } else if (hexNumber[i] == 'e' || hexNumber[i] == 'E') {
+                digit = 14;
+            } else if (hexNumber[i] == 'f' || hexNumber[i] == 'F') {
+                digit = 15;
+            } else if ((hexNumber[i]-48) >= 0 && (hexNumber[i]-48) <=9) {
+                digit = hexNumber[i] - 48;
+            } else {
+				integer = 0;
+				break;
+			}
+
+            integer = integer + (digit)*power(16, count);
+            count++;
+        }
+    }
+
+    return integer;
 }

@@ -107,14 +107,6 @@ void init_comhand(void) {
 			curr_process = 105;
 			comhand_pcbResume();
 		}
-		if ((strcasecmp("PCB BLOCK\0", buf) == 0) || atoi(buf) == 12) {
-			curr_process = 102;
-			comhand_pcbBlock();
-		}
-		if ((strcasecmp("PCB UNBLOCK\0", buf) == 0) || atoi(buf) == 13) {
-			curr_process = 103;
-			comhand_pcbUnblock();
-		}
 		if ((strcasecmp("PCB PRIORITY\0", buf) == 0) || atoi(buf) == 14) {
 			curr_process = 106;
 			comhand_pcbPriority();
@@ -1465,25 +1457,44 @@ void comhand_pcbShowHelper(pcb* target) {
 @returns	: N/A
 */
 void comhand_allocateMem() {
-	char* membuf[10] = { 0 };
-	puts("\n\nHow much memory would you like to allocate?\n> ");
+	//create capture input buf
+	char membuf[15] = { 0 };
+	//display intructions
+	puts(
+		"\n$:How much memory would you like to allocate?"\
+		"\n$:Format: NUMERICAL VALUE WITH MAX LENGTH OF 15"\
+		"\n"\
+		"\n> "
+	);
+	//read buffer input, capture in membuf
 	sys_req(READ, COM1, membuf, sizeof(membuf));
-
-	//printf("\n%i\n", atoi((const char*)membuf));
-
-	printf("\nMemory allocated to: %i", allocate_memory((size_t)atoi((const char*)membuf)));
-
-	return;
-}
-
-mcb* freeMem_helper(size_t address) {
-	mcb* currentPtr;
-	for (currentPtr = getHeadMcb(); currentPtr != NULL && address != currentPtr->start_address; currentPtr = currentPtr -> nextPtr);
-	if (currentPtr->flag == FREE) {
-		return currentPtr;
+	if (atoi(membuf) == 0) {
+		puts(
+			"\n$:ERROR:Must be a numerical value with max length of 15:"
+		);
+		puts(
+			"\n$:Returning to menu..."\
+			"\n"
+		);
+		//return
+		comhand_menu();
+		return;
+	}
+	//allocate memory
+	if (allocate_memory((size_t)atoi(membuf)) != NULL) {
+		puts(
+			//TODO : ADD CONFIRMATION OF ALLOCATION
+			"\n$:Memory allocated to:"
+		);
 	}
 
-	return NULL;
+	puts(
+		"\n$:Returning to menu..."\
+		"\n"
+	);
+	//return
+	comhand_menu();
+	return;
 }
 
 /*
@@ -1494,23 +1505,58 @@ mcb* freeMem_helper(size_t address) {
 @returns	: N/A
 */
 void comhand_freeMem() {
-	char* membuf[10] = { 0 };
-	puts("\n\nWhats the address of the memory you would like to free?\n> ");
+	//create memory storage buffer
+	char membuf[15] = { 0 };
+	puts(
+		"\n$:Whats the address of the memory you would like to free?:"\
+		"\n$:Format: HEXIDECIMAL VALUE WITH MAX LENGTH OF 15"\
+		"\n"\
+		"\n> 0x"
+	);
+	//capture input, store in membuf
 	sys_req(READ, COM1, membuf, sizeof(membuf));
-
-	void* address = (size_t*)atoi((const char*)membuf);
-
-	if (free_memory(address) == 0) {
-		puts("\nMemory block has been successfully freed!\n");
-	} else {
-		puts("\nError in freeing memory block at address!\n");
+	//format error check
+	if (hexToInt(membuf) == 0) {
+		puts(
+			"\n$:ERROR:Must be a hexidecimal value with max length of 15:"
+		);
+		puts(
+			"\n$:Returning to menu..."\
+			"\n"
+		);
+		//return
+		comhand_menu();
+		return;
 	}
+	//capture address, store in address
+	void* address = (void*)((size_t)hexToInt(membuf));
+
+	//mcb not found case
+	if (free_memory(address) != 0) {
+		puts(
+			"\n$:ERROR:Memory block could not be found!:"\
+			"\n"
+		);
+
+		puts(
+			"\n$:Returning to menu..."\
+			"\n"
+		);
+		//return
+		comhand_menu();
+		return;
+	}
+	//should only be reached if mcb exists
+	puts(
+		"\n$:Memory block has been successfully freed!:"\
+		"\n"
+	);
 
 	return;
 }
 
 /*
-@Name		: comhand_showMem
+@Name		: comhand_showMemory
 @brief		: will display a list of allocated or free memory blockes based on user's entry
 
 @param		entry : specifies which 'show' sequence to run
@@ -1518,9 +1564,9 @@ void comhand_freeMem() {
 */
 void comhand_showMemory(int entry) {
 	//initialize mcb at head of list
-	mcb* currPtr;
+	mcb* currPtr = getHeadMcb();
 	//initialize temp variables
-	int blockNumber = 0;
+	int blockNumber = 1;
 	//for allocated memory blocks
 	if (entry == 0) {
 		puts(
@@ -1528,17 +1574,23 @@ void comhand_showMemory(int entry) {
 			"\n=========================="
 		);
 		//for every non-null mcb, if it is allocated, print data
-		for (currPtr = getHeadMcb(); currPtr != NULL; currPtr = currPtr->nextPtr){
+		while (currPtr != NULL) {
 			if (currPtr->flag == ALLOCATED) {
-				blockNumber = blockNumber + 1;
+				if (blockNumber != 1) {
+					puts("\n-----");
+				}
 				printf(
-					"\n %i"\
-					"\n Block at Start Address: lol"\
-					"\n Size: lol"\
-					"\n",
-					blockNumber
+					"\nBlock:%i"\
+					"\n	Size: %i"\
+					"\n Start Address: 0x%x",
+					blockNumber,
+					(currPtr->size),
+					currPtr->start_address
 				);
+				blockNumber++;
 			}
+			
+			currPtr = currPtr->nextPtr;
 		}
 	}
 	//for free memory blocks
@@ -1548,18 +1600,23 @@ void comhand_showMemory(int entry) {
 			"\n=========================="
 		);
 		//for every non-null mcb, if it is free, print data
-		//for every non-null mcb, if it is allocated, print data
-		for (currPtr = getHeadMcb(); currPtr != NULL; currPtr = currPtr->nextPtr){
+		while (currPtr != NULL) {
 			if (currPtr->flag == FREE) {
-				blockNumber = blockNumber + 1;
+				if (blockNumber != 1) {
+					puts("\n-----");
+				}
 				printf(
-					"\n %i"\
-					"\n Block at Start Address: lol"\
-					"\n Size: lol"\
-					"\n",
-					blockNumber
+					"\nBlock:%i"\
+					"\n	Size: %i"\
+					"\n Start Address: 0x%x",
+					blockNumber,
+					(currPtr->size),
+					currPtr->start_address
 				);
+				blockNumber++;
 			}
+			
+			currPtr = currPtr->nextPtr;
 		}
 	}
 	//end & return statement
@@ -1567,7 +1624,8 @@ void comhand_showMemory(int entry) {
 		"\n=========================="\
 		"\n$:Memory Blocks shown above:"\
 		"\n"\
-		"\n$:If you see no Memory Blocks, none currently exist:"
+		"\n$:If you see no Memory Blocks, none currently exist:"\
+		"\n"
 	);
 	//return & free memory
 	sys_free_mem(currPtr);
@@ -1614,10 +1672,6 @@ void comhand_help(void) {
 		"\n$:		Switches the state of a specific PCB to [SUSPENDED] dispatching state."\
 		"\n$:	11) pcb resume"\
 		"\n$:		Switches the state of a specific PCB to [NOT SUSPENDED] dispatching state."\
-		"\n$:	12) pcb block"\
-		"\n$:		Switches the state of a specific PCB to [BLOCKED] execution state."\
-		"\n$:	13) pcb unblock"\
-		"\n$:		Switches the state of a specific PCB to [UNBLOCKED] execution state."\
 		"\n$:	14) pcb priority"\
 		"\n$:		Switches the priority of a specific PCB."\
 		"\n$:	15) pcb show"\
@@ -1659,8 +1713,6 @@ void comhand_menu(void) {
 		"\n$:	9) pcb delete"\
 		"\n$:	10) pcb suspend"\
 		"\n$:	11) pcb resume"\
-		"\n$:	12) pcb block "\
-		"\n$:	13) pcb unblock "\
 		"\n$:	14) pcb priority "\
 		"\n$:	15) pcb show"\
 		"\n$:	16) pcb show ready"\
