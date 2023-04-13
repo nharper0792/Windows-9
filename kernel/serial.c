@@ -122,47 +122,48 @@ int serial_poll(device dev, char* buffer, size_t len)
                 c = inb(dev);
                 c = inb(dev);
                 if(c=='A'){
-//                    char* newCommand = getFromHistory();
-//                    if(newCommand!=NULL) {
-//                    if(count>0) {
-//                        //add current buffer to command cycle
-//                        addToCycled(buffer);
-//
-//                        for (; ind > 0; ind--, count--) {
-//                            outb(dev, '\b');
-//                            outb(dev, ' ');
-//                            outb(dev, '\b');
-//                        }
-//                    }
-//                        int len = strlen(newCommand);
-//                        strcpy(buffer,newCommand);
-////                        sys_free_mem(newCommand);
-//                        for(;ind<len;ind++,count++){
-//                            outb(dev,newCommand[ind]);
-//                        }
-//                    }
+                    char* newCommand = getFromHistory();
+                    if(newCommand!=NULL) {
+                    if(count>0) {
+                        //add current buffer to command cycle
+                        addToCycled(buffer);
+
+                        for (; ind > 0; ind--, count--) {
+                            outb(dev, '\b');
+                            outb(dev, ' ');
+                            outb(dev, '\b');
+                        }
+                    }
+                        int len = strlen(newCommand);
+                        strcpy(buffer,newCommand);
+                        sys_free_mem(newCommand);
+                        for(;ind<len;ind++,count++){
+                            outb(dev,newCommand[ind]);
+                        }
+                    }
                 }
                 //down arrow
                 else if(c=='B'){
-//                    char* newCommand = getFromCycled();
-//                    if(newCommand!=NULL) {
-//                    if(count>0) {
-//                        //add current buffer to command history
-//                        addToHistory(buffer);
-//
-//                        for (; ind > 0; ind--, count--) {
-//                            outb(dev, '\b');
-//                            outb(dev, ' ');
-//                            outb(dev, '\b');
-//                        }
-//                    }
-//
-//                        int len = strlen(newCommand);
-//                        strcpy(buffer,newCommand);
-//                        for(;ind<len;ind++,count++){
-//                            outb(dev,newCommand[ind]);
-//                        }
-//                    }
+                    char* newCommand = getFromCycled();if(count>0) {
+                        //add current buffer to command history
+                        addToHistory(buffer);
+
+                        for (; ind > 0; ind--, count--) {
+                            outb(dev, '\b');
+                            outb(dev, ' ');
+                            outb(dev, '\b');
+                        }
+                    }
+                    if(newCommand!=NULL) {
+
+
+                        int len = strlen(newCommand);
+                        strcpy(buffer,newCommand);
+                        sys_free_mem(newCommand);
+                        for(;ind<len;ind++,count++){
+                            outb(dev,newCommand[ind]);
+                        }
+                    }
                 }
                 //right arrow
                 else if (c == 'C') {
@@ -184,9 +185,9 @@ int serial_poll(device dev, char* buffer, size_t len)
             else if (c == 13 || c == 10)
             {
                 if (count > 0) {
-//                    resetHistory();
-//                    addToHistory(buffer);
-//                    buffer[ind] = '\0';
+                    resetHistory();
+                    addToHistory(buffer);
+                    buffer[ind] = '\0';
                     outb(dev, '\n');
                     outb(dev, '\r');
                     return count;

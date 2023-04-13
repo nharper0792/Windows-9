@@ -9,6 +9,7 @@ Function Desc   : creates the list allocates memory for this list
 */
 list* createList(){
     list* newList = (list*)sys_alloc_mem(sizeof(list));
+    newList->headPtr = NULL;
     return newList;
 }
 
