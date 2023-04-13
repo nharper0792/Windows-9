@@ -1647,6 +1647,7 @@ void comhand_showMemory(int entry) {
 	);
 	//return & free memory
 	sys_free_mem(currPtr);
+	comhand_menu();
 	return;
 }
 
