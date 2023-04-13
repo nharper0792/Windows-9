@@ -191,12 +191,21 @@ void comhand_version(void) {
 	puts(
 		"\n \e[1;95m $:Version:"\
 		"\n == Windows 9 JB Edition == "\
-		"\n  _________________________"\
-		"\n /                         \\"\
-		"\n<       +-+-+-+-+-+-+       >"\
-		"\n \\_________________________/"\
-		"\n"
-		"\nVersion R5 04/06/2023 \e[0m"\
+		"\n                             |    "\
+		"\n                             |    "\
+		"\n                    _        |        |"\
+		"\n               --  <_>       |        |"\
+		"\n                             |        |"\
+		"\n                             |        |"\
+		"\n                              `-._    |"\
+		"\n                                 |`-._|"\
+		"\n                                 |"\
+		"\n                                 |"\
+		"\n_________________________________|____"\
+		"\n       \\           \\             |"\
+		"\n        \\           \\            |"\
+		"\n         \\           \\           |"\
+		"\nVersion R5 04/14/2023 \e[0m"\
 		"\n"
 	);
 	comhand_menu();
@@ -215,7 +224,7 @@ void comhand_shutdown(void) {
 		"\n$:	yes"\
 		"\n$:	no"\
 		"\n"\
-		"\n>"
+		"\n> "
 	);
 
 	for (;;) {
@@ -1480,12 +1489,13 @@ void comhand_allocateMem() {
 		comhand_menu();
 		return;
 	}
-	//allocate memory
-	if (allocate_memory((size_t)atoi(membuf)) != NULL) {
-		puts(
-			//TODO : ADD CONFIRMATION OF ALLOCATION
-			"\n$:Memory allocated to:"
-		);
+	//capture address for allocation
+	void* address = allocate_memory((size_t)atoi(membuf));
+
+	if (address != NULL) {
+		printf("\n$:Memory allocated to: 0x%x", (size_t)address);
+	} else {
+		puts("\nError allocating memory!");
 	}
 
 	puts(
@@ -1542,7 +1552,8 @@ void comhand_freeMem() {
 			"\n$:Returning to menu..."\
 			"\n"
 		);
-		//return
+		//return and frees
+		sys_free_mem(address);
 		comhand_menu();
 		return;
 	}

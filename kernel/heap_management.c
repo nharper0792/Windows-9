@@ -158,7 +158,7 @@ int hexToInt(char* hexNumber) {
 
     for (int i = strlen(hexNumber); i >= 0; i--) {
         if (hexNumber[i] != '\0') {
-            if (hexNumber[i] == 'a' || hexNumber[i] == 'a') {
+            if (hexNumber[i] == 'a' || hexNumber[i] == 'A') {
                 digit = 10;
             } else if (hexNumber[i] == 'b' || hexNumber[i] == 'B') {
                 digit = 11;
