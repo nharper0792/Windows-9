@@ -107,44 +107,44 @@ void init_comhand(void) {
 			curr_process = 105;
 			comhand_pcbResume();
 		}
-		if ((strcasecmp("PCB PRIORITY\0", buf) == 0) || atoi(buf) == 14) {
+		if ((strcasecmp("PCB PRIORITY\0", buf) == 0) || atoi(buf) == 12) {
 			curr_process = 106;
 			comhand_pcbPriority();
 		}
-		if ((strcasecmp("PCB SHOW\0", buf) == 0) || atoi(buf) == 15) {
+		if ((strcasecmp("PCB SHOW\0", buf) == 0) || atoi(buf) == 13) {
 			curr_process = 107;
 			comhand_pcbShow(0);
 		}
-		if ((strcasecmp("PCB SHOW READY\0", buf) == 0) || atoi(buf) == 16) {
+		if ((strcasecmp("PCB SHOW READY\0", buf) == 0) || atoi(buf) == 14) {
 			curr_process = 108;
 			comhand_pcbShow(1);
 		}
-		if ((strcasecmp("PCB SHOW BLOCKED\0", buf) == 0) || atoi(buf) == 17) {
+		if ((strcasecmp("PCB SHOW BLOCKED\0", buf) == 0) || atoi(buf) == 15) {
 			curr_process = 109;
 			comhand_pcbShow(2);
 		}
-		if ((strcasecmp("PCB SHOW ALL\0", buf) == 0) || atoi(buf) == 18) {
+		if ((strcasecmp("PCB SHOW ALL\0", buf) == 0) || atoi(buf) == 16) {
 			curr_process = 1010;
 			comhand_pcbShow(3);
 		}
-		if ((strcasecmp("LOAD\0", buf) == 0) || atoi(buf) == 19) {
+		if ((strcasecmp("LOAD\0", buf) == 0) || atoi(buf) == 17) {
 			curr_process = 110;
 			comhand_load();
 
 		}
-		if ((strcasecmp("ALLOCATE MEMORY\0", buf) == 0) || atoi(buf) == 20) {
+		if ((strcasecmp("ALLOCATE MEMORY\0", buf) == 0) || atoi(buf) == 18) {
 			curr_process =  111;
 			comhand_allocateMem();
 		}
-		if ((strcasecmp("FREE MEMORY\0", buf) == 0) || atoi(buf) == 21) {
+		if ((strcasecmp("FREE MEMORY\0", buf) == 0) || atoi(buf) == 19) {
 			curr_process = 112;
 			comhand_freeMem();
 		}
-		if ((strcasecmp("SHOW ALLOCATED MEMORY\0", buf) == 0) || atoi(buf) == 22) {
+		if ((strcasecmp("SHOW ALLOCATED MEMORY\0", buf) == 0) || atoi(buf) == 20) {
 			curr_process = 113;
 			comhand_showMemory(0);
 		}
-		if ((strcasecmp("SHOW FREE MEMORY\0", buf) == 0) || atoi(buf) == 23) {
+		if ((strcasecmp("SHOW FREE MEMORY\0", buf) == 0) || atoi(buf) == 21) {
 			curr_process = 114;
 			comhand_showMemory(1);
 		}
@@ -205,7 +205,8 @@ void comhand_version(void) {
 		"\n       \\           \\             |"\
 		"\n        \\           \\            |"\
 		"\n         \\           \\           |"\
-		"\nVersion R5 04/14/2023 \e[0m"\
+		"\nVersion R5"\
+		"\nCompilation Date: 04/13/2023 \e[0m"\
 		"\n"
 	);
 	comhand_menu();
@@ -1562,7 +1563,13 @@ void comhand_freeMem() {
 		"\n$:Memory block has been successfully freed!:"\
 		"\n"
 	);
-
+	puts(
+		"\n$:Returning to menu..."\
+		"\n"
+	);
+	//return and frees
+	sys_free_mem(address);
+	comhand_menu();
 	return;
 }
 
@@ -1593,7 +1600,7 @@ void comhand_showMemory(int entry) {
 				printf(
 					"\nBlock:%i"\
 					"\n	Size: %i"\
-					"\n Start Address: 0x%x",
+					"\n	Start Address: 0x%x",
 					blockNumber,
 					(currPtr->size),
 					currPtr->start_address
@@ -1619,7 +1626,7 @@ void comhand_showMemory(int entry) {
 				printf(
 					"\nBlock:%i"\
 					"\n	Size: %i"\
-					"\n Start Address: 0x%x",
+					"\n	Start Address: 0x%x",
 					blockNumber,
 					(currPtr->size),
 					currPtr->start_address
@@ -1683,25 +1690,25 @@ void comhand_help(void) {
 		"\n$:		Switches the state of a specific PCB to [SUSPENDED] dispatching state."\
 		"\n$:	11) pcb resume"\
 		"\n$:		Switches the state of a specific PCB to [NOT SUSPENDED] dispatching state."\
-		"\n$:	14) pcb priority"\
+		"\n$:	12) pcb priority"\
 		"\n$:		Switches the priority of a specific PCB."\
-		"\n$:	15) pcb show"\
+		"\n$:	13) pcb show"\
 		"\n$:		Will show the specific PCB that the user specifies."\
-		"\n$:	16) pcb show ready"\
+		"\n$:	14) pcb show ready"\
 		"\n$:		Will show all PCBs that are ready."\
-		"\n$:	17) pcb show blocked"\
+		"\n$:	15) pcb show blocked"\
 		"\n$:		Will show all PCBs that are blocked."\
-		"\n$:	18) pcb show all"\
+		"\n$:	16) pcb show all"\
 		"\n$:		Will show all PCBs that exist."\
-		"\n$:	19) load"\
+		"\n$:	17) load"\
 		"\n$:		Will load Processes 1-5 [FOR TESTING PURPOSES, USE NOT RECCOMMENDED]"\
-		"\n$:	20) allocate memory"\
+		"\n$:	18) allocate memory"\
 		"\n$:		Will allocate memory."\
-		"\n$:	21) free memory"\
+		"\n$:	19) free memory"\
 		"\n$:		Will free memory"\
-		"\n$:	22) show allocated memory"\
+		"\n$:	20) show allocated memory"\
 		"\n$:		Will show all allocated memory that exists"\
-		"\n$:	23) show free memory"\
+		"\n$:	21) show free memory"\
 		"\n$:		Will show all free memory that exists"\
 		"\n$:"\
 		"\n$:"\
@@ -1724,16 +1731,16 @@ void comhand_menu(void) {
 		"\n$:	9) pcb delete"\
 		"\n$:	10) pcb suspend"\
 		"\n$:	11) pcb resume"\
-		"\n$:	14) pcb priority "\
-		"\n$:	15) pcb show"\
-		"\n$:	16) pcb show ready"\
-		"\n$:	17) pcb show blocked"\
-		"\n$:	18) pcb show all"\
-		"\n$:	19) load"\
-		"\n$:	20) allocate memory"\
-		"\n$:	21) free memory"\
-		"\n$:	22) show allocated memory"\
-		"\n$:	23) show free memory"\
+		"\n$:	12) pcb priority "\
+		"\n$:	13) pcb show"\
+		"\n$:	14) pcb show ready"\
+		"\n$:	15) pcb show blocked"\
+		"\n$:	16) pcb show all"\
+		"\n$:	17) load"\
+		"\n$:	18) allocate memory"\
+		"\n$:	19) free memory"\
+		"\n$:	20) show allocated memory"\
+		"\n$:	21) show free memory"\
 		"\n$:"\
 		"\n$:See help command for more information.: "\
 		"\n"
