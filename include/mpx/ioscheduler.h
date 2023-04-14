@@ -26,10 +26,13 @@ typedef struct dcb {
 	enum alloc_status use_status;
 	enum event_status event_status;
 	enum op_code cur_op;
+	iocb* assoc_iocb;
 	ring_buffer* buffer;
 } dcb;
 
 typedef struct iocb {
+	iocb* nextPtr;
+	iocb* prevPtr;
 	pcb* assoc_pcb;
 	dcb* assoc_dcb;
 	enum op_code op_type;
