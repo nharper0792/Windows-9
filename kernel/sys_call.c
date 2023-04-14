@@ -2,10 +2,25 @@
 #include <pcb.h>
 #include <sys_req.h>
 #include <stdlib.h>
+#include <mpx/ioscheduler.h>
 
 pcb* currentProcess = NULL;//running process (NOT comhand)
 context* idleing = NULL;
+// TODO handle EAX being READ or WRITE
+//      The device will be in EBX, buffer in ECX, and buffer size in EDX
+//      Check to see whether the requested device is currently in use
+//       If not, you can directly call the appropriate driver function (i.e.
+//       serial read() or serial write())
+//      otherwise, schedule it with I/O scheduler
 
+/**TODO When Scheduling I/O, move process to blocked state
+        dispatch a new process as if the op were IDLE
+        each transfeerred byte will trigger an interrupt
+            device driver ISR will be called
+            if the operation is complete, set the event flag
+        Each time sys call() is called, check for any available Event Flags
+            For any that are set, perform the required completion sequence
+**/
 context* sys_call(context* current){
     node* readyHead = NULL;
     if(current->EAX == IDLE|| current->EAX == EXIT){
@@ -54,9 +69,44 @@ context* sys_call(context* current){
             currentProcess->dispatchingState = RUNNING;
             return (context*) currentProcess->stackPtr;
             // return stack ptr of current process
-        }}else{
-            current-> EAX =-1;
         }
+    }
+    else if (current->EAX == READ || current->EAX == WRITE){
+        int dev = current->EBX;
+        char* buffer = (char*)current->ECX;
+        size_t size = (size_t)current->EDX;
+        //check if dev in current->EBX is not busy
+        //if so, call the driver function
+        //check the state of the DCB
+        if(0){
+            current->EAX == READ? serial_read(dev,buffer,size):serial_write(dev,buffer,size);
+        }
+        //otherwise, schedule it
+        else{
+            readyHead = removeHead(ready);
+            if(readyHead == NULL){
+                current->EAX = NULL;
+                return current;
+            }
+            if(currentProcess!=NULL){
+                //something was running
+
+                //set it's state to ready and put in the ready queue
+                currentProcess->executionState = BLOCKED;
+                // save the current context as the stack top of currentProcess
+
+                currentProcess->stackPtr = (char*)current;
+                pcb_insert(currentProcess);
+                current->EAX = 0;
+            }
+            pcb* blockedProcess = currentProcess;
+            currentProcess = (pcb*)readyHead->data;
+            schedule_io(blockedProcess);
+        }
+    }
+    else{
+            current-> EAX =-1;
+    }
 
     return current;
 }
