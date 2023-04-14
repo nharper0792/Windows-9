@@ -15,7 +15,7 @@ typedef enum {
 } event_status;
 
 typedef struct ring_buffer {
-	char buffer[15];
+	char buffer[16];
 	size_t size;
 	ring_buffer* head;
 	ring_buffer* tail;
@@ -25,7 +25,7 @@ typedef struct dcb {
 	enum alloc_status use_status;
 	enum event_status event_status;
 	enum op_code cur_op;
-	
+	ring_buffer* buffer;
 } dcb;
 
 typedef struct iocb {
