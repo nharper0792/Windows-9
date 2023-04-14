@@ -3,7 +3,6 @@
 #include <sys_req.h>
 #include <stdlib.h>
 #include <mpx/ioscheduler.h>
-
 pcb* currentProcess = NULL;//running process (NOT comhand)
 context* idleing = NULL;
 // TODO handle EAX being READ or WRITE
@@ -31,7 +30,7 @@ context* sys_call(context* current){
 
         if(current->EAX == IDLE) {
             if(readyHead == NULL){
-                current->EAX = NULL;
+                current->EAX = 0;
                 return current;
             }
             if(currentProcess!=NULL){
@@ -78,14 +77,14 @@ context* sys_call(context* current){
         //check if dev in current->EBX is not busy
         //if so, call the driver function
         //check the state of the DCB
-        if(check_device_status(currentProcess)==INACTIVE){
+        if(check_device_status(dev)!=BUSY){
             current->EAX == READ? serial_read(dev,buffer,size):serial_write(dev,buffer,size);
         }
         //otherwise, schedule it
         else{
             readyHead = removeHead(ready);
             if(readyHead == NULL){
-                current->EAX = NULL;
+                current->EAX = 0;
                 return current;
             }
             if(currentProcess!=NULL){

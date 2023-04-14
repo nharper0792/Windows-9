@@ -7,12 +7,12 @@
 #include <ctype.h>
 #include <stddef.h>
 
-typedef enum {
-	INACTIVE,
-	IN_USE
+typedef enum alloc_status{
+	BUSY,
+    NOT_BUSY
 } alloc_status;
 
-typedef enum {
+typedef enum event_status{
 	NO_EVENT,
 	EVENT
 } event_status;
@@ -25,19 +25,20 @@ typedef struct ring_buffer {
 } ring_buffer;
 
 typedef struct dcb {
-	enum alloc_status use_status;
-	enum event_status event_status;
-	enum op_code cur_op;
-	iocb* assoc_iocb;
+    device assoc_dev;
+	alloc_status use_status;
+	event_status event_status;
+	op_code cur_op;
+	struct iocb* assoc_iocb;
 	ring_buffer* buffer;
 } dcb;
 
 typedef struct iocb {
-	iocb* nextPtr;
-	iocb* prevPtr;
+	struct iocb* nextPtr;
+	struct iocb* prevPtr;
 	pcb* assoc_pcb;
 	dcb* assoc_dcb;
-	enum op_code op_type;
+	op_code op_type;
 } iocb;
 
 int serial_open(device dev, int speed);
@@ -56,6 +57,6 @@ void serial_output_interrupt(struct dcb dcb);
 
 void schedule_io(pcb* process);
 
-int check_device_status(pcb* process);
+alloc_status check_device_status(device dev);
 
 #endif

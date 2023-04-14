@@ -1,6 +1,6 @@
-#include <ioscheduler.h>
-#include <serial.h>
-#include <io.h>
+#include <mpx/ioscheduler.h>
+#include <mpx/serial.h>
+#include <mpx/io.h>
 
 enum uart_registers {
     RBR = 0,	// Receive Buffer
@@ -69,13 +69,13 @@ void serial_output_interrupt(dcb dcb)
 }
 
 void schedule_io(pcb* process){
-
 }
 
-int check_device_status(pcb* process){
+alloc_status check_device_status(device dev){
     for(iocb* currPtr = iocbHead;currPtr!=NULL;currPtr = currPtr->nextPtr){
-        if(currPtr->assoc_pcb == process){
-            return currPtr->assoc_dcb->alloc_status;
+        if(currPtr->assoc_dcb->assoc_dev == dev){
+            return BUSY;
         }
     }
+    return NOT_BUSY;
 }

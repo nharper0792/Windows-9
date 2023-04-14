@@ -10,7 +10,8 @@ kernel/serial.o\
 kernel/pcb.o\
 kernel/sys_call.o\
 kernel/command_history.o\
-kernel/heap_management.o
+kernel/heap_management.o\
+kernel/ioscheduler.o
 
 LIB_OBJECTS =\
 lib/ctype.o\
