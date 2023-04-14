@@ -78,7 +78,7 @@ context* sys_call(context* current){
         //check if dev in current->EBX is not busy
         //if so, call the driver function
         //check the state of the DCB
-        if(0){
+        if(check_device_status(currentProcess)==INACTIVE){
             current->EAX == READ? serial_read(dev,buffer,size):serial_write(dev,buffer,size);
         }
         //otherwise, schedule it

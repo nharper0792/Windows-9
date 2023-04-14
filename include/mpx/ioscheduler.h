@@ -3,10 +3,12 @@
 
 #include <sys_req.h>
 #include <pcb.h>
-#include <device.h>
+#include <mpx/device.h>
+#include <ctype.h>
+#include <stddef.h>
 
 typedef enum {
-	IDLE,
+	INACTIVE,
 	IN_USE
 } alloc_status;
 
@@ -18,8 +20,8 @@ typedef enum {
 typedef struct ring_buffer {
 	char buffer[16];
 	size_t size;
-	ring_buffer* head;
-	ring_buffer* tail;
+	struct ring_buffer* head;
+	struct ring_buffer* tail;
 } ring_buffer;
 
 typedef struct dcb {
@@ -53,5 +55,7 @@ void serial_input_interrupt(struct dcb* dcb);
 void serial_output_interrupt(struct dcb dcb);
 
 void schedule_io(pcb* process);
+
+int check_device_status(pcb* process);
 
 #endif

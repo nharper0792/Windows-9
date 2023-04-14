@@ -18,6 +18,7 @@ enum uart_registers {
 };
 static int initialized[4] = { 0 };
 
+iocb* iocbHead;
 int serial_open(device dev, int speed)
 {
 	int dno = serial_devno(dev);
@@ -65,4 +66,16 @@ void serial_input_interrupt(dcb* dcb)
 
 void serial_output_interrupt(dcb dcb)
 {
+}
+
+void schedule_io(pcb* process){
+
+}
+
+int check_device_status(pcb* process){
+    for(iocb* currPtr = iocbHead;currPtr!=NULL;currPtr = currPtr->nextPtr){
+        if(currPtr->assoc_pcb == process){
+            return currPtr->assoc_dcb->alloc_status;
+        }
+    }
 }

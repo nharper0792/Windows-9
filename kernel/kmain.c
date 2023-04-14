@@ -83,7 +83,6 @@ void kmain(void)
 	// Module specific initialization -- not all modules require this
 	klogv(COM1, "Initializing MPX modules...");
 
-	// TODO : uncomment after initialize and set are done
 	initialize_heap(50000);
 	sys_set_heap_functions(allocate_memory, free_memory);
 	
