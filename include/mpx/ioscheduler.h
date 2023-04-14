@@ -3,6 +3,7 @@
 
 #include <sys_req.h>
 #include <pcb.h>
+#include <device.h>
 
 typedef enum {
 	IDLE,
@@ -33,5 +34,19 @@ typedef struct iocb {
 	dcb* assoc_dcb;
 	enum op_code op_type;
 } iocb;
+
+int serial_open(device dev, int speed);
+
+int serial_close(device dev);
+
+int serial_read(device dev, char* buf, size_t len);
+
+int serial_write(device dev, char* buf, size_t len);
+
+void serial_interrupt(void);
+
+void serial_input_interrupt(struct dcb* dcb);
+
+void serial_output_interrupt(struct dcb dcb);
 
 #endif
