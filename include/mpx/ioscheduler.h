@@ -55,7 +55,7 @@ void serial_input_interrupt(struct dcb* dcb);
 
 void serial_output_interrupt(struct dcb dcb);
 
-void schedule_io(pcb* process);
+void schedule_io(pcb* process, op_code op);
 
 alloc_status check_device_status(device dev);
 

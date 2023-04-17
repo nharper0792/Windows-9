@@ -1,6 +1,8 @@
 #include <mpx/ioscheduler.h>
 #include <mpx/serial.h>
 #include <mpx/io.h>
+#include <mpx/device.h>
+#include <memory.h>
 
 
 #define eflagO 1
@@ -8,7 +10,6 @@
 #define inUSE 3
 #define EOImask 0x20
 #define PICmask 0x21
-
 enum uart_registers {
     RBR = 0,	// Receive Buffer
     THR = 0,	// Transmitter Holding
@@ -26,9 +27,13 @@ enum uart_registers {
 static int initialized[4] = { 0 };
 
 iocb* iocbHead;
+
+dcb* DCB;
+
 int serial_open(device dev, int speed)
 {
-	dcb* DCB = (dcb*)DCB;
+	DCB = (dcb*)sys_alloc_mem(sizeof(dcb));
+    DCB->assoc_dev = dev;
 	DCB->event_status = eflagO;
 	DCB->use_status = IDLE;
 	int dno = serial_devno(dev);
@@ -64,7 +69,7 @@ int serial_read(device dev, char* buf, size_t len)
 
 int serial_write(device dev, char* buf, size_t len)
 {
-	return 0;
+
 }
 
 void serial_interrupt(void)
@@ -79,7 +84,16 @@ void serial_output_interrupt(dcb dcb)
 {
 }
 
-void schedule_io(pcb* process){
+void schedule_io(pcb* process,op_code op){
+    iocb* currPtr = iocbHead;
+    for(;currPtr != NULL; currPtr = currPtr->nextPtr){
+    }
+    iocb* newIocb = (iocb*)sys_alloc_memory(sizeof(iocb));
+    newIocb->prevPtr = currPtr;
+    newIocb->nextPtr = NULL;
+    newIocb->assoc_pcb = process;
+    newIocb->op_type = op;
+    currPtr->nextPtr = newIocb.
 }
 
 alloc_status check_device_status(device dev){
