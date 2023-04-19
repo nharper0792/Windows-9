@@ -31,6 +31,10 @@ typedef struct dcb {
 	op_code cur_op;
 	struct iocb* assoc_iocb;
 	ring_buffer* buffer;
+    char* input_buffer;
+    size_t input_len;
+    char* output_buffer;
+    size_t output_len;
 } dcb;
 
 typedef struct iocb {

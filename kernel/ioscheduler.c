@@ -36,6 +36,8 @@ int serial_open(device dev, int speed)
     DCB->assoc_dev = dev;
 	DCB->event_status = eflagO;
 	DCB->use_status = IDLE;
+    DCB->input_buffer = NULL;
+    DCB->output_buffer = NULL;
 	int dno = serial_devno(dev);
     if (dno == -1) {
         return -1;
@@ -59,17 +61,36 @@ int serial_open(device dev, int speed)
 
 int serial_close(device dev)
 {
+    dev = dev;
 	return 0;
 }
 
 int serial_read(device dev, char* buf, size_t len)
 {
+    dev = dev;
+    buf[len] = buf[len];
 	return 0;
 }
 
 int serial_write(device dev, char* buf, size_t len)
 {
-
+    if(!DCB){
+        return 401;
+    }
+    if(buf==NULL){
+        return 402;
+    }
+    if(len == 0){
+        return 403;
+    }
+    if(DCB->use_status == BUSY){
+        return 404;
+    }
+    DCB->output_buffer = buf;
+    DCB->output_len = len;
+    DCB->event_status = NO_EVENT;
+    outb(dev,*buf);
+    outb(dev + IER, inb(dev+IER)|0x02);
 }
 
 void serial_interrupt(void)
@@ -88,12 +109,12 @@ void schedule_io(pcb* process,op_code op){
     iocb* currPtr = iocbHead;
     for(;currPtr != NULL; currPtr = currPtr->nextPtr){
     }
-    iocb* newIocb = (iocb*)sys_alloc_memory(sizeof(iocb));
+    iocb* newIocb = (iocb*)sys_alloc_mem(sizeof(iocb));
     newIocb->prevPtr = currPtr;
     newIocb->nextPtr = NULL;
     newIocb->assoc_pcb = process;
     newIocb->op_type = op;
-    currPtr->nextPtr = newIocb.
+    currPtr->nextPtr = newIocb;
 }
 
 alloc_status check_device_status(device dev){
