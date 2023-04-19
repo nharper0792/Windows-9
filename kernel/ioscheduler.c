@@ -61,11 +61,14 @@ int serial_open(device dev, int speed)
 
 int serial_close(device dev)
 {
+    dev = dev;
 	return 0;
 }
 
 int serial_read(device dev, char* buf, size_t len)
 {
+    dev = dev;
+    buf[len] = buf[len];
 	return 0;
 }
 
