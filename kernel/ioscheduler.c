@@ -3,6 +3,7 @@
 #include <mpx/io.h>
 #include <mpx/device.h>
 #include <memory.h>
+#include <mpx/serial.h>
 
 
 #define eflagO 1
@@ -32,16 +33,19 @@ dcb* DCB;
 
 int serial_open(device dev, int speed)
 {
+    (void)speed;
 	DCB = (dcb*)sys_alloc_mem(sizeof(dcb));
     DCB->assoc_dev = dev;
 	DCB->event_status = eflagO;
-	DCB->use_status = IDLE;
+	DCB->use_status = NOT_BUSY;
     DCB->input_buffer = NULL;
     DCB->output_buffer = NULL;
-	int dno = serial_devno(dev);
+	int dno = dev;
     if (dno == -1) {
         return -1;
     }
+    int baud_rate = 115200 / (long)speed; //find baud rate
+
     outb(dev + IER, 0x00);	//disable interrupts
     outb(dev + LCR, 0x80);	//set line control register
     outb(dev + DLL, 115200 / 9600);	//set bsd least sig bit check whether baud rate is right
@@ -61,14 +65,33 @@ int serial_open(device dev, int speed)
 
 int serial_close(device dev)
 {
-    dev = dev;
-	return 0;
+    //check if device exists
+    int dno = dev;
+    if (dno == -1) {
+        return 201;
+    }
+    //set DCB status
+    DCB->event_status = eflagC;
+    //set values to 0x00
+    outb(dev + MSR, 0x00); //modem status register
+    outb(dev + IER, 0x00); //interrupt enable register
+    //PIC mask changes
+    int mask;
+    mask = inb(PICmask);
+  //  mask |= (1 < < 7);
+    outb(PICmask, mask);
+
+
+    //BUG TEST THE MESS OUTTA IT, check each parameter
+    return 1;
 }
 
 int serial_read(device dev, char* buf, size_t len)
 {
-    dev = dev;
-    buf[len] = buf[len];
+    (void)dev;
+    (void)buf;
+    (void)len;
+    
 	return 0;
 }
 
@@ -92,19 +115,36 @@ int serial_write(device dev, char* buf, size_t len)
     DCB->cur_op = WRITE;
     outb(dev + THR, *buf);
     outb(dev + IER, inb(dev+IER)|0x02);
+
+    return 1;
 }
 
 void serial_interrupt(void)
 {
+    cli();
 
+    unsigned char interType = inb(COM1 + 2);
+    if ((interType & 4) == 0) {
+        if ((interType & 2) == 2) {
+            serial_output_interrupt(DCB);
+        }
+
+    }
+    else if ((interType & 2) == 0) {
+        serial_input_interrupt(DCB);
+    }
+    outb(COM1 + 0x20, 0x20);
+    sti();
 }
 
-void serial_input_interrupt(dcb* dcb)
+void serial_input_interrupt(dcb* dcb1)
 {
+    (void)dcb;
 }
 
-void serial_output_interrupt(dcb dcb)
+void serial_output_interrupt(dcb* dcb1)
 {
+    (void)dcb;
 }
 
 void schedule_io(pcb* process,op_code op){

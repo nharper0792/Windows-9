@@ -57,7 +57,7 @@ void serial_interrupt(void);
 
 void serial_input_interrupt(struct dcb* dcb);
 
-void serial_output_interrupt(struct dcb dcb);
+void serial_output_interrupt(struct dcb* dcb);
 
 void schedule_io(pcb* process, op_code op);
 
