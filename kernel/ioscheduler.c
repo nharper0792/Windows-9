@@ -4,6 +4,7 @@
 #include <mpx/device.h>
 #include <memory.h>
 #include <mpx/serial.h>
+#include <mpx/interrupts.h>
 
 
 #define eflagO 1
@@ -31,7 +32,13 @@ iocb* iocbHead;
 
 dcb* DCB_array[4] = {0};
 dcb* DCB;
-
+dev devices[4] = {
+        COM1,
+        COM2,
+        COM3,
+        COM4
+};
+int get_devno(device dev);
 int serial_open(device dev, int speed)
 {
     (void)speed;
@@ -41,7 +48,7 @@ int serial_open(device dev, int speed)
 	DCB->use_status = NOT_BUSY;
     DCB->input_buffer = NULL;
     DCB->output_buffer = NULL;
-	int dno = dev;
+	int dno = get_devno(dev);
     if (dno == -1) {
         return -1;
     }
@@ -54,7 +61,7 @@ int serial_open(device dev, int speed)
     outb(dev + LCR, 0x03);	//lock divisor; 8bits, no parity, one stop
     outb(dev + FCR, 0xC7);	//enable fifo, clear, 14byte thresholdt
 	outb(dev+1,0x01);
-    DCB_array[dev] = DCB;
+    DCB_array[dno] = DCB;
 //    initialized[dno] = 1;
 	int mask;
 	mask = inb(PICmask);
@@ -69,11 +76,11 @@ int serial_open(device dev, int speed)
 int serial_close(device dev)
 {
     //check if device exists
-    int dno = dev;
+    int dno = get_devno(dev);
     if (dno == -1) {
         return 201;
     }
-    dcb* DCB = DCB_array[dev];
+    dcb* DCB = DCB_array[dno];
     //set DCB status
     DCB->event_status = eflagC;
     //set values to 0x00
@@ -138,14 +145,14 @@ int serial_read(device dev, char* buf, size_t len)
 
 int serial_write(device dev, char* buf, size_t len)
 {
-    dcb* DCB = DCB_array[dev]
+    dcb* DCB = DCB_array[get_devno(dev)];
     if(!DCB){
         return 401;
     }
     if(buf==NULL){
         return 402;
     }
-    if(len == 0){
+    if(len <= 0){
         return 403;
     }
     if(DCB->use_status == BUSY){
@@ -156,7 +163,7 @@ int serial_write(device dev, char* buf, size_t len)
     DCB->output_len = len;
     DCB->event_status = NO_EVENT;
     DCB->cur_op = WRITE;
-    outb(dev + THR, buf[DCB->output_index++]);
+    outb(dev + THR, buf[DCB->iocb_head->buffer_index++]);
     outb(dev + IER, inb(dev+IER)|0x02);
 
     return 1;
@@ -165,7 +172,8 @@ int serial_write(device dev, char* buf, size_t len)
 void serial_interrupt(void)
 {
     cli();
-    dcb* DCB = DCB_array[COM1];
+    for(int i = 0; i<)
+    dcb* DCB = DCB_array[get_devno(COM1)];
     unsigned char interType = inb(COM1 + 2);
     if ((interType & 4) == 0) {
         if ((interType & 2) == 2) {
@@ -191,7 +199,7 @@ void serial_output_interrupt(dcb* dcb1)
     if(dcb1->cur_op != WRITE){
         return;
     }
-    if(dcb1->output_index<dcb1->output_len){
+    if(dcb1->iocb_head->buffer_index < dcb1->iocb_head->buffer_len){
         outb(dev + THR, buf[dcb->iocb_head->output_index++]);
         return;
     }else{
@@ -201,7 +209,7 @@ void serial_output_interrupt(dcb* dcb1)
 }
 
 void schedule_io(pcb* process, op_code op, device dev, char* buffer, size_t size){
-    dcb* DCB = DCB_array[dev];
+    dcb* DCB = DCB_array[get_devno(dev)];
     iocb* currPtr = DCB->iocb_head;
     for(;currPtr->nextPtr != NULL; currPtr = currPtr->nextPtr){
     }
@@ -211,16 +219,25 @@ void schedule_io(pcb* process, op_code op, device dev, char* buffer, size_t size
     newIocb->op_type = op;
     newIocb->buffer_index = 0;
     newIocb->buffer = buffer;
-    newIocb->buffer_size = size;
+    newIocb->buffer_len = size;
     currPtr->nextPtr = newIocb;
 }
 
 alloc_status check_device_status(device dev){
-    return DCB_array[dev]->use-status;
+    return DCB_array[get_devno(dev)]->use_status;
 //    for(iocb* currPtr = iocbHead;currPtr!=NULL;currPtr = currPtr->nextPtr){
 //        if(currPtr->assoc_dcb->assoc_dev == dev){
 //            return BUSY;
 //        }
 //    }
 //    return NOT_BUSY;
+}
+
+get_devno(device dev){
+    for(int i = 0;i<sizeof(devices);i++){
+        if(devices[i] == dev){
+            return i;
+        }
+    }
+    return -1;
 }
