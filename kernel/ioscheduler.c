@@ -190,7 +190,24 @@ void serial_interrupt(void)
 
 void serial_input_interrupt(dcb* dcb1)
 {
-    (void)dcb1;
+    inb(COM1);
+
+    if (DCB->cur_op == READ) {
+        char* buffer = DCB->buffer->buffer;
+
+        int index = 0;
+        char character = NULL;
+
+        while (character != '\n' || index <= 16) {
+            character = buffer[index];
+            if (character != NULL) {
+                continue;
+            }
+
+            
+        }
+        
+    }
 
 }
 
