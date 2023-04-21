@@ -77,6 +77,7 @@ int serial_close(device dev)
     outb(dev + IER, 0x00); //interrupt enable register
     //PIC mask changes
     int mask;
+    //TODO : finish PIC masking, last to do
     mask = inb(PICmask);
   //  mask |= (1 < < 7);
     outb(PICmask, mask);
