@@ -2,9 +2,10 @@
 #include <mpx/serial.h>
 #include <mpx/io.h>
 #include <mpx/device.h>
-#include <memory.h>
 #include <mpx/serial.h>
 #include <mpx/interrupts.h>
+#include <mpx/sys_call.h>
+#include <memory.h>
 
 
 #define eflagO 1
@@ -28,10 +29,10 @@ enum uart_registers {
 };
 static int initialized[4] = { 0 };
 
-iocb* iocbHead;
+//iocb* iocbHead;
 
 dcb* DCB_array[4] = {0};
-dcb* DCB;
+
 device devices[4] = {
         COM1,
         COM2,
@@ -99,14 +100,15 @@ int serial_close(device dev)
 int serial_read(device dev, char* buf, size_t len)
 {
     //finding dcb to read from dcb list
+    dcb* DCB = DCB_array[get_devno(dev)];
     iocb* currentPtr;
-    for (currentPtr = iocbHead; currentPtr != NULL && currentPtr->assoc_dcb->assoc_dev != dev; currentPtr = currentPtr->nextPtr);
+    for (currentPtr = DCB->iocb_head; currentPtr != NULL && currentPtr->assoc_dcb->assoc_dev != dev; currentPtr = currentPtr->nextPtr);
     if (currentPtr == NULL) {
         //dev could not be found
         return -1;
     } 
 
-    dcb* dcbPtr = currentPtr->assoc_dcb;
+
 
     //checking to see if device is open
     if (DCB == NULL) {
@@ -132,7 +134,7 @@ int serial_read(device dev, char* buf, size_t len)
     int i = 0;
     size_t currentSize = 0;
     while (currentSize < len && i < 16) {
-        buf[i] = dcbPtr->buffer->buffer[i];
+        buf[i] = DCB->buffer->buffer[i];
         i++;
         currentSize++;
     }
@@ -184,10 +186,11 @@ void serial_interrupt(void)
 
 void serial_input_interrupt(dcb* dcb1)
 {
+
     inb(COM1);
 
-    if (DCB->cur_op == READ) {
-        char* buffer = DCB->buffer->buffer;
+    if (dcb1->cur_op == READ) {
+        char* buffer = dcb1->buffer->buffer;
 
         int index = 0;
         char character = 0;
@@ -216,7 +219,7 @@ void serial_output_interrupt(dcb* dcb1)
     }else{
         dcb1->use_status = NOT_BUSY;
         dcb1->event_status = NO_EVENT;
-//        outb(dcb->assoc_dev,)
+        ((context*)(dcb1->iocb_head->assoc_pcb->stackPtr))->EAX = dcb1->iocb_head->buffer_len;
     }
 }
 
