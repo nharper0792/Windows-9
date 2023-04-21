@@ -100,7 +100,7 @@ context* sys_call(context* current){
             }
             pcb* blockedProcess = currentProcess;
             currentProcess = (pcb*)readyHead->data;
-            schedule_io(blockedProcess,current->EBX);
+            schedule_io(blockedProcess,current->EAX,dev,buffer,size);
         }
     }
     else{

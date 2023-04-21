@@ -29,19 +29,17 @@ typedef struct dcb {
 	alloc_status use_status;
 	event_status event_status;
 	op_code cur_op;
-	struct iocb* assoc_iocb;
+	struct iocb* iocb_head;
 	ring_buffer* buffer;
-    char* input_buffer;
-    size_t input_len;
-    char* output_buffer;
-    size_t output_len;
 } dcb;
 
 typedef struct iocb {
 	struct iocb* nextPtr;
-	struct iocb* prevPtr;
 	pcb* assoc_pcb;
 	dcb* assoc_dcb;
+    size_t buffer_index;
+    char* buffer;
+    size_t buffer_len;
 	op_code op_type;
 } iocb;
 
@@ -59,7 +57,7 @@ void serial_input_interrupt(struct dcb* dcb);
 
 void serial_output_interrupt(struct dcb* dcb);
 
-void schedule_io(pcb* process, op_code op);
+void schedule_io(pcb* process, op_code op, device dev, char* buffer, size_t size);
 
 alloc_status check_device_status(device dev);
 
