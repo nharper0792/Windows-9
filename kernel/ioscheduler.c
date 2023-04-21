@@ -46,8 +46,6 @@ int serial_open(device dev, int speed)
     DCB->assoc_dev = dev;
 	DCB->event_status = eflagO;
 	DCB->use_status = NOT_BUSY;
-    DCB->input_buffer = NULL;
-    DCB->output_buffer = NULL;
 	int dno = get_devno(dev);
     if (dno == -1) {
         return -1;
@@ -158,9 +156,6 @@ int serial_write(device dev, char* buf, size_t len)
     if(DCB->use_status == BUSY){
         return 404;
     }
-    DCB->output_index = 0;
-    DCB->output_buffer = buf;
-    DCB->output_len = len;
     DCB->event_status = NO_EVENT;
     DCB->cur_op = WRITE;
     outb(dev + THR, buf[DCB->iocb_head->buffer_index++]);
@@ -200,11 +195,12 @@ void serial_output_interrupt(dcb* dcb1)
         return;
     }
     if(dcb1->iocb_head->buffer_index < dcb1->iocb_head->buffer_len){
-        outb(dev + THR, buf[dcb->iocb_head->output_index++]);
+        outb(dev + THR, dcb1->iocb_head->buffer[dcb1->iocb_head->buffer_index++]);
         return;
     }else{
         dcb1->use_status = NOT_BUSY;
         dcb1->event_status = NO_EVENT;
+        outb(dcb->assoc_dev)
     }
 }
 
