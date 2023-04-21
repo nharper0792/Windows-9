@@ -196,14 +196,16 @@ void serial_input_interrupt(dcb* dcb1)
         char character = 0;
 
         while (character != '\n' || index <= 16) {
-            character = buffer[index];
-            if (character != 0) {
+            character = ring_buffer[index];
+            if (character != NULL) {
                 continue;
             }
 
-            
+            character = inb(COM1);
+            ring_buffer[index] = character;
         }
-        
+
+        return;
     }
 
 }
