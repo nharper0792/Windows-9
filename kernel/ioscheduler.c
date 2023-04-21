@@ -141,6 +141,7 @@ void serial_interrupt(void)
 void serial_input_interrupt(dcb* dcb1)
 {
     (void)dcb;
+
 }
 
 void serial_output_interrupt(dcb* dcb1)
