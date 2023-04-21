@@ -184,23 +184,48 @@ void serial_interrupt(void)
 
 void serial_input_interrupt(dcb* dcb1)
 {
-    inb(COM1);
-
     if (DCB->cur_op == READ) {
-        char* buffer = DCB->buffer->buffer;
+        //storing in appropriate iocb buffer
+
+        /*
+         * TODO: get appropriate iocb
+         */
+        char* buffer = DCB->iocb_head->buffer;
+
+        int index = DCB->iocb_head->buffer_index;
+        char character = NULL;
+
+        while (index < DCB->iocb_head->buffer_len && character != '\n') {
+            if (buffer[index] != NULL) {
+                continue;
+            }
+
+            character = inb(COM1);
+            buffer[index] = character;
+
+            index++;
+        }
+
+        return;
+        
+    } else {
+        //storing in ring buffer
+        char* ring_buffer = DCB->buffer->buffer;
 
         int index = 0;
         char character = 0;
 
         while (character != '\n' || index <= 16) {
-            character = buffer[index];
-            if (character != 0) {
+            character = ring_buffer[index];
+            if (character != NULL) {
                 continue;
             }
 
-            
+            character = inb(COM1);
+            ring_buffer[index] = character;
         }
-        
+
+        return;
     }
 
 }
