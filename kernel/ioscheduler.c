@@ -145,12 +145,15 @@ void serial_input_interrupt(dcb* dcb1)
 
 void serial_output_interrupt(dcb* dcb1)
 {
-    (void)dcb;
+    if(dcb1->cur_op != WRITE){
+        return;
+    }
+    if(dcdcb1->output_len)
 }
 
 void schedule_io(pcb* process,op_code op){
     iocb* currPtr = iocbHead;
-    for(;currPtr != NULL; currPtr = currPtr->nextPtr){
+    for(;currPtr->nextPtr != NULL; currPtr = currPtr->nextPtr){
     }
     iocb* newIocb = (iocb*)sys_alloc_mem(sizeof(iocb));
     newIocb->prevPtr = currPtr;
@@ -161,10 +164,11 @@ void schedule_io(pcb* process,op_code op){
 }
 
 alloc_status check_device_status(device dev){
-    for(iocb* currPtr = iocbHead;currPtr!=NULL;currPtr = currPtr->nextPtr){
-        if(currPtr->assoc_dcb->assoc_dev == dev){
-            return BUSY;
-        }
-    }
-    return NOT_BUSY;
+    return DCB->use-status;
+//    for(iocb* currPtr = iocbHead;currPtr!=NULL;currPtr = currPtr->nextPtr){
+//        if(currPtr->assoc_dcb->assoc_dev == dev){
+//            return BUSY;
+//        }
+//    }
+//    return NOT_BUSY;
 }
