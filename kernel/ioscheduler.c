@@ -89,11 +89,47 @@ int serial_close(device dev)
 
 int serial_read(device dev, char* buf, size_t len)
 {
-    (void)dev;
-    (void)buf;
-    (void)len;
+    //finding dcb to read from dcb list
+    iocb* currentPtr;
+    for (currentPtr = iocbHead; currentPtr != NULL && currentPtr->assoc_dcb->assoc_dev != dev; currentPtr = currentPtr->nextPtr);
+    if (currentPtr == NULL) {
+        //dev could not be found
+        return -1;
+    } 
+
+    dcb* dcbPtr = currentPtr->assoc_dcb;
+
+    //checking to see if device is open
+    if (DCB == NULL) {
+        return 301;
+    }
+
+    //checking to see if valid buffer address
+    if (buf == NULL) {
+        return 302;
+    }
+
+    //checking to see if valid count address and or count value
+    if (len < 0) {
+        return 303;
+    }
+
+    //checking to see if device is busy
+    if (DCB->use_status == BUSY) {
+        return 304;
+    }
     
-	return 0;
+    //dev found and begins reading from ring buffer
+    int i = 0;
+    size_t currentSize = 0;
+    while (currentSize < len && i < 16) {
+        buf[i] = dcbPtr->buffer->buffer[i];
+        i++;
+        currentSize++;
+    }
+
+    //successfully read
+    return 0;
 }
 
 int serial_write(device dev, char* buf, size_t len)
@@ -140,7 +176,7 @@ void serial_interrupt(void)
 
 void serial_input_interrupt(dcb* dcb1)
 {
-    (void)dcb;
+    (void)dcb1;
 
 }
 
