@@ -32,7 +32,7 @@ iocb* iocbHead;
 
 dcb* DCB_array[4] = {0};
 dcb* DCB;
-dev devices[4] = {
+device devices[4] = {
         COM1,
         COM2,
         COM3,
@@ -167,7 +167,6 @@ int serial_write(device dev, char* buf, size_t len)
 void serial_interrupt(void)
 {
     cli();
-    for(int i = 0; i<)
     dcb* DCB = DCB_array[get_devno(COM1)];
     unsigned char interType = inb(COM1 + 2);
     if ((interType & 4) == 0) {
@@ -185,7 +184,24 @@ void serial_interrupt(void)
 
 void serial_input_interrupt(dcb* dcb1)
 {
-    (void)dcb1;
+    inb(COM1);
+
+    if (DCB->cur_op == READ) {
+        char* buffer = DCB->buffer->buffer;
+
+        int index = 0;
+        char character = 0;
+
+        while (character != '\n' || index <= 16) {
+            character = buffer[index];
+            if (character != 0) {
+                continue;
+            }
+
+            
+        }
+        
+    }
 
 }
 
@@ -195,12 +211,12 @@ void serial_output_interrupt(dcb* dcb1)
         return;
     }
     if(dcb1->iocb_head->buffer_index < dcb1->iocb_head->buffer_len){
-        outb(dev + THR, dcb1->iocb_head->buffer[dcb1->iocb_head->buffer_index++]);
+        outb(dcb1->assoc_dev + THR, dcb1->iocb_head->buffer[dcb1->iocb_head->buffer_index++]);
         return;
     }else{
         dcb1->use_status = NOT_BUSY;
         dcb1->event_status = NO_EVENT;
-        outb(dcb->assoc_dev)
+//        outb(dcb->assoc_dev,)
     }
 }
 
@@ -229,8 +245,8 @@ alloc_status check_device_status(device dev){
 //    return NOT_BUSY;
 }
 
-get_devno(device dev){
-    for(int i = 0;i<sizeof(devices);i++){
+int get_devno(device dev){
+    for(unsigned int i = 0;i<sizeof(devices);i++){
         if(devices[i] == dev){
             return i;
         }
