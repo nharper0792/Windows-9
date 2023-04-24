@@ -78,31 +78,30 @@ context* sys_call(context* current){
         //if so, call the driver function
         //check the state of the DCB
         if(check_device_status(dev)==NOT_BUSY){
+//            schedule_io(currentProcess,current->EAX,dev,buffer,size);
             current->EAX == READ? serial_read(dev,buffer,size):serial_write(dev,buffer,size);
         }
         //otherwise, schedule it
-        else{
-            readyHead = removeHead(ready);
-            if(readyHead == NULL){
-                current->EAX = 0;
-                return current;
-            }
-            if(currentProcess!=NULL){
-                //something was running
-
-                //set it's state to ready and put in the ready queue
-                pcb_remove(currentProcess);
-                currentProcess->executionState = BLOCKED;
-                pcb_insert(currentProcess);
-                // save the current context as the stack top of currentProcess
-
-                currentProcess->stackPtr = (char*)current;
-                pcb_insert(currentProcess);
-                current->EAX = 0;
-            }
-            schedule_io(currentProcess,current->EAX,dev,buffer,size);
-            currentProcess = (pcb*)readyHead->data;
+        else {
+            schedule_io(currentProcess, current->EAX, dev, buffer, size);
         }
+        readyHead = removeHead(ready);
+        if(readyHead == NULL){
+            current->EAX = 0;
+            return current;
+        }
+        if(currentProcess!=NULL){
+            //something was running
+            //set it's state to blocked and put in the blocked queue
+            pcb_remove(currentProcess);
+            currentProcess->executionState = BLOCKED;
+            pcb_insert(currentProcess);
+            // save the current context as the stack top of currentProcess
+            currentProcess->stackPtr = (char*)current;
+            pcb_insert(currentProcess);
+            current->EAX = 0;
+        }
+        currentProcess = (pcb*)readyHead->data;
     }
     else{
             current-> EAX =-1;

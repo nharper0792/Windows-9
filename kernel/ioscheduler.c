@@ -275,7 +275,17 @@ void schedule_io(pcb* process, op_code op, device dev, char* buffer, size_t size
 
 alloc_status check_device_status(device dev){
     int dno = serial_devno(dev);
-    return DCB_array[dno]->use_status;
+    dcb* DCB = DCB_array[dno];
+    if(DCB){
+        if(DCB->iocb_head){
+            return BUSY;
+        }
+        else{
+            return NOT_BUSY;
+        }
+    }else{
+        return -1;
+    }
 //    for(iocb* currPtr = iocbHead;currPtr!=NULL;currPtr = currPtr->nextPtr){
 //        if(currPtr->assoc_dcb->assoc_dev == dev){
 //            return BUSY;
