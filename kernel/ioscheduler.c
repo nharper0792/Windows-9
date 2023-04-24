@@ -7,12 +7,22 @@
 #include <mpx/sys_call.h>
 #include <memory.h>
 
-
 #define eflagO 1
 #define eflagC 2
 #define inUSE 3
 #define EOImask 0x20
 #define PICmask 0x21
+extern void serial_isr(void*);
+static int serial_devno(device dev)
+{
+    switch (dev) {
+        case COM1: return 0;
+        case COM2: return 1;
+        case COM3: return 2;
+        case COM4: return 3;
+    }
+    return -1;
+}
 enum uart_registers {
     RBR = 0,	// Receive Buffer
     THR = 0,	// Transmitter Holding
@@ -27,7 +37,7 @@ enum uart_registers {
     MSR = 6,	// Modem Status
     SCR = 7,	// Scratch
 };
-static int initialized[4] = { 0 };
+//static int initialized[4] = { 0 };
 
 //iocb* iocbHead;
 
@@ -39,7 +49,6 @@ device devices[4] = {
         COM3,
         COM4
 };
-int get_devno(device dev);
 int serial_open(device dev, int speed)
 {
     (void)speed;
@@ -47,26 +56,29 @@ int serial_open(device dev, int speed)
     DCB->assoc_dev = dev;
 	DCB->event_status = eflagO;
 	DCB->use_status = NOT_BUSY;
-	int dno = get_devno(dev);
+	int dno = serial_devno(dev);
     if (dno == -1) {
         return -1;
     }
-    int baud_rate = 115200 / (long)speed; //find baud rate
-
+    idt_install(0x24,serial_isr);
+    int divisor = 115200 / (long)speed; //find baud rate
+    int remainder = 115200 % (long)speed;
     outb(dev + IER, 0x00);	//disable interrupts
     outb(dev + LCR, 0x80);	//set line control register
-    outb(dev + DLL, 115200 / 9600);	//set bsd least sig bit check whether baud rate is right
-    outb(dev + DLM, 0x00);	//brd most significant bit
+    outb(dev + DLL, (int)divisor);	//set bsd least sig bit check whether baud rate is right
+    outb(dev + DLM, remainder);	//brd most significant bit
     outb(dev + LCR, 0x03);	//lock divisor; 8bits, no parity, one stop
     outb(dev + FCR, 0xC7);	//enable fifo, clear, 14byte thresholdt
-	outb(dev+1,0x01);
+	outb(dev+IER,0x01);
     DCB_array[dno] = DCB;
 //    initialized[dno] = 1;
+    cli();
 	int mask;
 	mask = inb(PICmask);
-	mask = mask&~10;
+    mask &= ~0x10;
 	outb(PICmask,mask);
 	outb(dev + MCR, 0x0B);	//enable interrupts, rts/dsr set
+    sti();
     (void)inb(dev);		//read bit to reset port
 
 	return 0;
@@ -75,7 +87,7 @@ int serial_open(device dev, int speed)
 int serial_close(device dev)
 {
     //check if device exists
-    int dno = get_devno(dev);
+    int dno = serial_devno(dev);
     if (dno == -1) {
         return 201;
     }
@@ -97,10 +109,9 @@ int serial_close(device dev)
     return 1;
 }
 
-int serial_read(device dev, char* buf, size_t len)
-{
+int serial_read(device dev, char* buf, size_t len){
     //finding dcb to read from dcb list
-    dcb* DCB = DCB_array[get_devno(dev)];
+    dcb* DCB = DCB_array[serial_devno(dev)];
     iocb* currentPtr;
     for (currentPtr = DCB->iocb_head; currentPtr != NULL && currentPtr->assoc_dcb->assoc_dev != dev; currentPtr = currentPtr->nextPtr);
     if (currentPtr == NULL) {
@@ -145,7 +156,7 @@ int serial_read(device dev, char* buf, size_t len)
 
 int serial_write(device dev, char* buf, size_t len)
 {
-    dcb* DCB = DCB_array[get_devno(dev)];
+    dcb* DCB = DCB_array[serial_devno(dev)];
     if(!DCB){
         return 401;
     }
@@ -159,29 +170,40 @@ int serial_write(device dev, char* buf, size_t len)
         return 404;
     }
     DCB->event_status = NO_EVENT;
+    DCB->char_buffer = buf;
+    DCB->buffer_len = len;
     DCB->cur_op = WRITE;
-    outb(dev + THR, buf[DCB->iocb_head->buffer_index++]);
+    char c = *(DCB->char_buffer);
+    DCB->char_buffer++;
+    DCB->buffer_progress++;
+    outb(dev + THR, c);
+    cli();
     outb(dev + IER, inb(dev+IER)|0x02);
-
+    sti();
     return 1;
 }
 
 void serial_interrupt(void)
 {
-    cli();
-    dcb* DCB = DCB_array[get_devno(COM1)];
-    unsigned char interType = inb(COM1 + 2);
+    dcb* DCB = DCB_array[serial_devno(COM1)];
+    unsigned char interType = inb(COM1+2);
     if ((interType & 4) == 0) {
         if ((interType & 2) == 2) {
             serial_output_interrupt(DCB);
+        }
+        else{
+            inb(DCB->assoc_dev + MSR);
         }
 
     }
     else if ((interType & 2) == 0) {
         serial_input_interrupt(DCB);
     }
+    else{
+        inb(DCB->assoc_dev + LSR);
+    }
     outb(COM1 + 0x20, 0x20);
-    sti();
+
 }
 
 void serial_input_interrupt(dcb* dcb1)
@@ -190,14 +212,14 @@ void serial_input_interrupt(dcb* dcb1)
     inb(COM1);
 
     if (dcb1->cur_op == READ) {
-        char* buffer = dcb1->buffer->buffer;
+        char* ring_buffer = dcb1->buffer->buffer;
 
         int index = 0;
         char character = 0;
 
         while (character != '\n' || index <= 16) {
             character = ring_buffer[index];
-            if (character != NULL) {
+            if (character != 0) {
                 continue;
             }
 
@@ -215,21 +237,23 @@ void serial_output_interrupt(dcb* dcb1)
     if(dcb1->cur_op != WRITE){
         return;
     }
-    if(dcb1->iocb_head->buffer_index < dcb1->iocb_head->buffer_len){
-        outb(dcb1->assoc_dev + THR, dcb1->iocb_head->buffer[dcb1->iocb_head->buffer_index++]);
+    if(dcb1->buffer_progress < dcb1->buffer_len){
+        char c = *(dcb1->char_buffer);
+        dcb1->char_buffer++;
+        dcb1->buffer_progress++;
+        outb(dcb1->assoc_dev + THR, c);
         return;
     }else{
         dcb1->use_status = NOT_BUSY;
         dcb1->event_status = NO_EVENT;
         ((context*)(dcb1->iocb_head->assoc_pcb->stackPtr))->EAX = dcb1->iocb_head->buffer_len;
+        outb(dcb1->assoc_dev + IER, inb(dcb1->assoc_dev+IER)&~0x02);
+        return;
     }
 }
 
 void schedule_io(pcb* process, op_code op, device dev, char* buffer, size_t size){
-    dcb* DCB = DCB_array[get_devno(dev)];
-    iocb* currPtr = DCB->iocb_head;
-    for(;currPtr->nextPtr != NULL; currPtr = currPtr->nextPtr){
-    }
+    dcb* DCB = DCB_array[serial_devno(dev)];
     iocb* newIocb = (iocb*)sys_alloc_mem(sizeof(iocb));
     newIocb->nextPtr = NULL;
     newIocb->assoc_pcb = process;
@@ -237,24 +261,25 @@ void schedule_io(pcb* process, op_code op, device dev, char* buffer, size_t size
     newIocb->buffer_index = 0;
     newIocb->buffer = buffer;
     newIocb->buffer_len = size;
-    currPtr->nextPtr = newIocb;
+    iocb* currPtr = DCB->iocb_head;
+    if(currPtr == NULL){
+        DCB->iocb_head = newIocb;
+    }
+    else{
+        for(;currPtr!=NULL && currPtr->nextPtr != NULL; currPtr = currPtr->nextPtr);
+        currPtr->nextPtr = newIocb;
+    }
+
+
 }
 
 alloc_status check_device_status(device dev){
-    return DCB_array[get_devno(dev)]->use_status;
+    int dno = serial_devno(dev);
+    return DCB_array[dno]->use_status;
 //    for(iocb* currPtr = iocbHead;currPtr!=NULL;currPtr = currPtr->nextPtr){
 //        if(currPtr->assoc_dcb->assoc_dev == dev){
 //            return BUSY;
 //        }
 //    }
 //    return NOT_BUSY;
-}
-
-int get_devno(device dev){
-    for(unsigned int i = 0;i<sizeof(devices);i++){
-        if(devices[i] == dev){
-            return i;
-        }
-    }
-    return -1;
 }

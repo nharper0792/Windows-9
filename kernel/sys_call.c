@@ -77,7 +77,7 @@ context* sys_call(context* current){
         //check if dev in current->EBX is not busy
         //if so, call the driver function
         //check the state of the DCB
-        if(check_device_status(dev)!=BUSY){
+        if(check_device_status(dev)==NOT_BUSY){
             current->EAX == READ? serial_read(dev,buffer,size):serial_write(dev,buffer,size);
         }
         //otherwise, schedule it
@@ -91,16 +91,17 @@ context* sys_call(context* current){
                 //something was running
 
                 //set it's state to ready and put in the ready queue
+                pcb_remove(currentProcess);
                 currentProcess->executionState = BLOCKED;
+                pcb_insert(currentProcess);
                 // save the current context as the stack top of currentProcess
 
                 currentProcess->stackPtr = (char*)current;
                 pcb_insert(currentProcess);
                 current->EAX = 0;
             }
-            pcb* blockedProcess = currentProcess;
+            schedule_io(currentProcess,current->EAX,dev,buffer,size);
             currentProcess = (pcb*)readyHead->data;
-            schedule_io(blockedProcess,current->EAX,dev,buffer,size);
         }
     }
     else{

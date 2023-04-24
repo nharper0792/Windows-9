@@ -50,7 +50,11 @@ sys_call_isr:
 	pop eax
 	iret
 
+extern serial_interrupt
 ;;; Serial port ISR. To be implemented in Module R6
 serial_isr:
+    cli
+    call serial_interrupt
+	sti
 	iret
 

@@ -21,6 +21,7 @@
 #include <stdio.h>
 #include <mpx/r3_commands.h>
 #include <heap_management.h>
+#include <mpx/ioscheduler.h>
 
 static void klogv(device dev, const char *msg)
 {
@@ -126,7 +127,7 @@ void kmain(void)
 		idle_con->EFLAGS = 0x0202;
 		pcb_insert(idle_pcb);
 	}
-
+    serial_open(COM1,19200);
 	// 9) YOUR command handler -- *create and #include an appropriate .h file*
 	// Pass execution to your command handler so the user can interact with the system.
 	klogv(COM1, "Transferring control to commhand...");
