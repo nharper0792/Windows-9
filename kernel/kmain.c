@@ -62,6 +62,7 @@ void kmain(void)
 	klogv(COM1, "Initializing Interrupt Vectors...");
 	irq_init();
 
+
 	// 5) Programmable Interrupt Controller -- mpx/interrupts.h
 	// Initialize the PIC so that the ISRs installed in the previous step are connected
 	// correctly.
@@ -128,6 +129,7 @@ void kmain(void)
 		pcb_insert(idle_pcb);
 	}
     serial_open(COM1,19200);
+    serial_out(COM2,"test",5);
 	// 9) YOUR command handler -- *create and #include an appropriate .h file*
 	// Pass execution to your command handler so the user can interact with the system.
 	klogv(COM1, "Transferring control to commhand...");

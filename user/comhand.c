@@ -50,7 +50,7 @@ void init_comhand(void) {
 		Variable: buf
 		Use		: buffers packets of data from input devices
 		*/
-		char buf[100] = { 0 };
+		char* buf = (char*)sys_alloc_mem(100);
 		sys_req(READ, COM1, buf, sizeof(buf));
 		comhand_yield();
 
@@ -157,6 +157,7 @@ void init_comhand(void) {
 				"\n"
 			);
 		}
+        sys_free_mem(buf);
 		//after user buffer has been read, will update the current process to 0
 		curr_process = 000;
 	}

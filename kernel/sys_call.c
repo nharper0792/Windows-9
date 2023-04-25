@@ -99,9 +99,10 @@ context* sys_call(context* current){
             pcb_insert(currentProcess);
             // save the current context as the stack top of currentProcess
             currentProcess->stackPtr = (char*)current;
-            current->EAX = 0;
+//            current->EAX = 0;
         }
         currentProcess = (pcb*)readyHead->data;
+        return (context*)currentProcess->stackPtr;
     }
     else{
             current-> EAX =-1;

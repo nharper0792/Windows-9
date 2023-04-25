@@ -216,17 +216,29 @@ void serial_input_interrupt(dcb* dcb1)
 
         if (rb->tail%sizeof(rb->arr) != rb->head-1) {
             rb->arr[rb->tail++] = character;
+            rb->tail %= sizeof(rb->arr);
         }
         return;
     }
     else{
         if(dcb1->buffer_progress < dcb1-> buffer_len && (character!='\n' && character!='\r')){
-            dcb1->char_buffer[dcb1->buffer_progress++] = character;
+//            if(character == '\b'){
+//                if(dcb1->buffer_progress>0){
+//                    dcb1->char_buffer[--(dcb1->buffer_progress)] = ' ';
+//                    outb(COM1,character);
+//                }
+//                outb(COM1,' ');
+//            }
+//            else{
+            *(dcb1->char_buffer++) = character;
+            dcb1->buffer_progress++;
+//            }
+//            outb(COM1,character);
         }
         else{
             dcb1->use_status = NOT_BUSY;
             dcb1->event_status = EVENT;
-            ((context*)(dcb1->iocb_head->assoc_pcb->stackPtr))->EAX = dcb1->buffer_progress;
+            ((context*)(dcb1->iocb_head->assoc_pcb->stackPtr))->EAX = dcb1->iocb_head->buffer_len;
         }
     }
 }
