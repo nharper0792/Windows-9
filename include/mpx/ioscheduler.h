@@ -18,10 +18,10 @@ typedef enum event_status{
 } event_status;
 
 typedef struct ring_buffer {
-	char buffer[16];
+	char arr[16];
 	size_t size;
-	struct ring_buffer* head;
-	struct ring_buffer* tail;
+	int head;
+	int tail;
 } ring_buffer;
 
 typedef struct dcb {

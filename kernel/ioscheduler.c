@@ -56,6 +56,7 @@ int serial_open(device dev, int speed)
     DCB->assoc_dev = dev;
 	DCB->event_status = eflagO;
 	DCB->use_status = NOT_BUSY;
+    DCB->buffer = (ring_buffer*)sys_alloc_mem(sizeof(ring_buffer));
 	int dno = serial_devno(dev);
     if (dno == -1) {
         return -1;
@@ -112,12 +113,6 @@ int serial_close(device dev)
 int serial_read(device dev, char* buf, size_t len){
     //finding dcb to read from dcb list
     dcb* DCB = DCB_array[serial_devno(dev)];
-    iocb* currentPtr;
-    for (currentPtr = DCB->iocb_head; currentPtr != NULL && currentPtr->assoc_dcb->assoc_dev != dev; currentPtr = currentPtr->nextPtr);
-    if (currentPtr == NULL) {
-        //dev could not be found
-        return -1;
-    } 
 
 
 
@@ -136,22 +131,31 @@ int serial_read(device dev, char* buf, size_t len){
         return 303;
     }
 
-    //checking to see if device is busy
-    if (DCB->use_status == BUSY) {
-        return 304;
-    }
-    
+    DCB->event_status = NO_EVENT;
+    DCB->char_buffer = buf;
+    DCB->buffer_len = len;
     //dev found and begins reading from ring buffer
-    int i = 0;
     size_t currentSize = 0;
-    while (currentSize < len && i < 16) {
-        buf[i] = DCB->buffer->buffer[i];
-        i++;
+    ring_buffer* rb = DCB->buffer;
+    cli();
+    while (currentSize < len && rb->head != rb->tail) {
+        if(rb->arr[rb->head]=='\n'){
+            break;
+        }
+        buf[currentSize] = rb->arr[rb->head++];
+        rb->head %= sizeof(rb->arr);
         currentSize++;
     }
-
+    sti();
+    if(currentSize==len){
+        return 1;
+    }
+    else{
+        DCB->cur_op = READ;
+        return 1;
+    }
     //successfully read
-    return 0;
+
 }
 
 int serial_write(device dev, char* buf, size_t len)
@@ -209,25 +213,26 @@ void serial_interrupt(void)
 void serial_input_interrupt(dcb* dcb1)
 {
 
-    inb(COM1);
+    char character = inb(COM1);
 
-    if (dcb1->cur_op == READ) {
-        char* ring_buffer = dcb1->buffer->buffer;
+    if (dcb1->cur_op != READ) {
+        ring_buffer* rb = dcb1->buffer;
 
-        int index = 0;
-        char character = 0;
-
-        while (character != '\n' || index <= 16) {
-            character = ring_buffer[index];
-            if (character != 0) {
-                continue;
-            }
-
-            character = inb(COM1);
-            ring_buffer[index] = character;
+        if (rb->tail%sizeof(rb->arr) != rb->head-1) {
+            rb->arr[rb->tail++] = character;
         }
 
         return;
+    }
+    else{
+        if(dcb1->buffer_progress < dcb1-> buffer_len && character!='\n'){
+            dcb1->char_buffer[dcb1->buffer_progress++] = character;
+        }
+        else{
+            dcb1->use_status = NOT_BUSY;
+            dcb1->event_status = EVENT;
+            ((context*)(dcb1->iocb_head->assoc_pcb->stackPtr))->EAX = dcb1->buffer_progress;
+        }
     }
 
 }
