@@ -245,7 +245,7 @@ void serial_output_interrupt(dcb* dcb1)
         return;
     }else{
         dcb1->use_status = NOT_BUSY;
-        dcb1->event_status = NO_EVENT;
+        dcb1->event_status = EVENT;
         ((context*)(dcb1->iocb_head->assoc_pcb->stackPtr))->EAX = dcb1->iocb_head->buffer_len;
         outb(dcb1->assoc_dev + IER, inb(dcb1->assoc_dev+IER)&~0x02);
         return;
@@ -275,15 +275,15 @@ void schedule_io(pcb* process, op_code op, device dev, char* buffer, size_t size
 
 }
 
-void io_complete(device dev){
-        dcb* DCB = DCB_array[serial_devno(dev)];
+void io_complete(){
+    for(size_t i = 0;i<sizeof(DCB_array);i++){
+        dcb* DCB = DCB_array[i];
         if(DCB){
             if(DCB->event_status == EVENT){
                 iocb* iocbHead = DCB->iocb_head;
                 pcb* process = iocbHead->assoc_pcb;
                 pcb_remove(process);
-                process->dispatchingState = READY;
-                ((context*)process->stackPtr)->EAX = DCB->buffer_len;
+                process->executionState = READY;
                 pcb_insert(process);
                 DCB->iocb_head = iocbHead->nextPtr;
                 sys_free_mem(iocbHead);
@@ -291,10 +291,8 @@ void io_complete(device dev){
 
                 DCB->event_status = NO_EVENT;
                 if(iocbHead){
-                    DCB->char_buffer = iocbHead->buffer;
-                    DCB->buffer_len = iocbHead->buffer_len;
                     DCB->cur_op = iocbHead->op_type;
-                    DCB->buffer_progress = iocbHead->buffer_index;
+                    DCB->cur_op==READ? serial_read(devices[i],iocbHead->buffer,iocbHead->buffer_len):serial_write(devices[i],iocbHead->buffer,iocbHead->buffer_len);
                 }
                 else{
                     DCB->char_buffer = NULL;
@@ -304,9 +302,11 @@ void io_complete(device dev){
                 }
             }
             else{
-return;
+                return;
             }
         }
+
+    }
 }
 
 alloc_status check_device_status(device dev){

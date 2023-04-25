@@ -23,7 +23,7 @@ context* idleing = NULL;
 **/
 context* sys_call(context* current){
     while(!ready->headPtr){
-        io_complete((device)current->EBX);
+        io_complete();
     }
     node* readyHead = NULL;
     if(current->EAX == IDLE|| current->EAX == EXIT){
@@ -97,7 +97,6 @@ context* sys_call(context* current){
             pcb_insert(currentProcess);
             // save the current context as the stack top of currentProcess
             currentProcess->stackPtr = (char*)current;
-            pcb_insert(currentProcess);
             current->EAX = 0;
         }
         currentProcess = (pcb*)readyHead->data;
