@@ -134,22 +134,22 @@ int pcb_remove(pcb* target){
     node* temp;
     if(ready != NULL && (temp=remove(ready,wrapper))!=NULL){
         sys_free_mem(temp);
-        sys_free_mem(wrapper);
+//        sys_free_mem(wrapper);
         return 0;
     }
     if(blocked != NULL && (temp=remove(blocked,wrapper))!=NULL){
         sys_free_mem(temp);
-        sys_free_mem(wrapper);
+//        sys_free_mem(wrapper);
         return 0;
     }
     if(suspendedReady != NULL && (temp=remove(suspendedReady,wrapper))!=NULL){
         sys_free_mem(temp);
-        sys_free_mem(wrapper);
+//        sys_free_mem(wrapper);
         return 0;
     }
     if(suspendedBlocked != NULL && (temp=remove(suspendedBlocked,wrapper))!=NULL){
         sys_free_mem(temp);
-        sys_free_mem(wrapper);
+//        sys_free_mem(wrapper);
         return 0;
     }
     return 1;

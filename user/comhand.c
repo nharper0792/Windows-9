@@ -51,7 +51,7 @@ void init_comhand(void) {
 		Use		: buffers packets of data from input devices
 		*/
 		char* buf = (char*)sys_alloc_mem(100);
-		sys_req(READ, COM1, buf, sizeof(buf));
+		sys_req(READ, COM1, buf, 100);
 		comhand_yield();
 
 

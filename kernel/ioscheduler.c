@@ -141,6 +141,7 @@ int serial_read(device dev, char* buf, size_t len){
         }
         buf[currentSize] = rb->arr[rb->head++];
         rb->head %= sizeof(rb->arr);
+        outb(dev,buf[currentSize]);
         currentSize++;
     }
     sti();
@@ -222,18 +223,18 @@ void serial_input_interrupt(dcb* dcb1)
     }
     else{
         if(dcb1->buffer_progress < dcb1-> buffer_len && (character!='\n' && character!='\r')){
-//            if(character == '\b'){
-//                if(dcb1->buffer_progress>0){
-//                    dcb1->char_buffer[--(dcb1->buffer_progress)] = ' ';
-//                    outb(COM1,character);
-//                }
-//                outb(COM1,' ');
-//            }
-//            else{
+            if(character == '\b'){
+                if(dcb1->buffer_progress>0){
+                    dcb1->char_buffer[--(dcb1->buffer_progress)] = ' ';
+                    outb(COM1,character);
+                }
+                outb(COM1,' ');
+            }
+            else{
             *(dcb1->char_buffer++) = character;
             dcb1->buffer_progress++;
-//            }
-//            outb(COM1,character);
+            }
+            outb(COM1,character);
         }
         else{
             dcb1->use_status = NOT_BUSY;
