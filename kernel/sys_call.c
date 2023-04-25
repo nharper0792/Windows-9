@@ -24,7 +24,9 @@ context* idleing = NULL;
 context* sys_call(context* current){
     while(!ready->headPtr){
         io_complete();
+        sti();
     }
+    cli();
     node* readyHead = NULL;
     if(current->EAX == IDLE|| current->EAX == EXIT){
         readyHead = removeHead(ready);

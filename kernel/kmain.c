@@ -128,9 +128,6 @@ void kmain(void)
 		pcb_insert(idle_pcb);
 	}
     serial_open(COM1,19200);
-    for(int i = 0; i < 1000000000; i++){
-
-    }
 	// 9) YOUR command handler -- *create and #include an appropriate .h file*
 	// Pass execution to your command handler so the user can interact with the system.
 	klogv(COM1, "Transferring control to commhand...");
