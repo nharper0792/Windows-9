@@ -223,6 +223,7 @@ void serial_input_interrupt(dcb* dcb1)
     }
     else{
         if(dcb1->buffer_progress < dcb1-> buffer_len && (character!='\n' && character!='\r' && character!='\f')){
+            //backspace
             if(character == 127){
                 if(dcb1->buffer_progress>0){
                     dcb1->char_buffer[--(dcb1->buffer_progress)] = ' ';
@@ -230,6 +231,10 @@ void serial_input_interrupt(dcb* dcb1)
                 }
                 outb(COM1,' ');
                 outb(COM1,'\b');
+            }
+            else if (character == '\033') {
+                character = inb(COM1);
+                character = inb(COM1);
             }
             else{
             dcb1->char_buffer[dcb1->buffer_progress++] = character;
@@ -241,7 +246,8 @@ void serial_input_interrupt(dcb* dcb1)
 dcb1->char_buffer[dcb1->buffer_progress++] = '\0';
             dcb1->use_status = NOT_BUSY;
             dcb1->event_status = EVENT;
-            ((context*)(dcb1->iocb_head->assoc_pcb->stackPtr))->EAX = dcb1->iocb_head->buffer_len;
+            outb
+//            ((context*)(dcb1->iocb_head->assoc_pcb->stackPtr))->EAX = dcb1->iocb_head->buffer_len;
         }
     }
 }
@@ -249,16 +255,16 @@ dcb1->char_buffer[dcb1->buffer_progress++] = '\0';
 void serial_output_interrupt(dcb* dcb1)
 {
     if(dcb1->cur_op != WRITE){
+        inb(dcb1->assoc_dev);
         return;
     }
-    if(dcb1->buffer_progress < dcb1->buffer_len){
+    if(dcb1->buffer_progress < dcb1->buffer_len || dcb1->char_buffer[dcb1->buffer_progress] == '\0'){
         char c = dcb1->char_buffer[dcb1->buffer_progress++];
         outb(dcb1->assoc_dev + THR, c);
         return;
     }else{
         dcb1->use_status = NOT_BUSY;
         dcb1->event_status = EVENT;
-        ((context*)(dcb1->iocb_head->assoc_pcb->stackPtr))->EAX = dcb1->iocb_head->buffer_len;
         outb(dcb1->assoc_dev + IER, inb(dcb1->assoc_dev+IER)&~0x02);
         return;
     }
@@ -297,10 +303,11 @@ void io_complete(){
                 iocb* iocbHead = DCB->iocb_head;
                 pcb* process = iocbHead->assoc_pcb;
                 pcb_remove(process);
+                ((context*)(DCB->iocb_head->assoc_pcb->stackPtr))->EAX = DCB->buffer_progress;
                 process->executionState = READY;
                 pcb_insert(process);
                 DCB->iocb_head = iocbHead->nextPtr;
-                sys_free_mem(iocbHead);
+//                sys_free_mem(iocbHead);
                 iocbHead = DCB->iocb_head;
 
                 DCB->event_status = NO_EVENT;

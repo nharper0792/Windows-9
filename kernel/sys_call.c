@@ -51,6 +51,7 @@ context* sys_call(context* current){
                 current->EAX = 0;
             }
             currentProcess = (pcb*)readyHead->data;
+            current = (context*)currentProcess->stackPtr;
         }else if(current->EAX == EXIT) {
             pcb_free(currentProcess);
             currentProcess = NULL;
@@ -85,7 +86,7 @@ context* sys_call(context* current){
         //check the state of the DCB
 
 
-            schedule_io(currentProcess, current->EAX, dev, buffer, size);
+        schedule_io(currentProcess, current->EAX, dev, buffer, size);
         readyHead = removeHead(ready);
         if(readyHead == NULL){
             current->EAX = 0;
@@ -93,23 +94,21 @@ context* sys_call(context* current){
         }
         if(currentProcess!=NULL){
             //something was running
-            //set it's state to blocked and put in the blocked queue
-            pcb_remove(currentProcess);
+
+            //set it's state to ready and put in the ready queue
             currentProcess->executionState = BLOCKED;
-            pcb_insert(currentProcess);
             // save the current context as the stack top of currentProcess
-            currentProcess->stackPtr = (char*)current;
-//            current->EAX = 0;
-        }
-        currentProcess = (pcb*)readyHead->data;
-//        else {
-//            currentProcess = (pcb*)readyHead->data;
+
             current->EAX = 0;
-            //set current state to running
-            currentProcess->dispatchingState = RUNNING;
-            return (context*) currentProcess->stackPtr;
-            // return stack ptr of current process
-//        }
+            currentProcess->stackPtr = (char*)current;
+            pcb_insert(currentProcess);
+        }
+        if(readyHead != NULL) {
+            currentProcess = (pcb *) readyHead->data;
+            current = (context *) currentProcess->stackPtr;
+        }
+//        current->EAX = 0;
+        return current;
     }
     else{
             current-> EAX =-1;
