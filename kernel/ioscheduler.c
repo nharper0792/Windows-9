@@ -246,7 +246,6 @@ void serial_input_interrupt(dcb* dcb1)
 dcb1->char_buffer[dcb1->buffer_progress++] = '\0';
             dcb1->use_status = NOT_BUSY;
             dcb1->event_status = EVENT;
-            outb
 //            ((context*)(dcb1->iocb_head->assoc_pcb->stackPtr))->EAX = dcb1->iocb_head->buffer_len;
         }
     }
