@@ -45,7 +45,8 @@ void init_comhand(void) {
 	comhand_menu();
 	for (;;)
 	{
-		puts("\n> ");
+		puts("\n> \0");
+
 		/*
 		Variable: buf
 		Use		: buffers packets of data from input devices
@@ -157,6 +158,7 @@ void init_comhand(void) {
 				"\n"
 			);
 		}
+
         sys_free_mem(buf);
 		//after user buffer has been read, will update the current process to 0
 		curr_process = 000;
@@ -206,8 +208,8 @@ void comhand_version(void) {
 		"\n       \\           \\             |"\
 		"\n        \\           \\            |"\
 		"\n         \\           \\           |"\
-		"\nVersion R5"\
-		"\nCompilation Date: 04/13/2023 \e[0m"\
+		"\nVersion R6"\
+		"\nCompilation Date: 04/26/2023 \e[0m"\
 		"\n"
 	);
 	comhand_menu();

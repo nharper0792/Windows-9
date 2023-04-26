@@ -88,8 +88,8 @@ int sys_free_mem(void *ptr)
 /***********************************************************************/
 void sys_idle_process(void)
 {
-	char msg[] = "IDLE PROCESS EXECUTING.\r\n";
-	
+	char msg[] = "IDLE PROCESS EXECUTING.\r\n\0";
+
 	for (;;) {
 		sys_req(WRITE, COM1, msg, sizeof(msg));
 		sys_req(IDLE);

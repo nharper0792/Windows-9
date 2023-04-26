@@ -38,6 +38,7 @@ void kmain(void)
 	// or the message won't print. In all other cases, the output should come first
 	// as it describes what is about to happen.
 	serial_init(COM1);
+    serial_init(COM3);
 	klogv(COM1, "Initialized serial I/O on COM1 device...");
 
 	// 1) Global Descriptor Table -- mpx/gdt.h
@@ -129,7 +130,6 @@ void kmain(void)
 		pcb_insert(idle_pcb);
 	}
     serial_open(COM1,19200);
-    serial_out(COM2,"test",5);
 	// 9) YOUR command handler -- *create and #include an appropriate .h file*
 	// Pass execution to your command handler so the user can interact with the system.
 	klogv(COM1, "Transferring control to commhand...");

@@ -102,7 +102,14 @@ context* sys_call(context* current){
 //            current->EAX = 0;
         }
         currentProcess = (pcb*)readyHead->data;
-        return (context*)currentProcess->stackPtr;
+//        else {
+//            currentProcess = (pcb*)readyHead->data;
+            current->EAX = 0;
+            //set current state to running
+            currentProcess->dispatchingState = RUNNING;
+            return (context*) currentProcess->stackPtr;
+            // return stack ptr of current process
+//        }
     }
     else{
             current-> EAX =-1;

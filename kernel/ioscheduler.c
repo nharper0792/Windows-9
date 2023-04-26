@@ -139,9 +139,9 @@ int serial_read(device dev, char* buf, size_t len){
             rb->head %= sizeof(rb->arr);
             break;
         }
-        buf[currentSize] = rb->arr[rb->head++];
+        *(DCB->char_buffer++) = rb->arr[rb->head++];
         rb->head %= sizeof(rb->arr);
-        outb(dev,buf[currentSize]);
+//        outb(dev,buf);
         currentSize++;
     }
     sti();
@@ -175,9 +175,9 @@ int serial_write(device dev, char* buf, size_t len)
     DCB->char_buffer = buf;
     DCB->buffer_len = len;
     DCB->cur_op = WRITE;
-    char c = *(DCB->char_buffer);
-    DCB->char_buffer++;
-    DCB->buffer_progress++;
+    DCB->buffer_progress = 0;
+    char c = DCB->char_buffer[DCB->buffer_progress++];
+//    DCB->char_buffer++;
     outb(dev + THR, c);
     cli();
     outb(dev + IER, inb(dev+IER)|0x02);
@@ -222,21 +222,22 @@ void serial_input_interrupt(dcb* dcb1)
         return;
     }
     else{
-        if(dcb1->buffer_progress < dcb1-> buffer_len && (character!='\n' && character!='\r')){
-            if(character == '\b'){
-                if(dcb1->buffer_progress>0){
-                    dcb1->char_buffer[--(dcb1->buffer_progress)] = ' ';
-                    outb(COM1,character);
-                }
-                outb(COM1,' ');
-            }
-            else{
+        if(dcb1->buffer_progress < dcb1-> buffer_len && (character!='\n' && character!='\r' && character!='\f')){
+//            if(character == '\b'){
+//                if(dcb1->buffer_progress>0){
+//                    dcb1->char_buffer[--(dcb1->buffer_progress)] = ' ';
+//                    outb(COM1,character);
+//                }
+//                outb(COM1,' ');
+//            }
+//            else{
             *(dcb1->char_buffer++) = character;
             dcb1->buffer_progress++;
-            }
-            outb(COM1,character);
+//            }
+//            outb(COM1,character);
         }
         else{
+            outb(COM1,'\n');
             dcb1->use_status = NOT_BUSY;
             dcb1->event_status = EVENT;
             ((context*)(dcb1->iocb_head->assoc_pcb->stackPtr))->EAX = dcb1->iocb_head->buffer_len;
@@ -250,9 +251,7 @@ void serial_output_interrupt(dcb* dcb1)
         return;
     }
     if(dcb1->buffer_progress < dcb1->buffer_len){
-        char c = *(dcb1->char_buffer);
-        dcb1->char_buffer++;
-        dcb1->buffer_progress++;
+        char c = dcb1->char_buffer[dcb1->buffer_progress++];
         outb(dcb1->assoc_dev + THR, c);
         return;
     }else{
