@@ -46,7 +46,6 @@ void init_comhand(void) {
 	for (;;)
 	{
 		puts("\n> \0");
-
 		/*
 		Variable: buf
 		Use		: buffers packets of data from input devices
@@ -158,9 +157,8 @@ void init_comhand(void) {
 				"\n"
 			);
 		}
-
-        sys_free_mem(buf);
 		//after user buffer has been read, will update the current process to 0
+        sys_free_mem(buf);
 		curr_process = 000;
 	}
 }
@@ -1716,7 +1714,7 @@ void comhand_help(void) {
 		"\n$:		Will show all free memory that exists"\
 		"\n$:"\
 		"\n$:"\
-		"\n$:  \n \e[0m"
+		"\n$:  \n \e[0m\0"
 	);
 	return;
 }

@@ -139,7 +139,7 @@ int serial_read(device dev, char* buf, size_t len){
             rb->head %= sizeof(rb->arr);
             break;
         }
-        *(DCB->char_buffer++) = rb->arr[rb->head++];
+        DCB->char_buffer[currentSize] = rb->arr[rb->head++];
         rb->head %= sizeof(rb->arr);
 //        outb(dev,buf);
         currentSize++;
@@ -223,21 +223,22 @@ void serial_input_interrupt(dcb* dcb1)
     }
     else{
         if(dcb1->buffer_progress < dcb1-> buffer_len && (character!='\n' && character!='\r' && character!='\f')){
-//            if(character == '\b'){
-//                if(dcb1->buffer_progress>0){
-//                    dcb1->char_buffer[--(dcb1->buffer_progress)] = ' ';
-//                    outb(COM1,character);
-//                }
-//                outb(COM1,' ');
-//            }
-//            else{
-            *(dcb1->char_buffer++) = character;
-            dcb1->buffer_progress++;
-//            }
-//            outb(COM1,character);
+            if(character == 127){
+                if(dcb1->buffer_progress>0){
+                    dcb1->char_buffer[--(dcb1->buffer_progress)] = ' ';
+                    outb(COM1,'\b');
+                }
+                outb(COM1,' ');
+                outb(COM1,'\b');
+            }
+            else{
+            dcb1->char_buffer[dcb1->buffer_progress++] = character;
+                outb(COM1,character);
+            }
         }
         else{
             outb(COM1,'\n');
+dcb1->char_buffer[dcb1->buffer_progress++] = '\0';
             dcb1->use_status = NOT_BUSY;
             dcb1->event_status = EVENT;
             ((context*)(dcb1->iocb_head->assoc_pcb->stackPtr))->EAX = dcb1->iocb_head->buffer_len;
@@ -289,7 +290,9 @@ void schedule_io(pcb* process, op_code op, device dev, char* buffer, size_t size
 void io_complete(){
     for(size_t i = 0;i<sizeof(DCB_array);i++){
         dcb* DCB = DCB_array[i];
+        //if the device is initialized
         if(DCB){
+            //if io needs completing
             if(DCB->event_status == EVENT){
                 iocb* iocbHead = DCB->iocb_head;
                 pcb* process = iocbHead->assoc_pcb;
